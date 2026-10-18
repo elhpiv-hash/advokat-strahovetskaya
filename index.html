@@ -14,7 +14,7 @@
        https://elhpiv-hash.github.io/advokat-strahovetskaya/ на него здесь, в robots.txt
        и sitemap.xml. -->
   <link rel="canonical" href="https://elhpiv-hash.github.io/advokat-strahovetskaya/">
-  <meta name="theme-color" content="#141B1D">
+  <meta name="theme-color" content="#121E2E">
 
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ru_RU">
@@ -35,8 +35,8 @@
 
   <!-- Предзагружаем только кириллицу: ей набран h1 (он же LCP) и вводный абзац.
        Латиница и знак ₽ нужны позже и приходят по unicode-range сами. -->
-  <link rel="preload" href="assets/fonts/pt-serif-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/pt-sans-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/spectral-cyrillic-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/commissioner-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <!-- Когда появится портрет — снять комментарий: браузер начнёт качать фото
        до разбора CSS, и LCP по картинке не будет ждать стилей.
   <link rel="preload" as="image" type="image/webp" fetchpriority="high"
@@ -44,14 +44,14 @@
         imagesizes="(min-width: 60em) 55vw, 100vw">
   -->
 
-  <link rel="stylesheet" href="css/style.min.css?v=1">
+  <link rel="stylesheet" href="css/style.min.css?v=2">
 
   <!-- Единственный встроенный скрипт: класс js нужен до первой отрисовки, иначе
        элементы первого экрана мигнут перед анимацией. Таймер — страховка:
        если main.js не загрузится или фото зависнет, экран всё равно проявится.
        Его sha256 стоит в CSP (.htaccess) — build.sh пересчитывает хеш сам. -->
   <script>document.documentElement.className='js';setTimeout(function(){document.documentElement.classList.add('is-hero-ready')},2000);</script>
-  <script src="js/main.min.js?v=1" defer></script>
+  <script src="js/main.min.js?v=2" defer></script>
 
   <!-- Телефон здесь не подставляется из SITE (поисковики JS не ждут) —
        при смене номера поправить и тут. -->
@@ -199,14 +199,14 @@
     </section>
 
     <!-- ==================== Уголовные дела ==================== -->
-    <section class="section section--white" id="criminal" aria-labelledby="criminal-title">
-      <div class="container criminal">
-        <div class="criminal__intro">
+    <section class="section section--white section--anchor" id="criminal" aria-labelledby="criminal-title">
+      <div class="container">
+        <!-- Заголовок и вводная фраза — в одну строку: под коротким заголовком
+             не остаётся пустой колонки, а список ниже получает всю ширину -->
+        <div class="section-head">
           <h2 class="section__title" id="criminal-title">Уголовные дела</h2>
           <!-- Её формулировка с HARANT дословно: опыт, а не обещание исхода -->
-          <p class="criminal__quote">Обширный опыт прекращения уголовных дел в&nbsp;суде, изменений мер пресечений на&nbsp;иные, не&nbsp;связанные с&nbsp;лишением свободы.</p>
-          <p class="criminal__note">Выезд в&nbsp;СИЗО и&nbsp;ИК. Экстренно&nbsp;— в&nbsp;любое время суток.</p>
-          <a class="criminal__phone" href="tel:+79112585934" data-site="phone" data-site-text>+7 (911) 258-59-34</a>
+          <p class="section-head__lead">Обширный опыт прекращения уголовных дел в&nbsp;суде, изменений мер пресечений на&nbsp;иные, не&nbsp;связанные с&nbsp;лишением свободы.</p>
         </div>
 
         <!-- Список прямо на фоне: статья УК — то, по чему человек ищет адвоката,
@@ -245,126 +245,164 @@
             <span class="crimes__law">ст.&nbsp;126 УК&nbsp;РФ</span>
           </li>
         </ul>
+
+        <!-- Экстренная связь замыкает раздел: кто дочитал список до конца,
+             ищет, куда звонить, — номер оказывается прямо под рукой -->
+        <div class="urgent">
+          <p class="urgent__text">Выезд в&nbsp;СИЗО и&nbsp;ИК. Экстренно&nbsp;— в&nbsp;любое время суток.</p>
+          <a class="urgent__phone" href="tel:+79112585934" data-site="phone" data-site-text>+7 (911) 258-59-34</a>
+        </div>
       </div>
     </section>
 
     <!-- ==================== Семейные дела ==================== -->
-    <section class="section section--stone" id="family" aria-labelledby="family-title">
+    <section class="section section--stone section--support" id="family" aria-labelledby="family-title">
       <div class="container family">
-        <h2 class="section__title family__title" id="family-title">Семейные дела</h2>
+        <!-- «Также» стоит под заголовком: левая колонка по высоте сравнивается
+             со списком справа, и пустоты под заголовком нет -->
+        <div class="family__aside">
+          <h2 class="section__title" id="family-title">Семейные дела</h2>
+          <div class="family__also">
+            <p class="family__also-title">Также</p>
+            <ul class="inline-list">
+              <li>административные дела</li>
+              <li>военное право</li>
+              <li>защита прав потребителей</li>
+              <li>экспертиза документов</li>
+            </ul>
+          </div>
+        </div>
         <ul class="family__list">
           <li>Алименты</li>
           <li>Заключение и&nbsp;расторжение брака</li>
           <li>Раздел имущества</li>
           <li>Усыновление, опека, попечительство, родительские права</li>
         </ul>
-        <div class="family__also">
-          <p class="family__also-title">Также</p>
-          <ul class="inline-list">
-            <li>административные дела</li>
-            <li>военное право</li>
-            <li>защита прав потребителей</li>
-            <li>экспертиза документов</li>
-          </ul>
-        </div>
       </div>
     </section>
 
     <!-- ==================== Отзывы ==================== -->
-    <section class="section section--white" id="reviews" aria-labelledby="reviews-title">
-      <div class="container split">
-        <h2 class="section__title split__aside" id="reviews-title">Отзывы</h2>
-        <div class="split__main">
-          <!-- Текст отзывов — дословно с HARANT, с сохранением авторской
-               пунктуации. Отобраны отзывы без номеров статей и дел, без
-               упоминания бесплатной консультации и без слов-оценок,
-               которые запрещает Кодекс профессиональной этики адвоката. -->
-          <figure class="review">
-            <blockquote class="review__text" cite="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/#reviews_jurist">
-              <p>Спасибо за&nbsp;прекращение дела! Благодаря вашей работе удалось избежать судимости. Очень детальный разбор материалов дела и&nbsp;грамотная тактика в&nbsp;суде. Ева Рубиновна, спасибо вам большое от&nbsp;всей нашей семьи.</p>
-            </blockquote>
-            <figcaption class="review__meta">Ирина, отзыв на&nbsp;HARANT, <time datetime="2026-05-12">12&nbsp;мая 2026</time></figcaption>
-          </figure>
-          <figure class="review">
-            <blockquote class="review__text" cite="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/#reviews_jurist">
-              <p>Если вам кажется, что выхода нет&nbsp;— звоните Страховецкой. Она вытащила нашу семью из&nbsp;ада. Муж остался на&nbsp;свободе, хотя обвинения были очень серьезными. Профессионал с&nbsp;большой буквы</p>
-            </blockquote>
-            <figcaption class="review__meta">Елена, отзыв на&nbsp;HARANT, <time datetime="2026-05-07">7&nbsp;мая 2026</time></figcaption>
-          </figure>
-          <figure class="review">
-            <blockquote class="review__text" cite="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/#reviews_jurist">
-              <p>Всем советую данного специалиста! Сегодня был суд. Разошлись примирением а&nbsp;грозила серьезная статья. Благодаря усилиям замечательного адвоката Евы Рубиновной все позади. Вам Ева Рубиновна здесь, еще раз хочу написать спасибо!!!! Проделана серьезная работа, которая спасла меня от&nbsp;тюрьмы! Всем кто попал в&nbsp;трудную ситуацию и&nbsp;нуждается в&nbsp;помощи советую данного адвоката. Это реально грамотный специалист! Спасибо!!!!!!</p>
-            </blockquote>
-            <figcaption class="review__meta">Илья, отзыв на&nbsp;HARANT, <time datetime="2025-06-18">18&nbsp;июня 2025</time></figcaption>
-          </figure>
-
+    <section class="section section--white section--anchor" id="reviews" aria-labelledby="reviews-title">
+      <div class="container">
+        <div class="section-head section-head--end">
+          <h2 class="section__title" id="reviews-title">Отзывы</h2>
           <p class="reviews__links">
             <a href="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/#reviews_jurist" target="_blank" rel="noopener">Все отзывы на&nbsp;HARANT (6)</a>
             <a href="https://yandex.ru/maps/org/advokat_strakhovetskaya_ye_r_/192041376690/reviews/" target="_blank" rel="noopener">Отзывы на&nbsp;Яндекс Картах</a>
           </p>
         </div>
+
+        <!-- Текст отзывов — дословно с HARANT, с сохранением авторской
+             пунктуации. Отобраны отзывы без номеров статей и дел, без
+             упоминания бесплатной консультации и без слов-оценок,
+             которые запрещает Кодекс профессиональной этики адвоката.
+             Подпись слева от текста, как в реестре: левая колонка занята
+             тем, кто это сказал, а не пустотой. -->
+        <div class="reviews">
+          <figure class="review review--first">
+            <figcaption class="review__meta">
+              <span class="review__name">Ирина</span>
+              <span>отзыв на&nbsp;HARANT</span>
+              <time datetime="2026-05-12">12&nbsp;мая 2026</time>
+            </figcaption>
+            <blockquote class="review__text" cite="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/#reviews_jurist">
+              <p>Спасибо за&nbsp;прекращение дела! Благодаря вашей работе удалось избежать судимости. Очень детальный разбор материалов дела и&nbsp;грамотная тактика в&nbsp;суде. Ева Рубиновна, спасибо вам большое от&nbsp;всей нашей семьи.</p>
+            </blockquote>
+          </figure>
+          <figure class="review">
+            <figcaption class="review__meta">
+              <span class="review__name">Елена</span>
+              <span>отзыв на&nbsp;HARANT</span>
+              <time datetime="2026-05-07">7&nbsp;мая 2026</time>
+            </figcaption>
+            <blockquote class="review__text" cite="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/#reviews_jurist">
+              <p>Если вам кажется, что выхода нет&nbsp;— звоните Страховецкой. Она вытащила нашу семью из&nbsp;ада. Муж остался на&nbsp;свободе, хотя обвинения были очень серьезными. Профессионал с&nbsp;большой буквы</p>
+            </blockquote>
+          </figure>
+          <figure class="review">
+            <figcaption class="review__meta">
+              <span class="review__name">Илья</span>
+              <span>отзыв на&nbsp;HARANT</span>
+              <time datetime="2025-06-18">18&nbsp;июня 2025</time>
+            </figcaption>
+            <blockquote class="review__text" cite="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/#reviews_jurist">
+              <p>Всем советую данного специалиста! Сегодня был суд. Разошлись примирением а&nbsp;грозила серьезная статья. Благодаря усилиям замечательного адвоката Евы Рубиновной все позади. Вам Ева Рубиновна здесь, еще раз хочу написать спасибо!!!! Проделана серьезная работа, которая спасла меня от&nbsp;тюрьмы! Всем кто попал в&nbsp;трудную ситуацию и&nbsp;нуждается в&nbsp;помощи советую данного адвоката. Это реально грамотный специалист! Спасибо!!!!!!</p>
+            </blockquote>
+          </figure>
+        </div>
       </div>
     </section>
 
     <!-- ==================== Об адвокате ==================== -->
-    <section class="section section--stone" id="about" aria-labelledby="about-title">
+    <section class="section section--stone section--anchor" id="about" aria-labelledby="about-title">
+      <!-- Две колонки-обёртки: слева фото и факты, справа заголовок и текст —
+           обе заполнены. На телефоне обёртки «растворяются» (display: contents),
+           и порядок становится как для чтения: заголовок, фото, текст, факты. -->
       <div class="container about">
-        <div class="about__media">
-          <!--
-            ФОТО. Положите снимок за работой (горизонтальный) в assets/img/src/work.jpg
-            и выполните `bash build-images.sh`. Затем удалите заглушку
-            <div class="photo-slot"> и снимите комментарий с <picture>.
-          -->
-          <div class="photo-slot photo-slot--3x2" aria-hidden="true"></div>
-          <!--
-          <picture>
-            <source type="image/webp"
-                    srcset="assets/img/work-640.webp 640w, assets/img/work-1000.webp 1000w, assets/img/work-1600.webp 1600w"
-                    sizes="(min-width: 60em) 50vw, 100vw">
-            <img class="about__img" src="assets/img/work.jpg" width="1000" height="667"
-                 alt="Адвокат Страховецкая Ева Рубиновна за работой" loading="lazy" decoding="async">
-          </picture>
-          -->
+        <div class="about__col about__col--media">
+          <div class="about__media">
+            <!--
+              ФОТО. Положите снимок за работой (горизонтальный) в assets/img/src/work.jpg
+              и выполните `bash build-images.sh`. Затем удалите заглушку
+              <div class="photo-slot"> и снимите комментарий с <picture>.
+            -->
+            <div class="photo-slot photo-slot--3x2" aria-hidden="true"></div>
+            <!--
+            <picture>
+              <source type="image/webp"
+                      srcset="assets/img/work-640.webp 640w, assets/img/work-1000.webp 1000w, assets/img/work-1600.webp 1600w"
+                      sizes="(min-width: 60em) 50vw, 100vw">
+              <img class="about__img" src="assets/img/work.jpg" width="1000" height="667"
+                   alt="Адвокат Страховецкая Ева Рубиновна за работой" loading="lazy" decoding="async">
+            </picture>
+            -->
+          </div>
+
+          <ul class="about__facts">
+            <li>Адвокат с&nbsp;2009 года</li>
+            <li>Адвокатский кабинет Страховецкая Е.&nbsp;Р.</li>
+            <li>Большая часть практики&nbsp;— Московский районный суд <span class="nowrap">Санкт-Петербурга</span> (43 из&nbsp;62 дел по&nbsp;открытым реестрам)</li>
+          </ul>
         </div>
 
-        <div class="about__text">
-          <h2 class="section__title" id="about-title">Об адвокате</h2>
+        <div class="about__col about__col--text">
+          <h2 class="section__title about__title" id="about-title">Об адвокате</h2>
+
           <!-- Текст — дословно с её страницы на HARANT; изменена только
-               типографика: неразрывные пробелы и пробел в «ст.&nbsp;126» -->
-          <div class="prose">
+               типографика: неразрывные пробелы и пробел в «ст. 126» -->
+          <div class="prose about__text">
             <p>Адвокат с&nbsp;большим опытом защиты по&nbsp;уголовным делам, в&nbsp;том числе по&nbsp;тяжким и&nbsp;особо тяжким преступлениям: незаконное хранение либо сбыт наркотиков (ст.&nbsp;228, 228.1 УК&nbsp;РФ), причинение тяжкого вреда здоровью (ст.&nbsp;111 УК&nbsp;РФ), убийство (ст.&nbsp;105 УК&nbsp;РФ), грабежи (ст.&nbsp;161 УК&nbsp;РФ), разбои (ст.&nbsp;162 УК&nbsp;РФ), кражи (ст.&nbsp;158 УК&nbsp;РФ), мошенничество (ст.&nbsp;159 УК&nbsp;РФ), похищение человека (ст.&nbsp;126 УК&nbsp;РФ). Обширный опыт прекращения уголовных дел в&nbsp;суде, изменений мер пресечений на&nbsp;иные, не&nbsp;связанные с&nbsp;лишением свободы.</p>
             <p>Также веду гражданские дела и&nbsp;семейные споры повышенной сложности.</p>
             <p>Работаю чётко и&nbsp;оперативно, готова выехать в&nbsp;любое время суток.</p>
             <p>Провожу собственные расследования, оспариваю доказательства и&nbsp;документирую каждый этап процесса.</p>
             <p>После обращения ко&nbsp;мне ваши проблемы становятся моей работой!</p>
           </div>
-          <p class="about__facts">Адвокат с&nbsp;2009 года. Адвокатский кабинет Страховецкая Е.&nbsp;Р. Большая часть практики&nbsp;— Московский районный суд <span class="nowrap">Санкт-Петербурга</span> (43 из&nbsp;62 дел по&nbsp;открытым реестрам).</p>
         </div>
       </div>
     </section>
 
     <!-- ==================== Стоимость ==================== -->
     <section class="section section--white" id="prices" aria-labelledby="prices-title">
-      <div class="container split">
-        <h2 class="section__title split__aside" id="prices-title">Стоимость</h2>
-        <div class="split__main">
-          <!-- Настоящая таблица, а не карточки: цены сравнивают построчно,
-               а скринридер читает пары «услуга — цена» -->
-          <table class="price">
-            <caption class="visually-hidden">Стоимость услуг адвоката</caption>
-            <tbody>
-              <tr><th scope="row">Консультация устная</th><td>5&nbsp;000&nbsp;₽</td></tr>
-              <tr><th scope="row">Консультация письменная</th><td>10&nbsp;000&nbsp;₽</td></tr>
-              <tr><th scope="row">Проверка и&nbsp;анализ договора</th><td>от&nbsp;5&nbsp;000&nbsp;₽</td></tr>
-              <tr><th scope="row">Составление договора</th><td>от&nbsp;10&nbsp;000&nbsp;₽</td></tr>
-              <tr><th scope="row">Составление претензии&nbsp;/ искового заявления</th><td>от&nbsp;10&nbsp;000&nbsp;₽</td></tr>
-              <tr><th scope="row">Досудебное урегулирование</th><td>от&nbsp;15&nbsp;000&nbsp;₽</td></tr>
-              <tr><th scope="row">Представительство в&nbsp;суде</th><td class="price__note">по договорённости</td></tr>
-              <tr><th scope="row">Защита по&nbsp;уголовному делу</th><td class="price__note">фиксированная цена, обсуждается на&nbsp;консультации</td></tr>
-            </tbody>
-          </table>
-          <p class="price__terms">Работа по&nbsp;договору, рассрочка, оплата наличными и&nbsp;картой, выезд к&nbsp;клиенту, онлайн-консультации.</p>
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section__title" id="prices-title">Стоимость</h2>
+          <p class="section-head__lead section-head__lead--small">Работа по&nbsp;договору, рассрочка, оплата наличными и&nbsp;картой, выезд к&nbsp;клиенту, онлайн-консультации.</p>
         </div>
+
+        <!-- Список «услуга — цена» (dl), а не карточки: пары читаются построчно,
+             скринридер объявляет их как термин и значение. Восемь строк
+             в две колонки на десктопе: прайс компактный и занимает всю ширину,
+             а не узкий столбец справа от пустоты. -->
+        <dl class="price">
+          <div class="price__row"><dt>Консультация устная</dt><dd>5&nbsp;000&nbsp;₽</dd></div>
+          <div class="price__row"><dt>Консультация письменная</dt><dd>10&nbsp;000&nbsp;₽</dd></div>
+          <div class="price__row"><dt>Проверка и&nbsp;анализ договора</dt><dd>от&nbsp;5&nbsp;000&nbsp;₽</dd></div>
+          <div class="price__row"><dt>Составление договора</dt><dd>от&nbsp;10&nbsp;000&nbsp;₽</dd></div>
+          <div class="price__row"><dt>Составление претензии&nbsp;/ искового заявления</dt><dd>от&nbsp;10&nbsp;000&nbsp;₽</dd></div>
+          <div class="price__row"><dt>Досудебное урегулирование</dt><dd>от&nbsp;15&nbsp;000&nbsp;₽</dd></div>
+          <div class="price__row"><dt>Представительство в&nbsp;суде</dt><dd class="price__note">по договорённости</dd></div>
+          <div class="price__row"><dt>Защита по&nbsp;уголовному делу</dt><dd class="price__note">фиксированная цена, обсуждается на&nbsp;консультации</dd></div>
+        </dl>
       </div>
     </section>
 
