@@ -964,6 +964,29 @@ section[tabindex="-1"]:focus {
   max-width: 34em;
 }
 
+/* Строка виджета Яндекс Карт — в той же сетке, что и отзывы с HARANT:
+   слева источник и ссылка, справа сам виджет */
+h3.review__name {
+  font-size: var(--step-1);
+}
+
+.review__source {
+  display: inline-block;
+  padding-block: .6875rem;
+}
+
+/* Высота с запасом на рейтинг и три-четыре отзыва; остальное виджет
+   прокручивает сам. Ширина ограничена — виджет свёрстан под ~560 px
+   и на всю колонку растягивается некрасиво. */
+.embed--reviews {
+  position: relative;
+  height: 34rem;
+  max-width: 44rem;
+  background: var(--c-stone-slot);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
 
 /* ---------- Об адвокате ---------- */
 
@@ -1142,13 +1165,17 @@ section[tabindex="-1"]:focus {
   overflow: hidden;
 }
 
-.map iframe {
+.embed iframe {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   border: 0;
-  /* Жёлтые дороги Яндекса спорят с холодной палитрой — приглушаем */
+}
+
+/* Жёлтые дороги Яндекса спорят с холодной палитрой — приглушаем.
+   Виджет отзывов не трогаем: звёзды рейтинга должны остаться жёлтыми */
+.map iframe {
   filter: saturate(.55);
 }
 
@@ -1165,7 +1192,7 @@ section[tabindex="-1"]:focus {
   padding-block: .625rem;
 }
 
-.no-js .map,
+.no-js .embed,
 .js .contacts__maplink {
   display: none;
 }
@@ -1467,6 +1494,10 @@ section[tabindex="-1"]:focus {
 
   .review {
     padding-block: 2.25rem;
+  }
+
+  .embed--reviews {
+    height: 40rem;
   }
 
   /* На десктопе подпись — столбиком, без запятой */

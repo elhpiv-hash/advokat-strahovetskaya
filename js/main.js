@@ -22,7 +22,9 @@ const SITE = {
   vk: 'https://vk.ru/id124027365',
   // Простая метка без карточки организации: в карточке Яндекса другие
   // часы работы, чем на HARANT, — противоречие на сайте ни к чему
-  map: 'https://yandex.ru/map-widget/v1/?ll=30.320962%2C59.872331&z=16&pt=30.320962%2C59.872331%2Cpm2dgm'
+  map: 'https://yandex.ru/map-widget/v1/?ll=30.320962%2C59.872331&z=16&pt=30.320962%2C59.872331%2Cpm2dgm',
+  // Официальный виджет отзывов карточки организации (id 192041376690)
+  yandexReviews: 'https://yandex.ru/maps-reviews-widget/192041376690?comments'
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -31,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMenu();
   initSmoothScroll();
   initHero();
-  initMap();
+  initEmbeds();
   initCallBar();
 });
 
@@ -219,16 +221,26 @@ function initHero() {
 }
 
 
-/* ---------- Карта: подгрузка при подходе к блоку ---------- */
+/* ---------- Виджеты Яндекса: подгрузка при подходе к блоку ---------- */
 
-function initMap() {
-  const box = document.querySelector('[data-map]');
-  if (!box) return;
+// Карта и отзывы — сторонние iframe, каждый тяжелее всей страницы.
+// В разметке только пустой блок с data-embed, iframe появляется, когда
+// блок подходит к экрану: первый экран за них не платит.
+function initEmbeds() {
+  const EMBEDS = {
+    map: { src: SITE.map, title: 'Карта: Санкт-Петербург, Московский проспект, 186' },
+    reviews: { src: SITE.yandexReviews, title: 'Отзывы об адвокате Страховецкой Е. Р. на Яндекс Картах' }
+  };
 
-  const load = () => {
+  const boxes = document.querySelectorAll('[data-embed]');
+  if (!boxes.length) return;
+
+  const load = (box) => {
+    const embed = EMBEDS[box.dataset.embed];
+    if (!embed) return;
     const frame = document.createElement('iframe');
-    frame.src = SITE.map;
-    frame.title = 'Карта: Санкт-Петербург, Московский проспект, 186';
+    frame.src = embed.src;
+    frame.title = embed.title;
     frame.loading = 'lazy';
     frame.allowFullscreen = true;
     frame.referrerPolicy = 'strict-origin-when-cross-origin';
@@ -236,15 +248,16 @@ function initMap() {
   };
 
   // За 400 px до появления: к тому моменту, как блок въедет в экран,
-  // виджет уже отрисует тайлы
+  // виджет уже успеет отрисоваться
   const observer = new IntersectionObserver((entries) => {
-    if (entries.some((entry) => entry.isIntersecting)) {
-      observer.disconnect();
-      load();
-    }
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      observer.unobserve(entry.target);
+      load(entry.target);
+    });
   }, { rootMargin: '400px 0px' });
 
-  observer.observe(box);
+  boxes.forEach((box) => observer.observe(box));
 }
 
 

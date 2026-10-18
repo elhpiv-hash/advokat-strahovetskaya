@@ -44,14 +44,14 @@
         imagesizes="(min-width: 60em) 55vw, 100vw">
   -->
 
-  <link rel="stylesheet" href="css/style.min.css?v=2">
+  <link rel="stylesheet" href="css/style.min.css?v=3">
 
   <!-- Единственный встроенный скрипт: класс js нужен до первой отрисовки, иначе
        элементы первого экрана мигнут перед анимацией. Таймер — страховка:
        если main.js не загрузится или фото зависнет, экран всё равно проявится.
        Его sha256 стоит в CSP (.htaccess) — build.sh пересчитывает хеш сам. -->
   <script>document.documentElement.className='js';setTimeout(function(){document.documentElement.classList.add('is-hero-ready')},2000);</script>
-  <script src="js/main.min.js?v=2" defer></script>
+  <script src="js/main.min.js?v=3" defer></script>
 
   <!-- Телефон здесь не подставляется из SITE (поисковики JS не ждут) —
        при смене номера поправить и тут. -->
@@ -288,7 +288,6 @@
           <h2 class="section__title" id="reviews-title">Отзывы</h2>
           <p class="reviews__links">
             <a href="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/#reviews_jurist" target="_blank" rel="noopener">Все отзывы на&nbsp;HARANT (6)</a>
-            <a href="https://yandex.ru/maps/org/advokat_strakhovetskaya_ye_r_/192041376690/reviews/" target="_blank" rel="noopener">Отзывы на&nbsp;Яндекс Картах</a>
           </p>
         </div>
 
@@ -329,6 +328,19 @@
               <p>Всем советую данного специалиста! Сегодня был суд. Разошлись примирением а&nbsp;грозила серьезная статья. Благодаря усилиям замечательного адвоката Евы Рубиновной все позади. Вам Ева Рубиновна здесь, еще раз хочу написать спасибо!!!! Проделана серьезная работа, которая спасла меня от&nbsp;тюрьмы! Всем кто попал в&nbsp;трудную ситуацию и&nbsp;нуждается в&nbsp;помощи советую данного адвоката. Это реально грамотный специалист! Спасибо!!!!!!</p>
             </blockquote>
           </figure>
+
+          <!-- Отзывы с Яндекс Карт — официальный виджет карточки организации,
+               тот же, что стоит на её странице HARANT. Отзывы в нём Яндекс
+               подставляет сам, свежие, и проверить их можно в один клик.
+               Виджет подгружается, когда раздел подходит к экрану
+               (main.js → initEmbeds); без JS остаётся ссылка слева. -->
+          <div class="review review--yandex">
+            <div class="review__meta">
+              <h3 class="review__name">Яндекс Карты</h3>
+              <a class="review__source" href="https://yandex.ru/maps/org/advokat_strakhovetskaya_ye_r_/192041376690/reviews/" target="_blank" rel="noopener">Все отзывы на&nbsp;Яндекс Картах</a>
+            </div>
+            <div class="embed embed--reviews" data-embed="reviews"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -474,10 +486,10 @@
                  alt="Вход в офис адвоката Страховецкой Е. Р., Московский проспект, 186" loading="lazy" decoding="async">
           </picture>
           -->
-          <!-- Карта подгружается, когда блок подходит к экрану (main.js → initMap):
+          <!-- Карта подгружается, когда блок подходит к экрану (main.js → initEmbeds):
                виджет Яндекса весит больше всей страницы, и платить за него
                на первом экране незачем -->
-          <div class="map" data-map></div>
+          <div class="map embed" data-embed="map"></div>
           <a class="contacts__maplink" href="https://yandex.ru/maps/org/advokat_strakhovetskaya_ye_r_/192041376690/" target="_blank" rel="noopener">Открыть в&nbsp;Яндекс Картах</a>
         </div>
       </div>
