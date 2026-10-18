@@ -1,0 +1,16 @@
+# Зависимости — сборка ставит их во временную папку, но на всякий случай
+node_modules/
+
+# Исходники фото: в них EXIF с геометкой и моделью телефона.
+# В репозиторий идут только обработанные build-images.sh файлы.
+assets/img/src/*
+!assets/img/src/.gitkeep
+
+# Системный и редакторский мусор
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.log
+*.swp
