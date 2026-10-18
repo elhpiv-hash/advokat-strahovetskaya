@@ -44,7 +44,7 @@
         imagesizes="(min-width: 60em) 55vw, 100vw">
   -->
 
-  <link rel="stylesheet" href="css/style.min.css?v=3">
+  <link rel="stylesheet" href="css/style.min.css?v=4">
 
   <!-- Единственный встроенный скрипт: класс js нужен до первой отрисовки, иначе
        элементы первого экрана мигнут перед анимацией. Таймер — страховка:
@@ -283,65 +283,29 @@
 
     <!-- ==================== Отзывы ==================== -->
     <section class="section section--white section--anchor" id="reviews" aria-labelledby="reviews-title">
-      <div class="container">
-        <div class="section-head section-head--end">
+      <!-- Отзывы — только из живого источника: официальный виджет карточки
+           организации на Яндекс Картах. Текст в нём ведёт Яндекс, вручную
+           на сайт ничего не переписано.
+           Виджет не шире ~760 px (дальше Яндекс заливает iframe своим серым),
+           поэтому он стоит в широкой колонке, а в узкой рядом — заголовок,
+           источники и звонок, по центру высоты виджета: это подпись к нему,
+           а не шапка над пустотой. -->
+      <div class="container reviews">
+        <div class="reviews__aside">
           <h2 class="section__title" id="reviews-title">Отзывы</h2>
-          <p class="reviews__links">
-            <a href="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/#reviews_jurist" target="_blank" rel="noopener">Все отзывы на&nbsp;HARANT (6)</a>
-          </p>
-        </div>
-
-        <!-- Текст отзывов — дословно с HARANT, с сохранением авторской
-             пунктуации. Отобраны отзывы без номеров статей и дел, без
-             упоминания бесплатной консультации и без слов-оценок,
-             которые запрещает Кодекс профессиональной этики адвоката.
-             Подпись слева от текста, как в реестре: левая колонка занята
-             тем, кто это сказал, а не пустотой. -->
-        <div class="reviews">
-          <figure class="review review--first">
-            <figcaption class="review__meta">
-              <span class="review__name">Ирина</span>
-              <span>отзыв на&nbsp;HARANT</span>
-              <time datetime="2026-05-12">12&nbsp;мая 2026</time>
-            </figcaption>
-            <blockquote class="review__text" cite="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/#reviews_jurist">
-              <p>Спасибо за&nbsp;прекращение дела! Благодаря вашей работе удалось избежать судимости. Очень детальный разбор материалов дела и&nbsp;грамотная тактика в&nbsp;суде. Ева Рубиновна, спасибо вам большое от&nbsp;всей нашей семьи.</p>
-            </blockquote>
-          </figure>
-          <figure class="review">
-            <figcaption class="review__meta">
-              <span class="review__name">Елена</span>
-              <span>отзыв на&nbsp;HARANT</span>
-              <time datetime="2026-05-07">7&nbsp;мая 2026</time>
-            </figcaption>
-            <blockquote class="review__text" cite="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/#reviews_jurist">
-              <p>Если вам кажется, что выхода нет&nbsp;— звоните Страховецкой. Она вытащила нашу семью из&nbsp;ада. Муж остался на&nbsp;свободе, хотя обвинения были очень серьезными. Профессионал с&nbsp;большой буквы</p>
-            </blockquote>
-          </figure>
-          <figure class="review">
-            <figcaption class="review__meta">
-              <span class="review__name">Илья</span>
-              <span>отзыв на&nbsp;HARANT</span>
-              <time datetime="2025-06-18">18&nbsp;июня 2025</time>
-            </figcaption>
-            <blockquote class="review__text" cite="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/#reviews_jurist">
-              <p>Всем советую данного специалиста! Сегодня был суд. Разошлись примирением а&nbsp;грозила серьезная статья. Благодаря усилиям замечательного адвоката Евы Рубиновной все позади. Вам Ева Рубиновна здесь, еще раз хочу написать спасибо!!!! Проделана серьезная работа, которая спасла меня от&nbsp;тюрьмы! Всем кто попал в&nbsp;трудную ситуацию и&nbsp;нуждается в&nbsp;помощи советую данного адвоката. Это реально грамотный специалист! Спасибо!!!!!!</p>
-            </blockquote>
-          </figure>
-
-          <!-- Отзывы с Яндекс Карт — официальный виджет карточки организации,
-               тот же, что стоит на её странице HARANT. Отзывы в нём Яндекс
-               подставляет сам, свежие, и проверить их можно в один клик.
-               Виджет подгружается, когда раздел подходит к экрану
-               (main.js → initEmbeds); без JS остаётся ссылка слева. -->
-          <div class="review review--yandex">
-            <div class="review__meta">
-              <h3 class="review__name">Яндекс Карты</h3>
-              <a class="review__source" href="https://yandex.ru/maps/org/advokat_strakhovetskaya_ye_r_/192041376690/reviews/" target="_blank" rel="noopener">Все отзывы на&nbsp;Яндекс Картах</a>
-            </div>
-            <div class="embed embed--reviews" data-embed="reviews"></div>
+          <ul class="reviews__sources">
+            <li><a href="https://yandex.ru/maps/org/advokat_strakhovetskaya_ye_r_/192041376690/reviews/" target="_blank" rel="noopener">Все отзывы на&nbsp;Яндекс Картах</a></li>
+            <li><a href="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/#reviews_jurist" target="_blank" rel="noopener">Отзывы на&nbsp;HARANT (6)</a></li>
+          </ul>
+          <div class="reviews__call">
+            <p class="reviews__price">Устная консультация&nbsp;— 5&nbsp;000&nbsp;₽</p>
+            <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
           </div>
         </div>
+
+        <!-- Подгружается, когда раздел подходит к экрану (main.js → initEmbeds);
+             без JS блок скрыт, остаются ссылки на источники -->
+        <div class="embed embed--reviews" data-embed="reviews"></div>
       </div>
     </section>
 

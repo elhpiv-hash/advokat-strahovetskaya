@@ -315,7 +315,7 @@ a[href^="tel:"] {
 .family > *,
 .about > *,
 .contacts > *,
-.review > * {
+.reviews > * {
   min-width: 0;
 }
 
@@ -892,96 +892,57 @@ section[tabindex="-1"]:focus {
 
 /* ---------- Отзывы ---------- */
 
-.section-head--end {
-  align-items: end;
-}
-
-.reviews__links {
+/* На телефоне обёртка «растворяется», и порядок становится такой:
+   заголовок, источники, виджет, звонок — кнопка после отзывов, а не до них */
+.reviews {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0 1.75rem;
-  max-width: none;
+  flex-direction: column;
 }
 
-.reviews__links a {
+.reviews__aside {
+  display: contents;
+}
+
+.reviews__aside .section__title {
+  order: 1;
+}
+
+.reviews__sources {
+  order: 2;
+  margin-bottom: 1.5rem;
+}
+
+.reviews__sources a {
   display: inline-block;
   padding-block: .625rem;
 }
 
-.reviews {
-  border-top: 1px solid var(--c-line);
+.embed--reviews {
+  order: 3;
 }
 
-/* Каждый отзыв — строка: подпись (кто и где) слева, текст справа.
-   Левая колонка заполнена именем автора, а не пустотой. */
-.review {
-  display: grid;
-  gap: .75rem;
-  padding-block: 1.75rem;
-  border-bottom: 1px solid var(--c-line);
+/* Звонок рядом с отзывами нужен только на десктопе: на телефоне и планшете
+   под виджетом уже стоит закреплённая кнопка «Позвонить», второй — дубль */
+.reviews__call {
+  order: 4;
+  display: none;
+  margin-top: 2rem;
 }
 
-.review__meta {
-  font-size: .9375rem;
-  line-height: 1.5;
-  color: var(--c-ink-soft);
-}
-
-.review__name {
-  display: block;
-  margin-bottom: .125rem;
+.reviews__price {
   font-family: var(--ff-serif);
   font-weight: 500;
   font-size: var(--step-1);
-  line-height: 1.2;
-  color: var(--c-ink);
+  line-height: 1.25;
 }
 
-/* На телефоне площадка и дата — одной строкой через запятую */
-.review__meta span:not(.review__name)::after {
-  content: ',';
-}
-
-.review__text {
-  font-size: var(--step-0);
-  line-height: 1.6;
-}
-
-.review__text p {
-  max-width: 62ch;
-}
-
-/* Первый отзыв набран антиквой крупнее остальных: ритм ломается один
-   раз и в одном месте — так видно, с чего начинать читать */
-.review--first .review__text {
-  font-family: var(--ff-serif);
-  font-weight: 500;
-  font-size: clamp(var(--step-1), 1.1rem + 1vw, 1.75rem);
-  line-height: 1.4;
-}
-
-.review--first .review__text p {
-  max-width: 34em;
-}
-
-/* Строка виджета Яндекс Карт — в той же сетке, что и отзывы с HARANT:
-   слева источник и ссылка, справа сам виджет */
-h3.review__name {
-  font-size: var(--step-1);
-}
-
-.review__source {
-  display: inline-block;
-  padding-block: .6875rem;
-}
-
-/* Высота с запасом на рейтинг и три-четыре отзыва; остальное виджет
-   прокручивает сам. Ширина ограничена — виджет свёрстан под ~560 px
-   и на всю колонку растягивается некрасиво. */
+/* Высота с запасом на рейтинг и пару отзывов; остальное виджет
+   прокручивает сам. Ширина ограничена: шире ~760 px Яндекс заливает
+   iframe своим серым фоном. */
 .embed--reviews {
   position: relative;
   height: 34rem;
-  max-width: 44rem;
+  max-width: 47rem;
   background: var(--c-stone-slot);
   border-radius: var(--radius);
   overflow: hidden;
@@ -1447,7 +1408,7 @@ h3.review__name {
      к разделу — страница читается как свёрстанная, а не собранная. */
   .section-head,
   .family,
-  .review {
+  .reviews {
     grid-template-columns: 4fr 8fr;
     column-gap: 4rem;
   }
@@ -1455,14 +1416,6 @@ h3.review__name {
   /* Первая строка вводной фразы встаёт на базовую линию заголовка */
   .section-head {
     align-items: baseline;
-  }
-
-  .section-head--end {
-    align-items: end;
-  }
-
-  .section-head--end .reviews__links {
-    justify-content: flex-end;
   }
 
   .crimes {
@@ -1492,22 +1445,30 @@ h3.review__name {
     padding-top: .5rem;
   }
 
-  .review {
-    padding-block: 2.25rem;
+  /* Узкая колонка — подпись к виджету: по центру его высоты, а не шапка
+     сверху над пустотой */
+  .reviews {
+    display: grid;
+    align-items: center;
+  }
+
+  .reviews__aside {
+    display: block;
+  }
+
+  .reviews__aside .section__title {
+    margin-bottom: 1rem;
+  }
+
+  .reviews__call {
+    display: grid;
+    justify-items: start;
+    gap: 1rem;
+    margin-top: 2.5rem;
   }
 
   .embed--reviews {
     height: 40rem;
-  }
-
-  /* На десктопе подпись — столбиком, без запятой */
-  .review__meta span,
-  .review__meta time {
-    display: block;
-  }
-
-  .review__meta span:not(.review__name)::after {
-    content: none;
   }
 
   .about {
