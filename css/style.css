@@ -1705,14 +1705,39 @@ main .case {
   text-decoration-color: var(--c-gold);
 }
 
-.contacts__links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 1.5rem;
-}
-
 .contacts__moscow {
   margin-top: 1.25rem;
+}
+
+/* «Позвонить» — во всю ширину колонки, WhatsApp и Telegram — парой */
+.contacts__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .625rem;
+  margin-top: 1.75rem;
+}
+
+.contacts__actions .btn--primary {
+  grid-column: 1 / -1;
+}
+
+.contacts__actions .btn {
+  min-width: 0;
+  padding-inline: .75rem;
+}
+
+/* В тёмной секции ссылки золотые — у кнопок свои цвета, их возвращаем */
+.section--dark .btn--primary {
+  color: var(--c-ink);
+}
+
+.section--dark .btn--outline {
+  color: var(--c-on-dark);
+  border-color: rgba(242, 241, 238, .35);
+}
+
+.section--dark .btn--outline:hover {
+  border-color: rgba(242, 241, 238, .75);
 }
 
 /* Карта: до загрузки в блоке адрес и ссылка на Яндекс Карты,

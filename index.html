@@ -40,7 +40,7 @@
         imagesrcset="assets/img/hero-640.avif 640w, assets/img/hero-808.avif 808w"
         imagesizes="(min-width: 64em) 52vw, 100vw">
 
-  <link rel="stylesheet" href="css/style.min.css?v=1b28c97b94">
+  <link rel="stylesheet" href="css/style.min.css?v=8d4acde6eb">
 
   <!-- Единственный встроенный скрипт (одинаковый на всех страницах): класс js
        нужен до первой отрисовки, иначе первый экран мигнёт перед анимацией.
@@ -367,13 +367,6 @@
             <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
           </div>
         </aside>
-        <figure class="group__photo">
-          <picture>
-            <source type="image/avif" srcset="assets/img/extra-3-640.avif 640w, assets/img/extra-3-1000.avif 1000w" sizes="13rem">
-            <source type="image/webp" srcset="assets/img/extra-3-640.webp 640w, assets/img/extra-3-1000.webp 1000w" sizes="13rem">
-            <img src="assets/img/extra-3.jpg" width="1000" height="1250" alt="Адвокат Страховецкая Ева Рубиновна" loading="lazy" decoding="async">
-          </picture>
-        </figure>
         </div>
       </div>
     </section>
@@ -816,13 +809,6 @@
               <dd><a class="contacts__phone" href="tel:+79112585934" data-site="phone" data-site-text>+7 (911) 258-59-34</a></dd>
             </div>
             <div class="contacts__row">
-              <dt>Мессенджеры</dt>
-              <dd class="contacts__links">
-                <a href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
-                <a href="https://t.me/advokatstrahovetskaya" data-site="telegram" target="_blank" rel="noopener">Telegram</a>
-              </dd>
-            </div>
-            <div class="contacts__row">
               <dt>Почта</dt>
               <dd><a href="mailto:strahovets@yandex.ru" data-site="email" data-site-text>strahovets@yandex.ru</a></dd>
             </div>
@@ -836,6 +822,14 @@
             </div>
           </dl>
           <p class="contacts__moscow">Работает также в&nbsp;Москве.</p>
+
+          <!-- Связь — кнопками, как в первом экране: «Позвонить» во всю
+               ширину колонки, мессенджеры — парой под ней -->
+          <div class="contacts__actions">
+            <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
+            <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
+            <a class="btn btn--outline" href="https://t.me/advokatstrahovetskaya" data-site="telegram" target="_blank" rel="noopener">Telegram</a>
+          </div>
         </div>
 
         <!-- Карта подгружается, когда блок подходит к экрану (main.js →
