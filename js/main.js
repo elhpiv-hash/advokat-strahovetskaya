@@ -1,8 +1,9 @@
 /* ==========================================================================
    Адвокат Страховецкая Е. Р. — сценарии
    --------------------------------------------------------------------------
-   Без зависимостей. Каждая функция initXxx() отвечает за один модуль
-   и молча выходит, если его разметки на странице нет.
+   Без зависимостей. Общий файл для главной, /privacy/ и 404. Каждая функция
+   initXxx() отвечает за один модуль и молча выходит, если его разметки
+   на странице нет. Сайт работает и без JS: всё здесь — надстройка.
    На сайт подключается main.min.js (bash build.sh).
    ========================================================================== */
 
@@ -12,7 +13,8 @@
    отсюда ссылку, с data-site-text — текст (ключ — значение атрибута,
    а если оно пустое — значение data-site). В HTML те же значения
    стоят как запасные: без JS сайт работает, а поисковики видят номер.
-   Сменился телефон — правим здесь, в разметке и в JSON-LD в <head>. */
+   Сменился телефон — правим здесь, в разметке, в JSON-LD в <head>
+   и в tools/build-directions.mjs. */
 const SITE = {
   phone: '+79112585934',
   phoneText: '+7 (911) 258-59-34',
@@ -27,14 +29,29 @@ const SITE = {
   yandexReviews: 'https://yandex.ru/maps-reviews-widget/192041376690?comments'
 };
 
+/* Яндекс.Метрика: номер счётчика строкой, например '12345678'.
+   Пусто — Метрика не загружается совсем, и плашка о cookie не показывается
+   (без Метрики сайт cookie не ставит). Цели — в README. */
+const METRIKA_ID = '';
+
+// Отметка о согласии на cookie — в localStorage (в браузере посетителя)
+const CONSENT_KEY = 'cookie-consent';
+
+const root = document.documentElement;
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
 document.addEventListener('DOMContentLoaded', () => {
   initSiteData();
-  initHeader();
   initMenu();
   initSmoothScroll();
+  initHashOnLoad();
   initHero();
   initEmbeds();
   initCallBar();
+  initLightbox();
+  initCookies();
+  initGoals();
+  initRevoke();
 });
 
 
@@ -67,25 +84,6 @@ function initSiteData() {
 }
 
 
-/* ---------- Шапка: прозрачная над первым экраном, белая при прокрутке ---------- */
-
-function initHeader() {
-  const header = document.querySelector('.header');
-  if (!header) return;
-
-  // Датчик высотой 24 px в начале страницы. IntersectionObserver вызывает
-  // колбэк только при пересечении порога — дешевле, чем слушать каждый scroll
-  const sentinel = document.createElement('div');
-  sentinel.className = 'scroll-sentinel';
-  sentinel.setAttribute('aria-hidden', 'true');
-  document.body.prepend(sentinel);
-
-  new IntersectionObserver(([entry]) => {
-    header.classList.toggle('is-solid', !entry.isIntersecting);
-  }).observe(sentinel);
-}
-
-
 /* ---------- Меню на телефоне ---------- */
 
 function initMenu() {
@@ -94,7 +92,6 @@ function initMenu() {
   if (!button || !nav) return;
 
   const header = button.closest('.header');
-  const root = document.documentElement;
   const desktop = window.matchMedia('(min-width: 80em)');
   const isOpen = () => button.getAttribute('aria-expanded') === 'true';
 
@@ -129,12 +126,16 @@ function initMenu() {
 }
 
 
-/* ---------- Плавный переход по якорям с учётом фиксированной шапки ---------- */
+/* ---------- Плавный переход по якорям ---------- */
+
+// Отступ под шапку задаёт CSS (scroll-margin-top у разделов), поэтому
+// scrollIntoView ставит раздел ровно под шапку — так же, как браузер
+// при открытии ссылки с #якорем из рекламы
+function scrollToTarget(target, smooth) {
+  target.scrollIntoView({ block: 'start', behavior: smooth && !reducedMotion.matches ? 'smooth' : 'instant' });
+}
 
 function initSmoothScroll() {
-  const header = document.querySelector('.header');
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-
   document.addEventListener('click', (event) => {
     const link = event.target.closest('a[href^="#"]');
     if (!link) return;
@@ -144,14 +145,12 @@ function initSmoothScroll() {
     if (!target) return;
 
     event.preventDefault();
+    if (id === 'hero') window.scrollTo({ top: 0, behavior: reducedMotion.matches ? 'instant' : 'smooth' });
+    else scrollToTarget(target, true);
 
-    // Высоту шапки меряем в момент клика: она разная на телефоне и десктопе,
-    // а на iPhone к ней добавляется safe-area
-    const offset = header ? header.offsetHeight : 0;
-    const top = id === 'hero' ? 0 : target.getBoundingClientRect().top + window.scrollY - offset;
-
-    window.scrollTo({ top: Math.max(0, top), behavior: reduce.matches ? 'auto' : 'smooth' });
-    history.pushState(null, '', '#' + id);
+    // replaceState, а не pushState: utm-метки в адресе сохраняются,
+    // а «Назад» уводит со страницы, а не прыгает по разделам
+    history.replaceState(null, '', '#' + id);
 
     // Переносим фокус в раздел: следующий Tab должен идти отсюда, а не с начала
     if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
@@ -160,16 +159,43 @@ function initSmoothScroll() {
 }
 
 
-/* ---------- Первый экран: проявление и параллакс ---------- */
+/* ---------- Ссылка с #якорем из рекламы ---------- */
+
+// Браузер прокручивает к #якорю сразу, по раскладке до загрузки шрифтов.
+// Потом приходят шрифты, строки выше секции переносятся иначе, и секция
+// уезжает из-под шапки. Поэтому после загрузки шрифтов и страницы
+// ставим её на место ещё раз — если человек сам не начал прокручивать.
+function initHashOnLoad() {
+  const id = decodeURIComponent(window.location.hash.slice(1));
+  const target = id && document.getElementById(id);
+  if (!target || id === 'hero') return;
+
+  let userMoved = false;
+  const stop = () => { userMoved = true; };
+  ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach((type) => {
+    window.addEventListener(type, stop, { once: true, passive: true });
+  });
+
+  const settle = () => {
+    if (!userMoved) scrollToTarget(target, false);
+  };
+
+  settle();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(settle);
+  window.addEventListener('load', settle, { once: true });
+}
+
+
+/* ---------- Первый экран: проявление ---------- */
 
 function initHero() {
   const hero = document.querySelector('.hero');
   if (!hero) return;
 
-  // Проявление запускает класс is-hero-ready — после загрузки фото, чтобы
-  // не проявлять пустое место. Нет фото (заглушка) — сразу. Страховочный
+  // Проявление запускает класс is-hero-ready — после загрузки портрета,
+  // чтобы не проявлять пустое место. Нет портрета — сразу. Страховочный
   // таймер на случай зависшей загрузки стоит в <head>.
-  const ready = () => document.documentElement.classList.add('is-hero-ready');
+  const ready = () => root.classList.add('is-hero-ready');
   const img = hero.querySelector('.hero__img');
   if (!img || img.complete) {
     ready();
@@ -177,55 +203,16 @@ function initHero() {
     img.addEventListener('load', ready, { once: true });
     img.addEventListener('error', ready, { once: true });
   }
-
-  const layer = hero.querySelector('.hero__parallax');
-  if (!layer) return;
-
-  // Параллакс — только мышь и широкий экран: на телефоне он дёргается
-  // вместе с адресной строкой и только мешает
-  const allowed = window.matchMedia('(min-width: 60em) and (hover: hover) and (prefers-reduced-motion: no-preference)');
-  const MAX_SHIFT = 40;
-  let inView = true;
-  let queued = false;
-
-  const update = () => {
-    queued = false;
-    const progress = Math.min(1, window.scrollY / hero.offsetHeight);
-    layer.style.transform = 'translate3d(0,' + (progress * MAX_SHIFT).toFixed(1) + 'px,0)';
-  };
-
-  const onScroll = () => {
-    if (inView && !queued) {
-      queued = true;
-      requestAnimationFrame(update);
-    }
-  };
-
-  // Ушли ниже первого экрана — сдвиг не считаем вовсе
-  new IntersectionObserver(([entry]) => {
-    inView = entry.isIntersecting;
-  }).observe(hero);
-
-  const toggle = () => {
-    if (allowed.matches) {
-      window.addEventListener('scroll', onScroll, { passive: true });
-      update();
-    } else {
-      window.removeEventListener('scroll', onScroll);
-      layer.style.transform = '';
-    }
-  };
-
-  allowed.addEventListener('change', toggle);
-  toggle();
 }
 
 
 /* ---------- Виджеты Яндекса: подгрузка при подходе к блоку ---------- */
 
 // Карта и отзывы — сторонние iframe, каждый тяжелее всей страницы.
-// В разметке только пустой блок с data-embed, iframe появляется, когда
-// блок подходит к экрану: первый экран за них не платит.
+// В разметке только блок с data-embed, iframe появляется, когда блок
+// подходит к экрану: первый экран за них не платит. Пустого прямоугольника
+// нет: у карты до загрузки видны адрес и ссылка, у отзывов блок нулевой
+// высоты раскрывается только после загрузки виджета.
 function initEmbeds() {
   const EMBEDS = {
     map: { src: SITE.map, title: 'Карта: Санкт-Петербург, Московский проспект, 186' },
@@ -241,27 +228,30 @@ function initEmbeds() {
     const frame = document.createElement('iframe');
     frame.src = embed.src;
     frame.title = embed.title;
-    frame.loading = 'lazy';
     frame.allowFullscreen = true;
     frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    frame.addEventListener('load', () => box.classList.add('is-loaded'), { once: true });
     box.append(frame);
   };
 
-  // За 400 px до появления: к тому моменту, как блок въедет в экран,
-  // виджет уже успеет отрисоваться
+  // За 600 px до появления: к тому моменту, как блок въедет в экран,
+  // виджет уже успеет отрисоваться. Следим за секцией, а не за блоком:
+  // у блока отзывов до загрузки нулевая высота.
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
       observer.unobserve(entry.target);
-      load(entry.target);
+      entry.target.querySelectorAll('[data-embed]').forEach(load);
     });
-  }, { rootMargin: '400px 0px' });
+  }, { rootMargin: '600px 0px' });
 
-  boxes.forEach((box) => observer.observe(box));
+  const watched = new Set();
+  boxes.forEach((box) => watched.add(box.closest('section') || box.parentElement));
+  watched.forEach((el) => observer.observe(el));
 }
 
 
-/* ---------- Мобильная кнопка «Позвонить» ---------- */
+/* ---------- Мобильная панель «Позвонить» + WhatsApp ---------- */
 
 function initCallBar() {
   const bar = document.getElementById('callbar');
@@ -272,7 +262,10 @@ function initCallBar() {
   let keyboard = false;
 
   const render = () => {
-    bar.classList.toggle('is-visible', pastHero && !keyboard);
+    const visible = pastHero && !keyboard;
+    bar.classList.toggle('is-visible', visible);
+    // CSS поднимает плашку cookie над панелью, пока та видна
+    root.classList.toggle('has-callbar', visible);
   };
 
   // Пока видны кнопки первого экрана, вторая «Позвонить» — дубль.
@@ -295,4 +288,153 @@ function initCallBar() {
   }
 
   render();
+}
+
+
+/* ---------- Увеличение документов ---------- */
+
+// Нативный <dialog>: showModal() уводит фокус внутрь и делает страницу
+// недоступной для Tab, Esc закрывает его без нашего кода. Остаётся
+// закрытие по клику на фон и возврат фокуса на превью.
+function initLightbox() {
+  const dialog = document.querySelector('[data-lightbox]');
+  const openers = document.querySelectorAll('[data-full]');
+  if (!dialog || !openers.length || typeof dialog.showModal !== 'function') return;
+
+  const img = dialog.querySelector('.lightbox__img');
+  const caption = dialog.querySelector('.lightbox__caption');
+  let opener = null;
+
+  openers.forEach((button) => {
+    button.addEventListener('click', () => {
+      opener = button;
+      const thumb = button.querySelector('img');
+      img.src = button.dataset.full;
+      img.alt = thumb ? thumb.alt : '';
+      caption.textContent = button.dataset.caption || '';
+      dialog.showModal();
+    });
+  });
+
+  dialog.querySelector('[data-lightbox-close]').addEventListener('click', () => dialog.close());
+
+  // Клик по затемнению: целью события становится сам <dialog>,
+  // а не картинка или подпись внутри него
+  dialog.addEventListener('click', (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+
+  dialog.addEventListener('close', () => {
+    img.src = 'data:,';
+    if (opener) opener.focus();
+  });
+}
+
+
+/* ---------- Cookie и Яндекс.Метрика ---------- */
+
+// localStorage бывает недоступен (приватный режим, запрет в настройках) —
+// поэтому только в try/catch. Без хранилища согласие живёт до перезагрузки.
+function hasConsent() {
+  try { return window.localStorage.getItem(CONSENT_KEY) === '1'; } catch (error) { return false; }
+}
+
+function saveConsent() {
+  try { window.localStorage.setItem(CONSENT_KEY, '1'); } catch (error) { /* без хранилища */ }
+}
+
+// Официальный код счётчика, разобранный по шагам: очередь вызовов ym()
+// до загрузки tag.js, сам скрипт и инициализация. Вебвизор и карта кликов
+// выключены — политика конфиденциальности их не описывает.
+function loadMetrika() {
+  if (!METRIKA_ID || typeof window.ym === 'function') return;
+
+  window.ym = function () {
+    (window.ym.a = window.ym.a || []).push(arguments);
+  };
+  window.ym.l = Date.now();
+
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = 'https://mc.yandex.ru/metrika/tag.js';
+  document.head.appendChild(script);
+
+  window.ym(Number(METRIKA_ID), 'init', {
+    clickmap: false,
+    trackLinks: true,
+    accurateTrackBounce: true,
+    webvisor: false
+  });
+}
+
+// Плашка показывается, только если Метрика настроена и согласия ещё нет
+function initCookies() {
+  if (!METRIKA_ID) return;
+  if (hasConsent()) {
+    loadMetrika();
+    return;
+  }
+
+  const banner = document.querySelector('[data-cookie]');
+  const accept = banner && banner.querySelector('[data-cookie-accept]');
+  if (!accept) return;
+
+  banner.hidden = false;
+  accept.addEventListener('click', () => {
+    saveConsent();
+    banner.hidden = true;
+    loadMetrika();
+  });
+}
+
+// Цели Метрики — клики по способам связи. Клик внутри секции направления
+// отправляет ещё и цель этой секции (sec_narkotiki_228 и т. п.): так видно,
+// какой рекламный запрос приводит звонки. Срабатывают после согласия.
+function initGoals() {
+  const goals = [
+    ['a[href^="tel:"]', 'click_phone'],
+    ['a[href*="wa.me/"]', 'click_whatsapp'],
+    ['a[href*="t.me/"]', 'click_telegram'],
+    ['a[href^="mailto:"]', 'click_email']
+  ];
+
+  document.addEventListener('click', (event) => {
+    if (!METRIKA_ID || typeof window.ym !== 'function') return;
+    for (const [selector, goal] of goals) {
+      const link = event.target.closest(selector);
+      if (!link) continue;
+      window.ym(Number(METRIKA_ID), 'reachGoal', goal);
+      const section = link.closest('[data-direction]');
+      if (section) window.ym(Number(METRIKA_ID), 'reachGoal', 'sec_' + section.dataset.direction.replace(/-/g, '_'));
+      return;
+    }
+  });
+}
+
+// «Отозвать согласие» на странице политики: удаляет отметку о согласии,
+// cookie и записи Метрики (_ym…) этого сайта и перезагружает страницу
+function initRevoke() {
+  const box = document.querySelector('[data-cookie-revoke]');
+  if (!box || !METRIKA_ID || !hasConsent()) return;
+
+  box.hidden = false;
+  box.querySelector('button').addEventListener('click', () => {
+    try { window.localStorage.removeItem(CONSENT_KEY); } catch (error) { /* без хранилища */ }
+
+    const host = window.location.hostname.replace(/^www\./, '');
+    document.cookie.split(';').forEach((part) => {
+      const name = part.split('=')[0].trim();
+      if (name.indexOf('_ym') !== 0) return;
+      ['', host, '.' + host].forEach((domain) => {
+        document.cookie = name + '=; Max-Age=0; path=/' + (domain ? '; domain=' + domain : '');
+      });
+    });
+    try {
+      Object.keys(window.localStorage).forEach((key) => {
+        if (key.indexOf('_ym') === 0) window.localStorage.removeItem(key);
+      });
+    } catch (error) { /* без хранилища */ }
+
+    window.location.reload();
+  });
 }

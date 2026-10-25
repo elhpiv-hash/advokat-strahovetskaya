@@ -9,9 +9,13 @@ AddCharset utf-8 .html .css .js .xml .txt
 
 Options -Indexes
 
+# Своя страница ошибки: путь от корня, она открывается по любому адресу
+ErrorDocument 404 /404.html
+
 <IfModule mod_mime.c>
   AddType font/woff2 .woff2
   AddType image/webp .webp
+  AddType image/avif .avif
   AddType image/x-icon .ico
   AddType text/javascript .js
 </IfModule>
@@ -42,6 +46,9 @@ Options -Indexes
 # что такие файлы вообще есть.
 RedirectMatch 404 /\.(git|svn|vscode|idea)(/|$)
 RedirectMatch 404 /assets/img/src(/|$)
+RedirectMatch 404 /assets/img/docs/src(/|$)
+RedirectMatch 404 /assets/content(/|$)
+RedirectMatch 404 /(tools|dist)(/|$)
 RedirectMatch 404 /node_modules(/|$)
 
 <FilesMatch "(^\.|\.(sh|md|cjs|mjs|map|log|bak|orig|swp|lock)$|^package(-lock)?\.json$)">
@@ -74,6 +81,8 @@ RedirectMatch 404 /node_modules(/|$)
   ExpiresByType application/javascript    "access plus 1 year"
   ExpiresByType font/woff2                "access plus 1 year"
   ExpiresByType image/webp                "access plus 1 month"
+  ExpiresByType image/avif                "access plus 1 month"
+  ExpiresByType image/png                 "access plus 1 month"
   ExpiresByType image/jpeg                "access plus 1 month"
   ExpiresByType image/x-icon              "access plus 1 month"
   ExpiresByType application/xml           "access plus 1 day"
@@ -84,7 +93,7 @@ RedirectMatch 404 /node_modules(/|$)
   <FilesMatch "\.(css|js|woff2)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
-  <FilesMatch "\.(webp|jpe?g|ico)$">
+  <FilesMatch "\.(avif|webp|png|jpe?g|ico)$">
     Header set Cache-Control "public, max-age=2592000"
   </FilesMatch>
   <FilesMatch "\.html$">
@@ -103,8 +112,10 @@ RedirectMatch 404 /node_modules(/|$)
   # правило на год, и откатиться на http будет нельзя.
   # Header always set Strict-Transport-Security "max-age=31536000"
 
-  # CSP: всё своё, кроме iframe карты Яндекса (yandex.com — на случай
-  # редиректа для зарубежных посетителей). Встроенный скрипт разрешён
-  # только по хешу; инлайн-стилей в разметке нет.
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'sha256-JHLQDXsf4Mz+I+MCgIVFeKJgsXh/Z4uU1wCoyf0KG6Q='; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src https://yandex.ru https://*.yandex.ru https://yandex.com https://*.yandex.com; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests"
+  # CSP: всё своё, кроме Яндекса. Метрика — скрипт и запросы к mc.yandex.ru
+  # (загружается только после согласия на cookie); iframe карты и виджета
+  # отзывов — yandex.ru (yandex.com — на случай редиректа для зарубежных
+  # посетителей). Встроенный скрипт разрешён только по хешу; 'unsafe-inline'
+  # в style-src — для стилей, которые вставляет код Метрики.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'sha256-JHLQDXsf4Mz+I+MCgIVFeKJgsXh/Z4uU1wCoyf0KG6Q=' https://mc.yandex.ru https://yastatic.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://mc.yandex.ru https://mc.yandex.com; font-src 'self'; connect-src 'self' https://mc.yandex.ru https://mc.yandex.com; frame-src https://yandex.ru https://*.yandex.ru https://yandex.com https://*.yandex.com; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests"
 </IfModule>
