@@ -35,14 +35,12 @@
        Латиница и знак ₽ нужны позже и приходят по unicode-range сами. -->
   <link rel="preload" href="assets/fonts/spectral-cyrillic-500-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/commissioner-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <!-- Когда появится портрет без фона (bash build-images.sh) — снять комментарий:
-       браузер начнёт качать фото до разбора CSS.
+  <!-- Портрет — LCP на телефоне: браузер начинает качать его до разбора CSS -->
   <link rel="preload" as="image" type="image/avif" fetchpriority="high"
         imagesrcset="assets/img/hero-480.avif 480w, assets/img/hero-960.avif 960w"
-        imagesizes="(min-width: 64em) 40vw, 100vw">
-  -->
+        imagesizes="(min-width: 64em) 30rem, 16rem">
 
-  <link rel="stylesheet" href="css/style.min.css?v=9402212bcd">
+  <link rel="stylesheet" href="css/style.min.css?v=2250acf527">
 
   <!-- Единственный встроенный скрипт (одинаковый на всех страницах): класс js
        нужен до первой отрисовки, иначе первый экран мигнёт перед анимацией.
@@ -153,9 +151,9 @@
 
     <!-- ==================== Первый экран ==================== -->
     <!-- Класс hero--photo включает раскладку с портретом справа (на телефоне —
-         над текстом). Пока портрета нет, справа карточка приёма: настоящие
-         адрес и часы вместо пустого прямоугольника. -->
-    <section class="hero" id="hero" aria-labelledby="hero-title">
+         над текстом). Без портрета (класс убрать) справа стоит карточка приёма
+         .hero__card — разметку см. в истории git, коммит cdeb88b. -->
+    <section class="hero hero--photo" id="hero" aria-labelledby="hero-title">
       <div class="container hero__inner">
         <div class="hero__content">
           <h1 class="hero__title" id="hero-title">Адвокат по&nbsp;уголовным и&nbsp;семейным делам в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h1>
@@ -171,27 +169,14 @@
         </div>
 
         <div class="hero__aside">
-          <!--
-            ПОРТРЕТ. Положите фото в assets/img/src/hero.jpg и выполните
-            python tools/cutout.py && bash build-images.sh (фон вырезается).
-            Затем: удалите карточку .hero__card, снимите комментарий с <picture>
-            и с preload портрета в <head>, добавьте секции класс hero--photo.
+          <!-- Портрет без фона: assets/img/src/hero.jpg → python tools/cutout.py →
+               bash build-images.sh. Пропорцию в width/height вписывает скрипт. -->
           <picture class="hero__photo">
-            <source type="image/avif" srcset="assets/img/hero-480.avif 480w, assets/img/hero-960.avif 960w" sizes="(min-width: 64em) 40vw, 100vw">
-            <source type="image/webp" srcset="assets/img/hero-480.webp 480w, assets/img/hero-960.webp 960w" sizes="(min-width: 64em) 40vw, 100vw">
-            <img class="hero__img" src="assets/img/hero-640.png" width="960" height="1200"
+            <source type="image/avif" srcset="assets/img/hero-480.avif 480w, assets/img/hero-960.avif 960w" sizes="(min-width: 64em) 30rem, 16rem">
+            <source type="image/webp" srcset="assets/img/hero-480.webp 480w, assets/img/hero-960.webp 960w" sizes="(min-width: 64em) 30rem, 16rem">
+            <img class="hero__img" src="assets/img/hero-640.png" width="860" height="1125"
                  alt="Адвокат Страховецкая Ева Рубиновна" fetchpriority="high">
           </picture>
-          -->
-          <div class="hero__card hero__later">
-            <p class="hero__card-title">Приём</p>
-            <dl class="hero__card-list">
-              <div><dt>Адрес</dt><dd>Московский пр., д.&nbsp;186, офис&nbsp;18</dd></div>
-              <div><dt>Метро</dt><dd>«Парк Победы»&nbsp;— 700&nbsp;м, «Электросила»&nbsp;— 800&nbsp;м</dd></div>
-              <div><dt>Часы</dt><dd>Ежедневно 10:00–22:00, экстренно&nbsp;— круглосуточно</dd></div>
-            </dl>
-            <a class="hero__card-phone" href="tel:+79112585934" data-site="phone" data-site-text>+7 (911) 258-59-34</a>
-          </div>
         </div>
       </div>
 
@@ -277,9 +262,16 @@
          tools/build-directions.mjs из tools/directions.json, руками не править. -->
     <!-- directions:sections:start -->
     <!-- narkotiki-228 -->
-    <section class="section direction section--white" id="narkotiki-228" aria-labelledby="narkotiki-228-title" data-direction="narkotiki-228">
+    <section class="section direction direction--photo section--white" id="narkotiki-228" aria-labelledby="narkotiki-228-title" data-direction="narkotiki-228">
       <div class="container direction__inner">
         <h2 class="direction__title" id="narkotiki-228-title">Адвокат по&nbsp;делам о&nbsp;наркотиках (ст.&nbsp;228, 228.1&nbsp;УК&nbsp;РФ) в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h2>
+        <figure class="direction__photo">
+          <picture>
+            <source type="image/avif" srcset="assets/img/extra-3-640.avif 640w, assets/img/extra-3-1000.avif 1000w" sizes="22rem">
+            <source type="image/webp" srcset="assets/img/extra-3-640.webp 640w, assets/img/extra-3-1000.webp 1000w" sizes="22rem">
+            <img src="assets/img/extra-3.jpg" width="1000" height="1250" alt="Адвокат Страховецкая Ева Рубиновна" loading="lazy" decoding="async">
+          </picture>
+        </figure>
         <div class="direction__body">
           <div class="direction__text">
             <p>Защищаю по&nbsp;делам о&nbsp;незаконном хранении либо&nbsp;сбыте наркотиков (ст.&nbsp;228, 228.1&nbsp;УК&nbsp;РФ), в&nbsp;том числе по&nbsp;тяжким и&nbsp;особо тяжким составам.</p>
@@ -307,9 +299,16 @@
     </section>
 
     <!-- moshennichestvo -->
-    <section class="section direction section--stone" id="moshennichestvo" aria-labelledby="moshennichestvo-title" data-direction="moshennichestvo">
+    <section class="section direction direction--photo section--stone" id="moshennichestvo" aria-labelledby="moshennichestvo-title" data-direction="moshennichestvo">
       <div class="container direction__inner">
         <h2 class="direction__title" id="moshennichestvo-title">Адвокат по&nbsp;делам о&nbsp;мошенничестве (ст.&nbsp;159&nbsp;УК&nbsp;РФ) в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h2>
+        <figure class="direction__photo">
+          <picture>
+            <source type="image/avif" srcset="assets/img/extra-2-640.avif 640w, assets/img/extra-2-1000.avif 1000w" sizes="22rem">
+            <source type="image/webp" srcset="assets/img/extra-2-640.webp 640w, assets/img/extra-2-1000.webp 1000w" sizes="22rem">
+            <img src="assets/img/extra-2.jpg" width="1000" height="1250" alt="Адвокат Страховецкая Ева Рубиновна" loading="lazy" decoding="async">
+          </picture>
+        </figure>
         <div class="direction__body">
           <div class="direction__text">
             <p>Защищаю по&nbsp;делам о&nbsp;мошенничестве (ст.&nbsp;159&nbsp;УК&nbsp;РФ).</p>
@@ -488,9 +487,16 @@
     </section>
 
     <!-- razdel-imushchestva -->
-    <section class="section direction section--stone" id="razdel-imushchestva" aria-labelledby="razdel-imushchestva-title" data-direction="razdel-imushchestva">
+    <section class="section direction direction--photo section--stone" id="razdel-imushchestva" aria-labelledby="razdel-imushchestva-title" data-direction="razdel-imushchestva">
       <div class="container direction__inner">
         <h2 class="direction__title" id="razdel-imushchestva-title">Адвокат по&nbsp;разделу имущества в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h2>
+        <figure class="direction__photo">
+          <picture>
+            <source type="image/avif" srcset="assets/img/extra-1-640.avif 640w, assets/img/extra-1-1000.avif 1000w" sizes="22rem">
+            <source type="image/webp" srcset="assets/img/extra-1-640.webp 640w, assets/img/extra-1-1000.webp 1000w" sizes="22rem">
+            <img src="assets/img/extra-1.jpg" width="1000" height="1250" alt="Адвокат Страховецкая Ева Рубиновна" loading="lazy" decoding="async">
+          </picture>
+        </figure>
         <div class="direction__body">
           <div class="direction__text">
             <p>Веду гражданские дела и&nbsp;семейные споры повышенной сложности, в&nbsp;том числе о&nbsp;разделе имущества.</p>
@@ -699,28 +705,18 @@
 
     <!-- ==================== Об адвокате ==================== -->
     <section class="section section--white section--anchor" id="ob-advokate" aria-labelledby="ob-advokate-title">
-      <!-- Две колонки-обёртки: слева цитата и факты (позже — фото), справа
-           заголовок и текст. На телефоне обёртки «растворяются» (display: contents),
+      <!-- Две колонки-обёртки: слева фото и факты, справа заголовок, цитата
+           и текст. На телефоне обёртки «растворяются» (display: contents),
            и порядок становится как для чтения: заголовок, цитата, текст, факты. -->
       <div class="container about">
         <div class="about__col about__col--media">
-          <!--
-            ФОТО. Положите снимок в assets/img/src/about.jpg и выполните
-            bash build-images.sh, затем снимите комментарий с <picture>.
+          <!-- Фото: assets/img/src/about.jpg → bash build-images.sh -->
           <picture class="about__media">
             <source type="image/avif" srcset="assets/img/about-640.avif 640w, assets/img/about-1000.avif 1000w" sizes="(min-width: 60em) 40vw, 100vw">
             <source type="image/webp" srcset="assets/img/about-640.webp 640w, assets/img/about-1000.webp 1000w" sizes="(min-width: 60em) 40vw, 100vw">
-            <img class="about__img" src="assets/img/about.jpg" width="1000" height="1250"
+            <img class="about__img" src="assets/img/about.jpg" width="913" height="1280"
                  alt="Адвокат Страховецкая Ева Рубиновна" loading="lazy" decoding="async">
           </picture>
-          -->
-          <figure class="about__quote">
-            <blockquote>
-              <p>Найти своего адвоката&nbsp;— это решение, определяющее судьбу и&nbsp;свободу человека</p>
-            </blockquote>
-            <figcaption>Ева Страховецкая</figcaption>
-          </figure>
-
           <ul class="about__facts">
             <li>Адвокат с&nbsp;2009 года</li>
             <li>Адвокатский кабинет «Страховецкая Е.&nbsp;Р.»</li>
@@ -731,6 +727,14 @@
 
         <div class="about__col about__col--text">
           <h2 class="section__title about__title" id="ob-advokate-title">Об адвокате</h2>
+
+          <figure class="about__quote">
+            <blockquote>
+              <p>Найти своего адвоката&nbsp;— это решение, определяющее судьбу и&nbsp;свободу человека</p>
+            </blockquote>
+            <figcaption>Ева Страховецкая</figcaption>
+          </figure>
+
           <!-- Текст — дословно с её страницы на HARANT; изменена только
                типографика: неразрывные пробелы и пробел в «ст. 126» -->
           <div class="prose about__text">

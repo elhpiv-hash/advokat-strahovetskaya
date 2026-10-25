@@ -715,16 +715,23 @@ section[tabindex="-1"]:focus {
 .hero--photo .hero__aside {
   display: block;
   order: -1;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .hero--photo .hero__card {
   display: none;
 }
 
+/* Высота по экрану: на 375 × 812 после портрета, заголовка, имени,
+   рег. № и текста «Позвонить» ещё помещается целиком. Портрет вписан
+   (contain), а не обрезан: лицо и руки с книгой видны при любой высоте. */
+.hero--photo .hero__inner {
+  padding-top: 1rem;
+}
+
 .hero__photo {
   display: block;
-  height: clamp(15rem, 100svh - 33rem, 26rem);
+  height: clamp(13rem, 100svh - 35rem, 26rem);
 }
 
 .hero__img {
@@ -978,6 +985,22 @@ section[tabindex="-1"]:focus {
   padding-inline: .75rem;
 }
 
+/* Фото секции (2–3 главных направления). На телефоне — под заголовком,
+   кадр 4:5 по верху, чтобы лицо не срезалось. На десктопе — слева на всю
+   высоту секции (см. медиазапрос), без пустоты под ним. */
+.direction__photo {
+  position: relative;
+}
+
+.direction__photo img {
+  width: 100%;
+  max-height: 28rem;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: 50% 15%;
+  border-radius: var(--radius);
+}
+
 
 /* ---------- Об адвокате ---------- */
 
@@ -1016,6 +1039,9 @@ section[tabindex="-1"]:focus {
 
 .about__img {
   width: 100%;
+  max-height: 34rem;
+  object-fit: cover;
+  object-position: 50% 20%;
   border-radius: var(--radius);
 }
 
@@ -1714,6 +1740,33 @@ section[tabindex="-1"]:focus {
     grid-column: 1 / -1;
   }
 
+  /* С фото: снимок слева на все строки, справа заголовок, текст и цена
+     друг под другом. Картинка лежит абсолютно и не задаёт высоту строк:
+     её высоту определяет текст рядом. */
+  .direction--photo .direction__inner {
+    grid-template-columns: 4fr 8fr;
+  }
+
+  .direction--photo .direction__title,
+  .direction--photo .direction__body,
+  .direction--photo .direction__offer {
+    grid-column: 2;
+  }
+
+  .direction--photo .direction__photo {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    min-height: 28rem;
+  }
+
+  .direction--photo .direction__photo img {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    max-height: none;
+    aspect-ratio: auto;
+  }
+
   .section-head {
     grid-template-columns: 4fr 8fr;
     column-gap: 4rem;
@@ -1732,7 +1785,16 @@ section[tabindex="-1"]:focus {
   }
 
   .about__media {
+    margin-bottom: 0;
+  }
+
+  .about__quote {
+    margin-top: .5rem;
     margin-bottom: 2rem;
+  }
+
+  .about__img {
+    max-height: none;
   }
 
   /* Отзывы: кнопки площадок слева по центру высоты виджета */
@@ -1838,6 +1900,7 @@ section[tabindex="-1"]:focus {
 
   /* Портрет: на всю высоту колонки, низ фигуры стоит на полосе цифр */
   .hero--photo .hero__inner {
+    padding-top: 3rem;
     padding-bottom: 0;
     align-items: end;
   }

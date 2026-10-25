@@ -103,19 +103,22 @@ async function buildSet(name) {
   const height = (w) => Math.round(w * ratio);
   const need = widths[widths.length - 1];
   const srcWidth = meta.orientation >= 5 ? meta.height : meta.width;
-  if (srcWidth < need) console.log(`  ! исходник ${srcWidth} px в ширину: для резкости нужно от ${need} px`);
+  if (srcWidth < need) console.log(`  ! исходник ${srcWidth} px в ширину (нужно ${need}): крупная версия — ${srcWidth} px, без растягивания`);
 
-  const make = (w) => sharp(file).rotate().resize(w, height(w), { fit: 'fill' });
+  // Увеличивать снимок незачем: резче он не станет, а весить будет больше.
+  // Имя файла остаётся по ширине из набора (hero-960), чтобы не менять разметку.
+  const fit = (w) => Math.min(w, srcWidth);
+  const make = (w) => sharp(file).rotate().resize(fit(w), height(fit(w)), { fit: 'fill' });
 
   for (const w of widths) {
     const avif = path.join(IMG, `${name}-${w}.avif`);
     // 4:2:0 — у AVIF по умолчанию 4:4:4: вдвое тяжелее при той же видимой разнице
     await make(w).avif({ quality: alpha ? 62 : 55, effort: 6, chromaSubsampling: '4:2:0' }).toFile(avif);
-    log(avif, w, height(w));
+    log(avif, fit(w), height(fit(w)));
     const webp = path.join(IMG, `${name}-${w}.webp`);
     // alphaQuality 90 — край волос и пальцев без «ступенек»
     await make(w).webp({ quality: 82, alphaQuality: 90, effort: 6 }).toFile(webp);
-    log(webp, w, height(w));
+    log(webp, fit(w), height(fit(w)));
   }
 
   if (alpha) {
@@ -123,15 +126,15 @@ async function buildSet(name) {
     // с прозрачностью — в несколько раз легче полноцветного
     const png = path.join(IMG, `${name}-640.png`);
     await make(640).png({ palette: true, quality: 90, effort: 10, compressionLevel: 9 }).toFile(png);
-    log(png, 640, height(640));
+    log(png, fit(640), height(fit(640)));
   } else {
     const jpg = path.join(IMG, `${name}.jpg`);
     // mozjpeg + прогрессивная развёртка: меньше вес, снимок проявляется целиком сразу
     await make(1000).flatten({ background: C.stone }).jpeg({ quality: 82, mozjpeg: true, progressive: true }).toFile(jpg);
-    log(jpg, 1000, height(1000));
+    log(jpg, fit(1000), height(fit(1000)));
   }
 
-  return { make, ratio, width: need, height: height(need) };
+  return { make, ratio, width: fit(need), height: height(fit(need)) };
 }
 
 // width/height у <img> в index.html — по пропорции исходника, чтобы браузер

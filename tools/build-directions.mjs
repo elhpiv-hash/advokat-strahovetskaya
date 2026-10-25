@@ -102,10 +102,33 @@ const sections = order.map((id, index) => {
     return `            <div><dt>${typo(name)}</dt><dd${note}>${typo(value)}</dd></div>`;
   }).join('\n');
 
+  // Фото секции — только если build-images.sh уже собрал его файлы:
+  // иначе на странице была бы битая картинка
+  let photo = '';
+  if (d.photo) {
+    const base = `assets/img/${d.photo}`;
+    if (!fs.existsSync(path.join(root, `${base}.jpg`))) {
+      console.warn(`  ! у «${id}» фото ${d.photo}, но ${base}.jpg нет — сначала bash build-images.sh; секция без фото`);
+    } else {
+      const set = (ext) => `${base}-640.${ext} 640w, ${base}-1000.${ext} 1000w`;
+      // Колонка фото на десктопе ≈ 22rem, на телефоне кадр 4:5 не выше 28rem — тоже ≤ 22rem
+      const sizes = '22rem';
+      photo = `
+        <figure class="direction__photo">
+          <picture>
+            <source type="image/avif" srcset="${set('avif')}" sizes="${sizes}">
+            <source type="image/webp" srcset="${set('webp')}" sizes="${sizes}">
+            <img src="${base}.jpg" width="1000" height="1250" alt="Адвокат Страховецкая Ева Рубиновна" loading="lazy" decoding="async">
+          </picture>
+        </figure>`;
+    }
+  }
+  const mod = photo ? ' direction--photo' : '';
+
   return `    <!-- ${id} -->
-    <section class="section direction ${tone}" id="${id}" aria-labelledby="${id}-title" data-direction="${id}">
+    <section class="section direction${mod} ${tone}" id="${id}" aria-labelledby="${id}-title" data-direction="${id}">
       <div class="container direction__inner">
-        <h2 class="direction__title" id="${id}-title">${typo(d.title)}</h2>
+        <h2 class="direction__title" id="${id}-title">${typo(d.title)}</h2>${photo}
         <div class="direction__body">
           <div class="direction__text">
 ${text}

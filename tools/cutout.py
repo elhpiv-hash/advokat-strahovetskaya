@@ -23,16 +23,35 @@
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
-from rembg import new_session, remove
+from PIL import Image, ImageDraw, ImageFilter
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / 'assets' / 'img' / 'src' / 'hero.jpg'
 OUT = ROOT / 'assets' / 'img' / 'src' / 'hero-cutout.png'
+# Маска rembg считается ~3 минуты на CPU; при повторных прогонах (подбор
+# контура KEEP) берётся сохранённая, пока hero.jpg не новее её
+MASK = ROOT / 'assets' / 'img' / 'src' / 'hero-mask.png'
 PLATE = (0xF6, 0xF5, 0xF2)      # фон первого экрана (--c-stone в css/style.css)
 
 SIDE_FADE = 0.08                # доля ширины: растушёвка у боковых краёв кадра
 BOTTOM_FADE = 0.10              # доля высоты: растушёвка у нижнего края
+
+# Что оставить в кадре сверх человека — многоугольники в пикселях hero.jpg.
+# Портретная модель видит только человека и убирает книгу, на которой лежат
+# руки, — без неё руки «висят» в воздухе. Контур книги: обложка, блок страниц
+# и корешок, без отражения в стекле стола. Для другого снимка — пересчитать
+# или оставить пустым.
+KEEP = [
+    [(141, 1027), (150, 1015), (300, 962), (360, 960), (518, 1017),
+     (518, 1060), (247, 1146), (143, 1066)],
+]
+
+# Что убрать, хотя модель сочла это человеком: хромированная рама стола
+# справа от книги, вплотную к жакету и брюкам
+REMOVE = [
+    [(522, 1036), (586, 1042), (636, 1082), (656, 1106), (662, 1150),
+     (664, 1280), (522, 1280)],
+]
 
 
 def box(arr, r):
@@ -58,12 +77,32 @@ def erode(mask, r):
     return box(mask.astype(np.float32), r) > 0.999
 
 
+def person_mask(image):
+    if MASK.exists() and MASK.stat().st_mtime >= SRC.stat().st_mtime:
+        return Image.open(MASK).convert('L')
+    from rembg import new_session, remove   # тяжёлый импорт — только когда нужен
+    mask = remove(image, session=new_session('birefnet-portrait'), only_mask=True, post_process_mask=False)
+    mask.convert('L').save(MASK)
+    return mask.convert('L')
+
+
+def poly_mask(size, polygons):
+    """Многоугольники — маска с краем в 1 px, чтобы контур не был зубчатым."""
+    canvas = Image.new('L', size, 0)
+    draw = ImageDraw.Draw(canvas)
+    for poly in polygons:
+        draw.polygon(poly, fill=255)
+    return np.asarray(canvas.filter(ImageFilter.GaussianBlur(0.8)), dtype=np.float32)[..., None] / 255
+
+
 def main():
     image = Image.open(SRC).convert('RGB')
-    mask = remove(image, session=new_session('birefnet-portrait'), only_mask=True, post_process_mask=False)
+    mask = person_mask(image)
 
     I = np.asarray(image, dtype=np.float32) / 255
-    a = np.asarray(mask.convert('L'), dtype=np.float32)[..., None] / 255
+    a = np.asarray(mask, dtype=np.float32)[..., None] / 255
+    a = np.maximum(a, poly_mask(image.size, KEEP))
+    a = a * (1 - poly_mask(image.size, REMOVE))
 
     # фон под человеком — нормированная свёртка по пикселям «точно фон»
     bg = (a < 0.02).astype(np.float32)
