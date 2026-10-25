@@ -1,15 +1,17 @@
 // ==========================================================================
-//  tools/build-directions.mjs — секции направлений и оглавление на главной
+//  tools/build-directions.mjs — направления на главной
 //  --------------------------------------------------------------------------
 //  Источник — tools/directions.json. Скрипт пересобирает в index.html два
 //  блока между метками:
-//    <!-- directions:toc:start -->      … <!-- directions:toc:end -->
-//    <!-- directions:sections:start --> … <!-- directions:sections:end -->
+//    <!-- directions:cards:start -->  … <!-- directions:cards:end -->
+//        три карточки групп в разделе «Направления»;
+//    <!-- directions:groups:start --> … <!-- directions:groups:end -->
+//        три секции-группы: строки направлений слева, «Стоимость» справа.
 //  Руками эти блоки не правят: следующий запуск build.sh их перезапишет.
 //
-//  Зачем генератор, а не готовая разметка: у 14 секций один скелет, а якорь
-//  каждой — это адрес из рекламы, ссылка из оглавления и цель Метрики.
-//  Из одного JSON они не разойдутся, а смена порядка — перестановка id.
+//  Зачем генератор, а не готовая разметка: id строки — это адрес из рекламы,
+//  ссылка из карточки и цели Метрики (sec_<id>, open_<id>). Из одного JSON
+//  они не разойдутся, а смена порядка — перестановка строк в JSON.
 //
 //  Запуск: node tools/build-directions.mjs (его вызывает build.sh)
 // ==========================================================================
@@ -31,21 +33,21 @@ const fail = (msg) => { console.error('Ошибка: ' + msg); process.exit(1); 
 
 // ----- Проверка данных -----
 
-const order = data.groups.flatMap((group) => group.items);
-const known = Object.keys(data.directions);
-for (const id of order) {
-  if (!data.directions[id]) fail(`в groups есть «${id}», а в directions его нет`);
+const ids = [];
+for (const group of data.groups) {
+  ids.push(group.id);
+  if (!group.items || !group.items.length) fail(`в группе «${group.id}» нет строк`);
+  if (!group.prices || !group.prices.length) fail(`в группе «${group.id}» нет цен`);
+  for (const item of group.items) {
+    ids.push(item.id);
+    if (!item.title || !item.text || !item.points) fail(`у строки «${item.id}» нет title, text или points`);
+    if (item.points.length < 3 || item.points.length > 4) console.warn(`  ! у «${item.id}» ${item.points.length} пунктов «что делаю» — по заданию 3–4`);
+  }
+}
+for (const id of ids) {
   if (!/^[a-z0-9-]+$/.test(id)) fail(`якорь «${id}» — только латиница, цифры и дефис`);
 }
-for (const id of known) {
-  if (!order.includes(id)) fail(`направление «${id}» не стоит ни в одной группе`);
-}
-if (new Set(order).size !== order.length) fail('один и тот же якорь стоит в groups дважды');
-for (const id of order) {
-  const d = data.directions[id];
-  if (!data.prices[d.prices]) fail(`у «${id}» набор цен «${d.prices}», а в prices его нет`);
-  if (d.points.length < 3 || d.points.length > 5) console.warn(`  ! у «${id}» ${d.points.length} пунктов «что делаю» — по заданию 3–5`);
-}
+if (new Set(ids).size !== ids.length) fail('один и тот же якорь встречается в directions.json дважды');
 
 // ----- Типографика -----
 
@@ -68,91 +70,112 @@ function typo(text) {
     .replace(/УК РФ/g, 'УК&nbsp;РФ')
     .replace(/(\d) (\d{3})/g, '$1&nbsp;$2')       // «10 000»
     .replace(/ ₽/g, '&nbsp;₽')
+    .replace(/ \/ /g, '&nbsp;/ ')
     .replace(/Санкт-Петербург[а-я]*/g, '<span class="nowrap">$&</span>');
 }
 
-// ----- Оглавление -----
+const CHEVRON = '<svg class="case__icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>';
 
-const toc = data.groups.map((group) => {
-  const links = group.items.map((id) => {
-    const d = data.directions[id];
-    const law = d.law ? ` <span class="toc__law">${typo(d.law)}</span>` : '';
-    return `          <li><a class="toc__link" href="#${id}"><span class="toc__name">${typo(d.toc)}</span>${law}</a></li>`;
+// ----- Карточки групп (раздел «Направления») -----
+
+const cards = data.groups.map((group) => {
+  const links = group.items.map((item) => {
+    const law = item.article ? ` <span class="area__law">${typo(item.article)}</span>` : '';
+    return `            <li><a class="area__link" href="#${item.id}"><span class="area__name">${typo(item.title)}</span>${law}</a></li>`;
   }).join('\n');
   return [
-    '      <div class="toc__group">',
-    `        <h3 class="toc__title">${typo(group.title)}</h3>`,
-    '        <ul class="toc__list">',
+    '        <li class="area">',
+    `          <h3 class="area__title">${typo(group.title)}</h3>`,
+    '          <ul class="area__list">',
     links,
-    '        </ul>',
-    '      </div>'
+    '          </ul>',
+    `          <a class="area__more" href="#${group.id}">Цены и&nbsp;подробности</a>`,
+    '        </li>'
   ].join('\n');
 }).join('\n');
 
-// ----- Секции -----
+// ----- Секции групп -----
 
-const sections = order.map((id, index) => {
-  const d = data.directions[id];
-  // Фон чередуется: граница между запросами видна без линий-разделителей
-  const tone = index % 2 === 0 ? 'section--white' : 'section--stone';
-  const text = d.text.map((p) => `            <p>${typo(p)}</p>`).join('\n');
-  const points = d.points.map((p) => `            <li>${typo(p)}</li>`).join('\n');
-  const prices = data.prices[d.prices].map(([name, value]) => {
-    const note = /\d/.test(value) ? '' : ' class="direction__note"';
-    return `            <div><dt>${typo(name)}</dt><dd${note}>${typo(value)}</dd></div>`;
-  }).join('\n');
-
-  // Фото секции — только если build-images.sh уже собрал его файлы:
-  // иначе на странице была бы битая картинка
-  let photo = '';
-  if (d.photo) {
-    const base = `assets/img/${d.photo}`;
-    if (!fs.existsSync(path.join(root, `${base}.jpg`))) {
-      console.warn(`  ! у «${id}» фото ${d.photo}, но ${base}.jpg нет — сначала bash build-images.sh; секция без фото`);
-    } else {
-      const set = (ext) => `${base}-640.${ext} 640w, ${base}-1000.${ext} 1000w`;
-      // Колонка фото на десктопе ≈ 22rem, на телефоне кадр 4:5 не выше 28rem — тоже ≤ 22rem
-      const sizes = '22rem';
-      photo = `
-        <figure class="direction__photo">
+function photoFigure(group) {
+  if (!group.photo) return '';
+  // Фото — только если build-images.sh уже собрал его файлы: иначе на
+  // странице была бы битая картинка
+  const base = `assets/img/${group.photo}`;
+  if (!fs.existsSync(path.join(root, `${base}.jpg`))) {
+    console.warn(`  ! у «${group.id}» фото ${group.photo}, но ${base}.jpg нет — сначала bash build-images.sh; группа без фото`);
+    return '';
+  }
+  const set = (ext) => `${base}-640.${ext} 640w, ${base}-1000.${ext} 1000w`;
+  // Кадр виден только на десктопе (≥ 1024 px) и не шире 13rem
+  return `
+        <figure class="group__photo">
           <picture>
-            <source type="image/avif" srcset="${set('avif')}" sizes="${sizes}">
-            <source type="image/webp" srcset="${set('webp')}" sizes="${sizes}">
+            <source type="image/avif" srcset="${set('avif')}" sizes="13rem">
+            <source type="image/webp" srcset="${set('webp')}" sizes="13rem">
             <img src="${base}.jpg" width="1000" height="1250" alt="Адвокат Страховецкая Ева Рубиновна" loading="lazy" decoding="async">
           </picture>
         </figure>`;
-    }
-  }
-  const mod = photo ? ' direction--photo' : '';
+}
 
-  return `    <!-- ${id} -->
-    <section class="section direction${mod} ${tone}" id="${id}" aria-labelledby="${id}-title" data-direction="${id}">
-      <div class="container direction__inner">
-        <h2 class="direction__title" id="${id}-title">${typo(d.title)}</h2>${photo}
-        <div class="direction__body">
-          <div class="direction__text">
-${text}
-          </div>
-          <ul class="direction__points" aria-label="Что делаю">
+const groups = data.groups.map((group, index) => {
+  // Фон чередуется: белая, светло-серая, белая — соседние группы не сливаются
+  const tone = index % 2 === 0 ? 'section--white' : 'section--stone';
+
+  const rows = group.items.map((item) => {
+    const law = item.article ? `\n                  <span class="case__law">${typo(item.article)}</span>` : '';
+    const text = item.text.map(typo).join(' ');
+    const points = item.points.map((p) => `                  <li>${typo(p)}</li>`).join('\n');
+    return `          <li class="case" id="${item.id}">
+            <details class="case__details">
+              <summary class="case__head">
+                <span class="case__name">
+                  <span class="case__title">${typo(item.title)}</span>${law}
+                </span>
+                <span class="case__more"><span class="case__open">Подробнее</span><span class="case__close">Свернуть</span>${CHEVRON}</span>
+              </summary>
+              <div class="case__body">
+                <p>${text}</p>
+                <ul class="case__points" aria-label="Что делаю">
 ${points}
+                </ul>
+              </div>
+            </details>
+          </li>`;
+  }).join('\n');
+
+  const also = group.also ? `\n          <li class="case case--also">${typo(group.also)}</li>` : '';
+
+  const prices = group.prices.map(([name, value]) => {
+    const note = /\d/.test(value) ? '' : ' class="tariff__note"';
+    return `            <div class="tariff__row"><dt>${typo(name)}</dt><dd${note}>${typo(value)}</dd></div>`;
+  }).join('\n');
+
+  return `    <!-- ${group.id} -->
+    <section class="section group ${tone}" id="${group.id}" aria-labelledby="${group.id}-title">
+      <div class="container group__inner">
+        <div class="group__main">
+          <h2 class="section__title" id="${group.id}-title">${typo(group.title)}</h2>
+          <p class="group__lead">${group.lead.map(typo).join(' ')}</p>
+          <ul class="cases">
+${rows}${also}
           </ul>
         </div>
-        <div class="direction__offer">
-          <dl class="direction__prices">
+
+        <div class="group__aside">
+        <aside class="tariff" aria-labelledby="${group.id}-prices">
+          <h3 class="tariff__title" id="${group.id}-prices">${typo(group.pricesTitle)}</h3>
+          <dl class="tariff__list">
 ${prices}
           </dl>
-          <div class="direction__actions">
+          <div class="tariff__actions">
             <a class="btn btn--primary" href="${TEL}" data-site="phone">Позвонить</a>
             <a class="btn btn--outline" href="${WHATSAPP}" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
           </div>
+        </aside>${photoFigure(group)}
         </div>
       </div>
     </section>`;
 }).join('\n\n');
-
-if (order.length % 2 === 1) {
-  console.warn('  ! нечётное число направлений: последняя секция белая, как и «Об адвокате» после неё — поменяйте фон «Об адвокате»');
-}
 
 // ----- Запись -----
 
@@ -170,7 +193,8 @@ function put(name, content) {
   html = html.slice(0, a + start.length) + '\n' + content + '\n' + indent + html.slice(b);
 }
 
-put('toc', toc);
-put('sections', sections);
+put('cards', cards);
+put('groups', groups);
 fs.writeFileSync(indexFile, html);
-console.log(`  направления: ${order.length} секций, оглавление — ${data.groups.length} группы`);
+const rowsCount = data.groups.reduce((n, g) => n + g.items.length, 0);
+console.log(`  направления: ${data.groups.length} группы, ${rowsCount} строк с якорями`);

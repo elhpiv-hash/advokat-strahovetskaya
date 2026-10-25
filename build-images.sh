@@ -8,8 +8,9 @@
 #     hero.jpg скриптом tools/cutout.py) → hero-480|960.avif|webp с прозрачностью
 #     и запасной hero-640.png. Пропорция — как у вырезки: снимок не обрезается.
 #  2. about.jpg — фото для «Об адвокате» → about-640|1000.avif|webp + about.jpg.
-#  3. extra-1.jpg … extra-3.jpg — фото для 2–3 главных секций направлений
-#     → extra-N-640|1000.avif|webp + extra-N.jpg.
+#  3. extra-1.jpg … extra-3.jpg — фото для групп направлений (поле photo
+#     в tools/directions.json) → extra-N-640|1000.avif|webp + extra-N.jpg.
+#     contacts-dark.jpg — фото для тёмных «Контактов» → contacts-dark-…
 #  4. assets/img/docs/src/* — сканы дипломов и сертификатов → docs/<имя>-480.webp
 #     (превью) и docs/<имя>-1600.webp (для увеличения). Номера и серии
 #     размываются по координатам из tools/docs-blur.json.
@@ -18,7 +19,7 @@
 #  6. favicon.ico (16, 32, 48 px) и apple-touch-icon.png (180 px).
 #
 #  Пропорции фото скрипт сам вписывает в width/height у <img> в index.html
-#  (hero__img, about__img) — место под фото резервируется без сдвигов (CLS).
+#  (hero__img, about__img, contacts__img) — место под фото резервируется без сдвигов (CLS).
 #  Нет исходника — набор пропускается, остальное собирается.
 #
 #  Запуск:   bash build-images.sh   (потом bash build.sh)
@@ -61,7 +62,7 @@ const DOCS = path.join(IMG, 'docs');
 const FONTS = 'assets/fonts';
 
 // Цвета — те же, что в css/style.css
-const C = { stone: '#F6F5F2', ink: '#22252A', soft: '#5E636B', goldLine: '#D8C49B', goldText: '#8A6A33', dark: '#121E2E', onDark: '#F2F1EE' };
+const C = { stone: '#F6F5F2', ink: '#22252A', soft: '#5E636B', goldLine: '#D8C49B', goldText: '#8A6A33', dark: '#1F2226', onDark: '#F2F1EE' };
 
 const kb = (file) => (fs.statSync(file).size / 1024).toFixed(1).padStart(8);
 const log = (file, w, h) => console.log(`  ${path.relative(IMG, file).padEnd(24)} ${String(w).padStart(5)} x ${String(h).padEnd(5)} ${kb(file)} KB`);
@@ -82,7 +83,8 @@ const SETS = {
   about: { widths: [640, 1000], alpha: false },
   'extra-1': { widths: [640, 1000], alpha: false },
   'extra-2': { widths: [640, 1000], alpha: false },
-  'extra-3': { widths: [640, 1000], alpha: false }
+  'extra-3': { widths: [640, 1000], alpha: false },
+  'contacts-dark': { widths: [640, 1000], alpha: false }
 };
 // Портрет без фона лежит под отдельным именем: hero.jpg — исходник для cutout.py
 const SOURCE_NAME = { hero: 'hero-cutout' };
@@ -308,6 +310,8 @@ async function favicon() {
   const about = await buildSet('about');
   if (about) patchSize('about__img', about.width, about.height);
   for (const name of ['extra-1', 'extra-2', 'extra-3']) await buildSet(name);
+  const contacts = await buildSet('contacts-dark');
+  if (contacts) patchSize('contacts__img', contacts.width, contacts.height);
   await buildDocs();
   await ogCover(hero);
   await favicon();

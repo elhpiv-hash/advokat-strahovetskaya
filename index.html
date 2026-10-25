@@ -40,7 +40,7 @@
         imagesrcset="assets/img/hero-480.avif 480w, assets/img/hero-960.avif 960w"
         imagesizes="(min-width: 64em) 30rem, 16rem">
 
-  <link rel="stylesheet" href="css/style.min.css?v=2250acf527">
+  <link rel="stylesheet" href="css/style.min.css?v=1c124c441d">
 
   <!-- Единственный встроенный скрипт (одинаковый на всех страницах): класс js
        нужен до первой отрисовки, иначе первый экран мигнёт перед анимацией.
@@ -48,7 +48,7 @@
        всё равно проявится. Его sha256 стоит в CSP (.htaccess) — build.sh
        пересчитывает хеш сам. -->
   <script>document.documentElement.className='js';setTimeout(function(){document.documentElement.classList.add('is-hero-ready')},2000);</script>
-  <script src="js/main.min.js?v=66cc1fc5b3" defer></script>
+  <script src="js/main.min.js?v=7f40e98f3e" defer></script>
 
   <!-- Телефон здесь не подставляется из SITE (поисковики JS не ждут) —
        при смене номера поправить и тут. -->
@@ -115,8 +115,8 @@
         <ul class="nav__list">
           <li><a class="nav__link" href="#napravleniya">Направления</a></li>
           <li><a class="nav__link" href="#ob-advokate">Об адвокате</a></li>
-          <li><a class="nav__link" href="#otzyvy">Отзывы</a></li>
           <li><a class="nav__link" href="#stoimost">Стоимость</a></li>
+          <li><a class="nav__link" href="#otzyvy">Отзывы</a></li>
           <li><a class="nav__link" href="#kontakty">Контакты</a></li>
         </ul>
         <!-- В открытом меню на телефоне связь должна быть под рукой,
@@ -191,517 +191,428 @@
       </div>
     </section>
 
-    <!-- ==================== Условия работы ==================== -->
-    <section class="section section--white section--support" id="usloviya" aria-labelledby="usloviya-title">
-      <div class="container">
-        <h2 class="section__title" id="usloviya-title">Условия работы</h2>
-        <!-- Только реальные условия из профиля: без «лучший» и обещаний исхода -->
-        <ul class="terms">
-          <li class="terms__item">
-            <h3 class="terms__title">Выезд в&nbsp;СИЗО и&nbsp;ИК</h3>
-            <p>Возможен выезд к&nbsp;клиенту и&nbsp;командировки, работаю также в&nbsp;Москве.</p>
-          </li>
-          <li class="terms__item">
-            <h3 class="terms__title">Экстренно&nbsp;— круглосуточно</h3>
-            <p>Ежедневно 10:00–22:00, в&nbsp;экстренных случаях&nbsp;— в&nbsp;любое время суток.</p>
-          </li>
-          <li class="terms__item">
-            <h3 class="terms__title">Работа по&nbsp;договору</h3>
-            <p>Защита по&nbsp;уголовному делу&nbsp;— по&nbsp;фиксированной цене, её обсуждаем на&nbsp;консультации.</p>
-          </li>
-          <li class="terms__item">
-            <h3 class="terms__title">Рассрочка</h3>
-            <p>Оплата наличными и&nbsp;картой, возможны онлайн-консультации.</p>
-          </li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- ==================== Направления: оглавление ==================== -->
-    <section class="section section--stone section--support" id="napravleniya" aria-labelledby="napravleniya-title">
-      <div class="container toc">
-        <h2 class="section__title toc__heading" id="napravleniya-title">Направления</h2>
-        <!-- Блок собирает tools/build-directions.mjs из tools/directions.json -->
-        <!-- directions:toc:start -->
-      <div class="toc__group">
-        <h3 class="toc__title">Уголовные дела</h3>
-        <ul class="toc__list">
-          <li><a class="toc__link" href="#narkotiki-228"><span class="toc__name">Наркотики</span> <span class="toc__law">ст.&nbsp;228, 228.1&nbsp;УК&nbsp;РФ</span></a></li>
-          <li><a class="toc__link" href="#moshennichestvo"><span class="toc__name">Мошенничество</span> <span class="toc__law">ст.&nbsp;159&nbsp;УК&nbsp;РФ</span></a></li>
-          <li><a class="toc__link" href="#tyazhkiy-vred"><span class="toc__name">Тяжкий вред здоровью</span> <span class="toc__law">ст.&nbsp;111&nbsp;УК&nbsp;РФ</span></a></li>
-          <li><a class="toc__link" href="#grabezh-razboy"><span class="toc__name">Грабёж и&nbsp;разбой</span> <span class="toc__law">ст.&nbsp;161, 162&nbsp;УК&nbsp;РФ</span></a></li>
-          <li><a class="toc__link" href="#krazha"><span class="toc__name">Кража</span> <span class="toc__law">ст.&nbsp;158&nbsp;УК&nbsp;РФ</span></a></li>
-          <li><a class="toc__link" href="#poddelka-dokumentov"><span class="toc__name">Подделка документов</span> <span class="toc__law">ст.&nbsp;327&nbsp;УК&nbsp;РФ</span></a></li>
-          <li><a class="toc__link" href="#ugolovnye-dela"><span class="toc__name">Все уголовные дела</span> <span class="toc__law">в&nbsp;том числе тяжкие и&nbsp;особо тяжкие</span></a></li>
-        </ul>
-      </div>
-      <div class="toc__group">
-        <h3 class="toc__title">Семейные дела</h3>
-        <ul class="toc__list">
-          <li><a class="toc__link" href="#razdel-imushchestva"><span class="toc__name">Раздел имущества</span></a></li>
-          <li><a class="toc__link" href="#razvod"><span class="toc__name">Развод</span></a></li>
-          <li><a class="toc__link" href="#alimenty"><span class="toc__name">Алименты</span></a></li>
-          <li><a class="toc__link" href="#opeka"><span class="toc__name">Опека, усыновление, родительские права</span></a></li>
-        </ul>
-      </div>
-      <div class="toc__group">
-        <h3 class="toc__title">Другие дела</h3>
-        <ul class="toc__list">
-          <li><a class="toc__link" href="#administrativnye"><span class="toc__name">Административные дела</span></a></li>
-          <li><a class="toc__link" href="#voennoe-pravo"><span class="toc__name">Военное право</span></a></li>
-          <li><a class="toc__link" href="#zashchita-potrebiteley"><span class="toc__name">Защита прав потребителей</span></a></li>
-        </ul>
-      </div>
-        <!-- directions:toc:end -->
-      </div>
-    </section>
-
-    <!-- ==================== Секции направлений ==================== -->
-    <!-- У каждой секции якорь-латиница — это адрес из рекламы, например
-         https://example.ru/?utm_source=yandex#narkotiki-228. Блок собирает
+    <!-- ==================== Направления ==================== -->
+    <!-- Три карточки групп: в каждой — ссылки на строки направлений (те же
+         якоря, что в рекламе) и на саму группу с ценами. Карточки собирает
          tools/build-directions.mjs из tools/directions.json, руками не править. -->
-    <!-- directions:sections:start -->
-    <!-- narkotiki-228 -->
-    <section class="section direction direction--photo section--white" id="narkotiki-228" aria-labelledby="narkotiki-228-title" data-direction="narkotiki-228">
-      <div class="container direction__inner">
-        <h2 class="direction__title" id="narkotiki-228-title">Адвокат по&nbsp;делам о&nbsp;наркотиках (ст.&nbsp;228, 228.1&nbsp;УК&nbsp;РФ) в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h2>
-        <figure class="direction__photo">
+    <section class="section section--stone" id="napravleniya" aria-labelledby="napravleniya-title">
+      <div class="container">
+        <h2 class="section__title" id="napravleniya-title">Направления</h2>
+        <ul class="areas">
+        <!-- directions:cards:start -->
+        <li class="area">
+          <h3 class="area__title">Уголовные дела</h3>
+          <ul class="area__list">
+            <li><a class="area__link" href="#narkotiki-228"><span class="area__name">Наркотики</span> <span class="area__law">ст.&nbsp;228, 228.1&nbsp;УК&nbsp;РФ</span></a></li>
+            <li><a class="area__link" href="#moshennichestvo"><span class="area__name">Мошенничество, кража, растрата</span> <span class="area__law">ст.&nbsp;158–160&nbsp;УК&nbsp;РФ</span></a></li>
+            <li><a class="area__link" href="#grabezh-razboy"><span class="area__name">Грабёж и&nbsp;разбой</span> <span class="area__law">ст.&nbsp;161, 162&nbsp;УК&nbsp;РФ</span></a></li>
+            <li><a class="area__link" href="#tyazhkiy-vred"><span class="area__name">Тяжкий вред здоровью</span> <span class="area__law">ст.&nbsp;111&nbsp;УК&nbsp;РФ</span></a></li>
+            <li><a class="area__link" href="#poddelka-dokumentov"><span class="area__name">Подделка документов</span> <span class="area__law">ст.&nbsp;327&nbsp;УК&nbsp;РФ</span></a></li>
+          </ul>
+          <a class="area__more" href="#ugolovnye-dela">Цены и&nbsp;подробности</a>
+        </li>
+        <li class="area">
+          <h3 class="area__title">Семейные дела</h3>
+          <ul class="area__list">
+            <li><a class="area__link" href="#razdel-imushchestva"><span class="area__name">Раздел имущества</span></a></li>
+            <li><a class="area__link" href="#razvod"><span class="area__name">Развод</span></a></li>
+            <li><a class="area__link" href="#alimenty"><span class="area__name">Алименты</span></a></li>
+            <li><a class="area__link" href="#opeka"><span class="area__name">Опека, усыновление, родительские права</span></a></li>
+          </ul>
+          <a class="area__more" href="#semeynye-dela">Цены и&nbsp;подробности</a>
+        </li>
+        <li class="area">
+          <h3 class="area__title">Другие дела</h3>
+          <ul class="area__list">
+            <li><a class="area__link" href="#administrativnye"><span class="area__name">Административные дела</span></a></li>
+            <li><a class="area__link" href="#voennoe-pravo"><span class="area__name">Военное право</span></a></li>
+            <li><a class="area__link" href="#zashchita-potrebiteley"><span class="area__name">Защита прав потребителей</span></a></li>
+          </ul>
+          <a class="area__more" href="#drugie-dela">Цены и&nbsp;подробности</a>
+        </li>
+        <!-- directions:cards:end -->
+        </ul>
+      </div>
+    </section>
+
+    <!-- ==================== Группы направлений ==================== -->
+    <!-- «Уголовные дела», «Семейные дела», «Другие дела»: слева строки
+         направлений, справа «Стоимость» группы. У группы и у каждой строки —
+         якорь-латиница, это адрес из рекламы, например
+         https://example.ru/?utm_source=yandex#narkotiki-228: main.js
+         прокручивает к строке, раскрывает «Подробнее» и подсвечивает её.
+         Блок собирает tools/build-directions.mjs, руками не править. -->
+    <!-- directions:groups:start -->
+    <!-- ugolovnye-dela -->
+    <section class="section group section--white" id="ugolovnye-dela" aria-labelledby="ugolovnye-dela-title">
+      <div class="container group__inner">
+        <div class="group__main">
+          <h2 class="section__title" id="ugolovnye-dela-title">Уголовные дела</h2>
+          <p class="group__lead">Защита по&nbsp;уголовным делам, в&nbsp;том числе по&nbsp;тяжким и&nbsp;особо тяжким составам. Обширный опыт прекращения уголовных дел в&nbsp;суде, изменений мер пресечений на&nbsp;иные, не&nbsp;связанные с&nbsp;лишением свободы.</p>
+          <ul class="cases">
+          <li class="case" id="narkotiki-228">
+            <details class="case__details">
+              <summary class="case__head">
+                <span class="case__name">
+                  <span class="case__title">Наркотики</span>
+                  <span class="case__law">ст.&nbsp;228, 228.1&nbsp;УК&nbsp;РФ</span>
+                </span>
+                <span class="case__more"><span class="case__open">Подробнее</span><span class="case__close">Свернуть</span><svg class="case__icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></span>
+              </summary>
+              <div class="case__body">
+                <p>Защищаю по&nbsp;делам о&nbsp;незаконном хранении либо&nbsp;сбыте наркотиков (ст.&nbsp;228, 228.1&nbsp;УК&nbsp;РФ), в&nbsp;том числе по&nbsp;тяжким и&nbsp;особо тяжким составам. Провожу собственное расследование, оспариваю доказательства и&nbsp;документирую каждый этап процесса.</p>
+                <ul class="case__points" aria-label="Что делаю">
+                  <li>Выезжаю в&nbsp;СИЗО и&nbsp;ИК, в&nbsp;экстренных случаях&nbsp;— в&nbsp;любое время суток</li>
+                  <li>Изучаю материалы дела и&nbsp;проверяю доказательства обвинения</li>
+                  <li>Заявляю ходатайства об&nbsp;изменении меры пресечения на&nbsp;не&nbsp;связанную с&nbsp;лишением свободы</li>
+                  <li>Работаю по&nbsp;договору</li>
+                </ul>
+              </div>
+            </details>
+          </li>
+          <li class="case" id="moshennichestvo">
+            <details class="case__details">
+              <summary class="case__head">
+                <span class="case__name">
+                  <span class="case__title">Мошенничество, кража, растрата</span>
+                  <span class="case__law">ст.&nbsp;158–160&nbsp;УК&nbsp;РФ</span>
+                </span>
+                <span class="case__more"><span class="case__open">Подробнее</span><span class="case__close">Свернуть</span><svg class="case__icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></span>
+              </summary>
+              <div class="case__body">
+                <p>Защищаю по&nbsp;делам о&nbsp;кражах (ст.&nbsp;158&nbsp;УК&nbsp;РФ), мошенничестве (ст.&nbsp;159&nbsp;УК&nbsp;РФ), присвоении и&nbsp;растрате (ст.&nbsp;160&nbsp;УК&nbsp;РФ). Провожу собственные расследования, оспариваю доказательства и&nbsp;документирую каждый этап процесса.</p>
+                <ul class="case__points" aria-label="Что делаю">
+                  <li>Изучаю материалы дела и&nbsp;проверяю доказательства обвинения</li>
+                  <li>Выезжаю в&nbsp;СИЗО и&nbsp;ИК</li>
+                  <li>Заявляю ходатайства об&nbsp;изменении меры пресечения</li>
+                  <li>Работаю по&nbsp;договору</li>
+                </ul>
+              </div>
+            </details>
+          </li>
+          <li class="case" id="grabezh-razboy">
+            <details class="case__details">
+              <summary class="case__head">
+                <span class="case__name">
+                  <span class="case__title">Грабёж и&nbsp;разбой</span>
+                  <span class="case__law">ст.&nbsp;161, 162&nbsp;УК&nbsp;РФ</span>
+                </span>
+                <span class="case__more"><span class="case__open">Подробнее</span><span class="case__close">Свернуть</span><svg class="case__icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></span>
+              </summary>
+              <div class="case__body">
+                <p>Защищаю по&nbsp;делам о&nbsp;грабеже (ст.&nbsp;161&nbsp;УК&nbsp;РФ) и&nbsp;разбое (ст.&nbsp;162&nbsp;УК&nbsp;РФ). Работаю чётко и&nbsp;оперативно, готова выехать в&nbsp;любое время суток.</p>
+                <ul class="case__points" aria-label="Что делаю">
+                  <li>Выезжаю в&nbsp;СИЗО и&nbsp;ИК, в&nbsp;экстренных случаях&nbsp;— в&nbsp;любое время суток</li>
+                  <li>Оспариваю доказательства обвинения</li>
+                  <li>Заявляю ходатайства об&nbsp;изменении меры пресечения</li>
+                  <li>Документирую каждый этап процесса</li>
+                </ul>
+              </div>
+            </details>
+          </li>
+          <li class="case" id="tyazhkiy-vred">
+            <details class="case__details">
+              <summary class="case__head">
+                <span class="case__name">
+                  <span class="case__title">Тяжкий вред здоровью</span>
+                  <span class="case__law">ст.&nbsp;111&nbsp;УК&nbsp;РФ</span>
+                </span>
+                <span class="case__more"><span class="case__open">Подробнее</span><span class="case__close">Свернуть</span><svg class="case__icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></span>
+              </summary>
+              <div class="case__body">
+                <p>Защищаю по&nbsp;делам о&nbsp;причинении тяжкого вреда здоровью (ст.&nbsp;111&nbsp;УК&nbsp;РФ). Провожу собственное расследование и&nbsp;оспариваю доказательства.</p>
+                <ul class="case__points" aria-label="Что делаю">
+                  <li>Экстренный выезд&nbsp;— в&nbsp;любое время суток</li>
+                  <li>Выезжаю в&nbsp;СИЗО и&nbsp;ИК</li>
+                  <li>Заявляю ходатайства об&nbsp;изменении меры пресечения</li>
+                  <li>Документирую каждый этап процесса</li>
+                </ul>
+              </div>
+            </details>
+          </li>
+          <li class="case" id="poddelka-dokumentov">
+            <details class="case__details">
+              <summary class="case__head">
+                <span class="case__name">
+                  <span class="case__title">Подделка документов</span>
+                  <span class="case__law">ст.&nbsp;327&nbsp;УК&nbsp;РФ</span>
+                </span>
+                <span class="case__more"><span class="case__open">Подробнее</span><span class="case__close">Свернуть</span><svg class="case__icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></span>
+              </summary>
+              <div class="case__body">
+                <p>Защищаю по&nbsp;делам о&nbsp;подделке документов (ст.&nbsp;327&nbsp;УК&nbsp;РФ). Работаю чётко и&nbsp;оперативно, готова выехать в&nbsp;любое время суток.</p>
+                <ul class="case__points" aria-label="Что делаю">
+                  <li>Изучаю материалы дела и&nbsp;проверяю доказательства обвинения</li>
+                  <li>Провожу собственное расследование</li>
+                  <li>Выезжаю в&nbsp;СИЗО и&nbsp;ИК</li>
+                  <li>Работаю по&nbsp;договору</li>
+                </ul>
+              </div>
+            </details>
+          </li>
+          <li class="case case--also">Также: убийство (ст.&nbsp;105), похищение человека (ст.&nbsp;126), другие тяжкие и&nbsp;особо тяжкие составы</li>
+          </ul>
+        </div>
+
+        <div class="group__aside">
+        <aside class="tariff" aria-labelledby="ugolovnye-dela-prices">
+          <h3 class="tariff__title" id="ugolovnye-dela-prices">Стоимость по&nbsp;уголовным делам</h3>
+          <dl class="tariff__list">
+            <div class="tariff__row"><dt>Устная консультация</dt><dd>5&nbsp;000&nbsp;₽</dd></div>
+            <div class="tariff__row"><dt>Письменная консультация</dt><dd>10&nbsp;000&nbsp;₽</dd></div>
+            <div class="tariff__row"><dt>Защита по&nbsp;уголовному делу</dt><dd class="tariff__note">фиксированная цена, обсуждается на&nbsp;консультации</dd></div>
+          </dl>
+          <div class="tariff__actions">
+            <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
+            <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
+          </div>
+        </aside>
+        <figure class="group__photo">
           <picture>
-            <source type="image/avif" srcset="assets/img/extra-3-640.avif 640w, assets/img/extra-3-1000.avif 1000w" sizes="22rem">
-            <source type="image/webp" srcset="assets/img/extra-3-640.webp 640w, assets/img/extra-3-1000.webp 1000w" sizes="22rem">
+            <source type="image/avif" srcset="assets/img/extra-3-640.avif 640w, assets/img/extra-3-1000.avif 1000w" sizes="13rem">
+            <source type="image/webp" srcset="assets/img/extra-3-640.webp 640w, assets/img/extra-3-1000.webp 1000w" sizes="13rem">
             <img src="assets/img/extra-3.jpg" width="1000" height="1250" alt="Адвокат Страховецкая Ева Рубиновна" loading="lazy" decoding="async">
           </picture>
         </figure>
-        <div class="direction__body">
-          <div class="direction__text">
-            <p>Защищаю по&nbsp;делам о&nbsp;незаконном хранении либо&nbsp;сбыте наркотиков (ст.&nbsp;228, 228.1&nbsp;УК&nbsp;РФ), в&nbsp;том числе по&nbsp;тяжким и&nbsp;особо тяжким составам.</p>
-            <p>Обширный опыт прекращения уголовных дел в&nbsp;суде, изменений мер пресечений на&nbsp;иные, не&nbsp;связанные с&nbsp;лишением свободы.</p>
-          </div>
-          <ul class="direction__points" aria-label="Что делаю">
-            <li>Выезжаю в&nbsp;СИЗО и&nbsp;ИК, в&nbsp;экстренных случаях&nbsp;— в&nbsp;любое время суток</li>
-            <li>Провожу собственное расследование и&nbsp;оспариваю доказательства</li>
-            <li>Заявляю ходатайства об&nbsp;изменении меры пресечения на&nbsp;не&nbsp;связанную с&nbsp;лишением свободы</li>
-            <li>Документирую каждый этап процесса</li>
-          </ul>
-        </div>
-        <div class="direction__offer">
-          <dl class="direction__prices">
-            <div><dt>Защита по&nbsp;уголовному делу</dt><dd class="direction__note">фиксированная цена, обсуждается на&nbsp;консультации</dd></div>
-            <div><dt>Устная консультация</dt><dd>5&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Письменная консультация</dt><dd>10&nbsp;000&nbsp;₽</dd></div>
-          </dl>
-          <div class="direction__actions">
-            <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
-            <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
-          </div>
         </div>
       </div>
     </section>
 
-    <!-- moshennichestvo -->
-    <section class="section direction direction--photo section--stone" id="moshennichestvo" aria-labelledby="moshennichestvo-title" data-direction="moshennichestvo">
-      <div class="container direction__inner">
-        <h2 class="direction__title" id="moshennichestvo-title">Адвокат по&nbsp;делам о&nbsp;мошенничестве (ст.&nbsp;159&nbsp;УК&nbsp;РФ) в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h2>
-        <figure class="direction__photo">
-          <picture>
-            <source type="image/avif" srcset="assets/img/extra-2-640.avif 640w, assets/img/extra-2-1000.avif 1000w" sizes="22rem">
-            <source type="image/webp" srcset="assets/img/extra-2-640.webp 640w, assets/img/extra-2-1000.webp 1000w" sizes="22rem">
-            <img src="assets/img/extra-2.jpg" width="1000" height="1250" alt="Адвокат Страховецкая Ева Рубиновна" loading="lazy" decoding="async">
-          </picture>
-        </figure>
-        <div class="direction__body">
-          <div class="direction__text">
-            <p>Защищаю по&nbsp;делам о&nbsp;мошенничестве (ст.&nbsp;159&nbsp;УК&nbsp;РФ).</p>
-            <p>Провожу собственные расследования, оспариваю доказательства и&nbsp;документирую каждый этап процесса.</p>
-          </div>
-          <ul class="direction__points" aria-label="Что делаю">
-            <li>Изучаю материалы дела и&nbsp;проверяю доказательства обвинения</li>
-            <li>Выезжаю в&nbsp;СИЗО и&nbsp;ИК</li>
-            <li>Заявляю ходатайства об&nbsp;изменении меры пресечения</li>
-            <li>Работаю по&nbsp;договору, возможна рассрочка</li>
+    <!-- semeynye-dela -->
+    <section class="section group section--stone" id="semeynye-dela" aria-labelledby="semeynye-dela-title">
+      <div class="container group__inner">
+        <div class="group__main">
+          <h2 class="section__title" id="semeynye-dela-title">Семейные дела</h2>
+          <p class="group__lead">Веду гражданские дела и&nbsp;семейные споры повышенной сложности. Возможны онлайн-консультации и&nbsp;выезд к&nbsp;клиенту.</p>
+          <ul class="cases">
+          <li class="case" id="razdel-imushchestva">
+            <details class="case__details">
+              <summary class="case__head">
+                <span class="case__name">
+                  <span class="case__title">Раздел имущества</span>
+                </span>
+                <span class="case__more"><span class="case__open">Подробнее</span><span class="case__close">Свернуть</span><svg class="case__icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></span>
+              </summary>
+              <div class="case__body">
+                <p>Веду дела о&nbsp;разделе имущества, в&nbsp;том числе в&nbsp;семейных спорах повышенной сложности. Работаю чётко и&nbsp;оперативно.</p>
+                <ul class="case__points" aria-label="Что делаю">
+                  <li>Консультирую устно и&nbsp;письменно</li>
+                  <li>Проверяю и&nbsp;составляю договоры</li>
+                  <li>Веду досудебное урегулирование</li>
+                  <li>Представляю интересы в&nbsp;суде</li>
+                </ul>
+              </div>
+            </details>
+          </li>
+          <li class="case" id="razvod">
+            <details class="case__details">
+              <summary class="case__head">
+                <span class="case__name">
+                  <span class="case__title">Развод</span>
+                </span>
+                <span class="case__more"><span class="case__open">Подробнее</span><span class="case__close">Свернуть</span><svg class="case__icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></span>
+              </summary>
+              <div class="case__body">
+                <p>Веду дела о&nbsp;заключении и&nbsp;расторжении брака, в&nbsp;том числе семейные споры повышенной сложности. Возможны онлайн-консультации и&nbsp;выезд к&nbsp;клиенту.</p>
+                <ul class="case__points" aria-label="Что делаю">
+                  <li>Консультирую устно и&nbsp;письменно</li>
+                  <li>Составляю исковые заявления</li>
+                  <li>Веду досудебное урегулирование</li>
+                  <li>Представляю интересы в&nbsp;суде</li>
+                </ul>
+              </div>
+            </details>
+          </li>
+          <li class="case" id="alimenty">
+            <details class="case__details">
+              <summary class="case__head">
+                <span class="case__name">
+                  <span class="case__title">Алименты</span>
+                </span>
+                <span class="case__more"><span class="case__open">Подробнее</span><span class="case__close">Свернуть</span><svg class="case__icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></span>
+              </summary>
+              <div class="case__body">
+                <p>Веду дела об&nbsp;алиментах&nbsp;— в&nbsp;рамках семейных споров, в&nbsp;том числе повышенной сложности. Работаю по&nbsp;договору.</p>
+                <ul class="case__points" aria-label="Что делаю">
+                  <li>Консультирую устно и&nbsp;письменно</li>
+                  <li>Составляю претензии и&nbsp;исковые заявления</li>
+                  <li>Веду досудебное урегулирование</li>
+                  <li>Представляю интересы в&nbsp;суде</li>
+                </ul>
+              </div>
+            </details>
+          </li>
+          <li class="case" id="opeka">
+            <details class="case__details">
+              <summary class="case__head">
+                <span class="case__name">
+                  <span class="case__title">Опека, усыновление, родительские права</span>
+                </span>
+                <span class="case__more"><span class="case__open">Подробнее</span><span class="case__close">Свернуть</span><svg class="case__icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></span>
+              </summary>
+              <div class="case__body">
+                <p>Веду дела об&nbsp;усыновлении, опеке, попечительстве и&nbsp;родительских правах. Работаю чётко и&nbsp;оперативно, возможен выезд к&nbsp;клиенту.</p>
+                <ul class="case__points" aria-label="Что делаю">
+                  <li>Консультирую устно и&nbsp;письменно</li>
+                  <li>Составляю исковые заявления</li>
+                  <li>Веду досудебное урегулирование</li>
+                  <li>Представляю интересы в&nbsp;суде</li>
+                </ul>
+              </div>
+            </details>
+          </li>
           </ul>
         </div>
-        <div class="direction__offer">
-          <dl class="direction__prices">
-            <div><dt>Защита по&nbsp;уголовному делу</dt><dd class="direction__note">фиксированная цена, обсуждается на&nbsp;консультации</dd></div>
-            <div><dt>Устная консультация</dt><dd>5&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Письменная консультация</dt><dd>10&nbsp;000&nbsp;₽</dd></div>
+
+        <div class="group__aside">
+        <aside class="tariff" aria-labelledby="semeynye-dela-prices">
+          <h3 class="tariff__title" id="semeynye-dela-prices">Стоимость по&nbsp;семейным делам</h3>
+          <dl class="tariff__list">
+            <div class="tariff__row"><dt>Устная консультация</dt><dd>5&nbsp;000&nbsp;₽</dd></div>
+            <div class="tariff__row"><dt>Составление претензии&nbsp;/ искового заявления</dt><dd>от&nbsp;10&nbsp;000&nbsp;₽</dd></div>
+            <div class="tariff__row"><dt>Досудебное урегулирование</dt><dd>от&nbsp;15&nbsp;000&nbsp;₽</dd></div>
+            <div class="tariff__row"><dt>Представительство в&nbsp;суде</dt><dd class="tariff__note">по&nbsp;договорённости</dd></div>
           </dl>
-          <div class="direction__actions">
+          <div class="tariff__actions">
             <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
             <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
           </div>
+        </aside>
         </div>
       </div>
     </section>
 
-    <!-- tyazhkiy-vred -->
-    <section class="section direction section--white" id="tyazhkiy-vred" aria-labelledby="tyazhkiy-vred-title" data-direction="tyazhkiy-vred">
-      <div class="container direction__inner">
-        <h2 class="direction__title" id="tyazhkiy-vred-title">Адвокат по&nbsp;делам о&nbsp;причинении тяжкого вреда здоровью (ст.&nbsp;111&nbsp;УК&nbsp;РФ) в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h2>
-        <div class="direction__body">
-          <div class="direction__text">
-            <p>Защищаю по&nbsp;делам о&nbsp;причинении тяжкого вреда здоровью (ст.&nbsp;111&nbsp;УК&nbsp;РФ).</p>
-            <p>Работаю чётко и&nbsp;оперативно, готова выехать в&nbsp;любое время суток.</p>
-          </div>
-          <ul class="direction__points" aria-label="Что делаю">
-            <li>Экстренный выезд&nbsp;— в&nbsp;любое время суток</li>
-            <li>Выезжаю в&nbsp;СИЗО и&nbsp;ИК</li>
-            <li>Провожу собственное расследование и&nbsp;оспариваю доказательства</li>
-            <li>Документирую каждый этап процесса</li>
+    <!-- drugie-dela -->
+    <section class="section group section--white" id="drugie-dela" aria-labelledby="drugie-dela-title">
+      <div class="container group__inner">
+        <div class="group__main">
+          <h2 class="section__title" id="drugie-dela-title">Другие дела</h2>
+          <p class="group__lead">Административные дела, военное право и&nbsp;защита прав потребителей. Работаю по&nbsp;договору, возможны онлайн-консультации и&nbsp;выезд к&nbsp;клиенту.</p>
+          <ul class="cases">
+          <li class="case" id="administrativnye">
+            <details class="case__details">
+              <summary class="case__head">
+                <span class="case__name">
+                  <span class="case__title">Административные дела</span>
+                </span>
+                <span class="case__more"><span class="case__open">Подробнее</span><span class="case__close">Свернуть</span><svg class="case__icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></span>
+              </summary>
+              <div class="case__body">
+                <p>Веду административные дела. Работаю по&nbsp;договору; возможны онлайн-консультации и&nbsp;выезд к&nbsp;клиенту.</p>
+                <ul class="case__points" aria-label="Что делаю">
+                  <li>Консультирую устно и&nbsp;письменно</li>
+                  <li>Изучаю материалы дела</li>
+                  <li>Представляю интересы в&nbsp;суде</li>
+                </ul>
+              </div>
+            </details>
+          </li>
+          <li class="case" id="voennoe-pravo">
+            <details class="case__details">
+              <summary class="case__head">
+                <span class="case__name">
+                  <span class="case__title">Военное право</span>
+                </span>
+                <span class="case__more"><span class="case__open">Подробнее</span><span class="case__close">Свернуть</span><svg class="case__icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></span>
+              </summary>
+              <div class="case__body">
+                <p>Консультирую и&nbsp;веду дела по&nbsp;военному праву. Работаю по&nbsp;договору.</p>
+                <ul class="case__points" aria-label="Что делаю">
+                  <li>Консультирую устно и&nbsp;письменно</li>
+                  <li>Составляю претензии и&nbsp;исковые заявления</li>
+                  <li>Представляю интересы в&nbsp;суде</li>
+                </ul>
+              </div>
+            </details>
+          </li>
+          <li class="case" id="zashchita-potrebiteley">
+            <details class="case__details">
+              <summary class="case__head">
+                <span class="case__name">
+                  <span class="case__title">Защита прав потребителей</span>
+                </span>
+                <span class="case__more"><span class="case__open">Подробнее</span><span class="case__close">Свернуть</span><svg class="case__icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></span>
+              </summary>
+              <div class="case__body">
+                <p>Веду дела о&nbsp;защите прав потребителей. Возможны онлайн-консультации и&nbsp;выезд к&nbsp;клиенту.</p>
+                <ul class="case__points" aria-label="Что делаю">
+                  <li>Проверяю и&nbsp;анализирую договоры</li>
+                  <li>Составляю претензии и&nbsp;исковые заявления</li>
+                  <li>Веду досудебное урегулирование</li>
+                  <li>Представляю интересы в&nbsp;суде</li>
+                </ul>
+              </div>
+            </details>
+          </li>
           </ul>
         </div>
-        <div class="direction__offer">
-          <dl class="direction__prices">
-            <div><dt>Защита по&nbsp;уголовному делу</dt><dd class="direction__note">фиксированная цена, обсуждается на&nbsp;консультации</dd></div>
-            <div><dt>Устная консультация</dt><dd>5&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Письменная консультация</dt><dd>10&nbsp;000&nbsp;₽</dd></div>
-          </dl>
-          <div class="direction__actions">
-            <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
-            <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- grabezh-razboy -->
-    <section class="section direction section--stone" id="grabezh-razboy" aria-labelledby="grabezh-razboy-title" data-direction="grabezh-razboy">
-      <div class="container direction__inner">
-        <h2 class="direction__title" id="grabezh-razboy-title">Адвокат по&nbsp;делам о&nbsp;грабеже и&nbsp;разбое (ст.&nbsp;161, 162&nbsp;УК&nbsp;РФ) в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h2>
-        <div class="direction__body">
-          <div class="direction__text">
-            <p>Защищаю по&nbsp;делам о&nbsp;грабеже (ст.&nbsp;161&nbsp;УК&nbsp;РФ) и&nbsp;разбое (ст.&nbsp;162&nbsp;УК&nbsp;РФ).</p>
-            <p>Обширный опыт прекращения уголовных дел в&nbsp;суде, изменений мер пресечений на&nbsp;иные, не&nbsp;связанные с&nbsp;лишением свободы.</p>
-          </div>
-          <ul class="direction__points" aria-label="Что делаю">
-            <li>Выезжаю в&nbsp;СИЗО и&nbsp;ИК, в&nbsp;экстренных случаях&nbsp;— в&nbsp;любое время суток</li>
-            <li>Оспариваю доказательства обвинения</li>
-            <li>Заявляю ходатайства об&nbsp;изменении меры пресечения</li>
-            <li>Работаю по&nbsp;договору, возможна рассрочка</li>
-          </ul>
-        </div>
-        <div class="direction__offer">
-          <dl class="direction__prices">
-            <div><dt>Защита по&nbsp;уголовному делу</dt><dd class="direction__note">фиксированная цена, обсуждается на&nbsp;консультации</dd></div>
-            <div><dt>Устная консультация</dt><dd>5&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Письменная консультация</dt><dd>10&nbsp;000&nbsp;₽</dd></div>
+        <div class="group__aside">
+        <aside class="tariff" aria-labelledby="drugie-dela-prices">
+          <h3 class="tariff__title" id="drugie-dela-prices">Стоимость по&nbsp;другим делам</h3>
+          <dl class="tariff__list">
+            <div class="tariff__row"><dt>Проверка и&nbsp;анализ договора</dt><dd>от&nbsp;5&nbsp;000&nbsp;₽</dd></div>
+            <div class="tariff__row"><dt>Составление договора</dt><dd>от&nbsp;10&nbsp;000&nbsp;₽</dd></div>
+            <div class="tariff__row"><dt>Составление претензии</dt><dd>от&nbsp;10&nbsp;000&nbsp;₽</dd></div>
+            <div class="tariff__row"><dt>Представительство в&nbsp;суде</dt><dd class="tariff__note">по&nbsp;договорённости</dd></div>
           </dl>
-          <div class="direction__actions">
+          <div class="tariff__actions">
             <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
             <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
           </div>
+        </aside>
         </div>
       </div>
     </section>
+    <!-- directions:groups:end -->
 
-    <!-- krazha -->
-    <section class="section direction section--white" id="krazha" aria-labelledby="krazha-title" data-direction="krazha">
-      <div class="container direction__inner">
-        <h2 class="direction__title" id="krazha-title">Адвокат по&nbsp;делам о&nbsp;краже (ст.&nbsp;158&nbsp;УК&nbsp;РФ) в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h2>
-        <div class="direction__body">
-          <div class="direction__text">
-            <p>Защищаю по&nbsp;делам о&nbsp;кражах (ст.&nbsp;158&nbsp;УК&nbsp;РФ).</p>
-            <p>Провожу собственные расследования, оспариваю доказательства и&nbsp;документирую каждый этап процесса.</p>
-          </div>
-          <ul class="direction__points" aria-label="Что делаю">
-            <li>Изучаю материалы дела и&nbsp;проверяю доказательства обвинения</li>
-            <li>Выезжаю в&nbsp;СИЗО и&nbsp;ИК</li>
-            <li>Заявляю ходатайства об&nbsp;изменении меры пресечения</li>
-            <li>Документирую каждый этап процесса</li>
-          </ul>
-        </div>
-        <div class="direction__offer">
-          <dl class="direction__prices">
-            <div><dt>Защита по&nbsp;уголовному делу</dt><dd class="direction__note">фиксированная цена, обсуждается на&nbsp;консультации</dd></div>
-            <div><dt>Устная консультация</dt><dd>5&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Письменная консультация</dt><dd>10&nbsp;000&nbsp;₽</dd></div>
-          </dl>
-          <div class="direction__actions">
-            <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
-            <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
-          </div>
-        </div>
-      </div>
-    </section>
+    <!-- ==================== Практика в цифрах ==================== -->
+    <!-- Тёмная секция (одна из двух). Только проверяемые цифры из открытых
+         реестров (профиль на HARANT): без разбивки по статьям и без «процента
+         выигранных дел» — таких данных нет. -->
+    <section class="section section--dark" id="praktika" aria-labelledby="praktika-title">
+      <div class="container">
+        <h2 class="section__title" id="praktika-title">Практика в&nbsp;цифрах</h2>
 
-    <!-- poddelka-dokumentov -->
-    <section class="section direction section--stone" id="poddelka-dokumentov" aria-labelledby="poddelka-dokumentov-title" data-direction="poddelka-dokumentov">
-      <div class="container direction__inner">
-        <h2 class="direction__title" id="poddelka-dokumentov-title">Адвокат по&nbsp;делам о&nbsp;подделке документов (ст.&nbsp;327&nbsp;УК&nbsp;РФ) в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h2>
-        <div class="direction__body">
-          <div class="direction__text">
-            <p>Защищаю по&nbsp;делам о&nbsp;подделке документов (ст.&nbsp;327&nbsp;УК&nbsp;РФ).</p>
-            <p>Работаю чётко и&nbsp;оперативно, готова выехать в&nbsp;любое время суток.</p>
-          </div>
-          <ul class="direction__points" aria-label="Что делаю">
-            <li>Изучаю материалы дела и&nbsp;проверяю доказательства обвинения</li>
-            <li>Провожу собственное расследование</li>
-            <li>Выезжаю в&nbsp;СИЗО и&nbsp;ИК</li>
-            <li>Работаю по&nbsp;договору, возможна рассрочка</li>
+        <div class="practice">
+          <!-- Цифры — статичный текст, без «накручивающихся» счётчиков -->
+          <ul class="stats">
+            <li class="stats__item">
+              <span class="stats__value">2009</span>
+              <span class="stats__label">адвокат с&nbsp;2009 года</span>
+            </li>
+            <li class="stats__item">
+              <span class="stats__value">16<span class="stats__plus">+</span></span>
+              <span class="stats__label">лет практики</span>
+            </li>
+            <li class="stats__item">
+              <span class="stats__value">62</span>
+              <span class="stats__label">дела в&nbsp;открытых судебных реестрах</span>
+            </li>
           </ul>
-        </div>
-        <div class="direction__offer">
-          <dl class="direction__prices">
-            <div><dt>Защита по&nbsp;уголовному делу</dt><dd class="direction__note">фиксированная цена, обсуждается на&nbsp;консультации</dd></div>
-            <div><dt>Устная консультация</dt><dd>5&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Письменная консультация</dt><dd>10&nbsp;000&nbsp;₽</dd></div>
-          </dl>
-          <div class="direction__actions">
-            <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
-            <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- ugolovnye-dela -->
-    <section class="section direction section--white" id="ugolovnye-dela" aria-labelledby="ugolovnye-dela-title" data-direction="ugolovnye-dela">
-      <div class="container direction__inner">
-        <h2 class="direction__title" id="ugolovnye-dela-title">Адвокат по&nbsp;уголовным делам в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h2>
-        <div class="direction__body">
-          <div class="direction__text">
-            <p>Адвокат с&nbsp;большим опытом защиты по&nbsp;уголовным делам, в&nbsp;том числе по&nbsp;тяжким и&nbsp;особо тяжким преступлениям: незаконное хранение либо&nbsp;сбыт наркотиков (ст.&nbsp;228, 228.1&nbsp;УК&nbsp;РФ), причинение тяжкого вреда здоровью (ст.&nbsp;111&nbsp;УК&nbsp;РФ), убийство (ст.&nbsp;105&nbsp;УК&nbsp;РФ), грабежи (ст.&nbsp;161&nbsp;УК&nbsp;РФ), разбои (ст.&nbsp;162&nbsp;УК&nbsp;РФ), кражи (ст.&nbsp;158&nbsp;УК&nbsp;РФ), мошенничество (ст.&nbsp;159&nbsp;УК&nbsp;РФ), похищение человека (ст.&nbsp;126&nbsp;УК&nbsp;РФ).</p>
-            <p>Обширный опыт прекращения уголовных дел в&nbsp;суде, изменений мер пресечений на&nbsp;иные, не&nbsp;связанные с&nbsp;лишением свободы.</p>
-          </div>
-          <ul class="direction__points" aria-label="Что делаю">
-            <li>Выезжаю в&nbsp;СИЗО и&nbsp;ИК, в&nbsp;экстренных случаях&nbsp;— в&nbsp;любое время суток</li>
-            <li>Провожу собственные расследования и&nbsp;оспариваю доказательства</li>
-            <li>Заявляю ходатайства об&nbsp;изменении меры пресечения на&nbsp;не&nbsp;связанную с&nbsp;лишением свободы</li>
-            <li>Документирую каждый этап процесса</li>
-            <li>Работаю по&nbsp;договору, возможна рассрочка</li>
-          </ul>
+          <!-- Единственный график — доля Московского районного суда. Числа
+               видны текстом; полоса лишь иллюстрирует их и скрыта от
+               скринридеров. Длины частей — из --a и --b в разметке. -->
+          <figure class="chart">
+            <figcaption class="chart__title">Дела по&nbsp;судам</figcaption>
+            <p class="chart__lead"><span class="chart__num">43</span> <span class="chart__of">из&nbsp;62&nbsp;дел</span></p>
+            <p class="chart__text">рассматривались в&nbsp;Московском районном суде <span class="nowrap">Санкт-Петербурга</span></p>
+            <div class="chart__bar" style="--a: 43; --b: 19" aria-hidden="true">
+              <span class="chart__part chart__part--a"></span>
+              <span class="chart__part chart__part--b"></span>
+            </div>
+            <ul class="chart__legend">
+              <li class="chart__key chart__key--a"><span>Московский районный суд</span> <b>43</b></li>
+              <li class="chart__key chart__key--b"><span>Другие суды</span> <b>19</b></li>
+            </ul>
+          </figure>
         </div>
-        <div class="direction__offer">
-          <dl class="direction__prices">
-            <div><dt>Защита по&nbsp;уголовному делу</dt><dd class="direction__note">фиксированная цена, обсуждается на&nbsp;консультации</dd></div>
-            <div><dt>Устная консультация</dt><dd>5&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Письменная консультация</dt><dd>10&nbsp;000&nbsp;₽</dd></div>
-          </dl>
-          <div class="direction__actions">
-            <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
-            <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- razdel-imushchestva -->
-    <section class="section direction direction--photo section--stone" id="razdel-imushchestva" aria-labelledby="razdel-imushchestva-title" data-direction="razdel-imushchestva">
-      <div class="container direction__inner">
-        <h2 class="direction__title" id="razdel-imushchestva-title">Адвокат по&nbsp;разделу имущества в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h2>
-        <figure class="direction__photo">
-          <picture>
-            <source type="image/avif" srcset="assets/img/extra-1-640.avif 640w, assets/img/extra-1-1000.avif 1000w" sizes="22rem">
-            <source type="image/webp" srcset="assets/img/extra-1-640.webp 640w, assets/img/extra-1-1000.webp 1000w" sizes="22rem">
-            <img src="assets/img/extra-1.jpg" width="1000" height="1250" alt="Адвокат Страховецкая Ева Рубиновна" loading="lazy" decoding="async">
-          </picture>
-        </figure>
-        <div class="direction__body">
-          <div class="direction__text">
-            <p>Веду гражданские дела и&nbsp;семейные споры повышенной сложности, в&nbsp;том числе о&nbsp;разделе имущества.</p>
-            <p>Работаю чётко и&nbsp;оперативно.</p>
-          </div>
-          <ul class="direction__points" aria-label="Что делаю">
-            <li>Консультирую устно и&nbsp;письменно</li>
-            <li>Проверяю и&nbsp;составляю договоры</li>
-            <li>Составляю претензии и&nbsp;исковые заявления</li>
-            <li>Веду досудебное урегулирование</li>
-            <li>Представляю интересы в&nbsp;суде</li>
-          </ul>
-        </div>
-        <div class="direction__offer">
-          <dl class="direction__prices">
-            <div><dt>Устная консультация</dt><dd>5&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Исковое заявление</dt><dd>от&nbsp;10&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Представительство в&nbsp;суде</dt><dd class="direction__note">по&nbsp;договорённости</dd></div>
-          </dl>
-          <div class="direction__actions">
-            <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
-            <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
-          </div>
-        </div>
+        <p class="practice__source">По&nbsp;данным открытых реестров (HARANT).
+          <a href="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/" target="_blank" rel="noopener">Профиль на&nbsp;HARANT<span class="visually-hidden"> (откроется в&nbsp;новой вкладке)</span></a></p>
       </div>
     </section>
-
-    <!-- razvod -->
-    <section class="section direction section--white" id="razvod" aria-labelledby="razvod-title" data-direction="razvod">
-      <div class="container direction__inner">
-        <h2 class="direction__title" id="razvod-title">Адвокат по&nbsp;разводу в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h2>
-        <div class="direction__body">
-          <div class="direction__text">
-            <p>Веду дела о&nbsp;заключении и&nbsp;расторжении брака, в&nbsp;том числе семейные споры повышенной сложности.</p>
-            <p>Возможны онлайн-консультации и&nbsp;выезд к&nbsp;клиенту.</p>
-          </div>
-          <ul class="direction__points" aria-label="Что делаю">
-            <li>Консультирую устно и&nbsp;письменно</li>
-            <li>Составляю исковые заявления</li>
-            <li>Веду досудебное урегулирование</li>
-            <li>Представляю интересы в&nbsp;суде</li>
-          </ul>
-        </div>
-        <div class="direction__offer">
-          <dl class="direction__prices">
-            <div><dt>Устная консультация</dt><dd>5&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Исковое заявление</dt><dd>от&nbsp;10&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Представительство в&nbsp;суде</dt><dd class="direction__note">по&nbsp;договорённости</dd></div>
-          </dl>
-          <div class="direction__actions">
-            <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
-            <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- alimenty -->
-    <section class="section direction section--stone" id="alimenty" aria-labelledby="alimenty-title" data-direction="alimenty">
-      <div class="container direction__inner">
-        <h2 class="direction__title" id="alimenty-title">Адвокат по&nbsp;алиментам в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h2>
-        <div class="direction__body">
-          <div class="direction__text">
-            <p>Веду дела об&nbsp;алиментах&nbsp;— в&nbsp;рамках семейных споров, в&nbsp;том числе повышенной сложности.</p>
-            <p>Работаю по&nbsp;договору, возможна рассрочка.</p>
-          </div>
-          <ul class="direction__points" aria-label="Что делаю">
-            <li>Консультирую устно и&nbsp;письменно</li>
-            <li>Составляю претензии и&nbsp;исковые заявления</li>
-            <li>Веду досудебное урегулирование</li>
-            <li>Представляю интересы в&nbsp;суде</li>
-          </ul>
-        </div>
-        <div class="direction__offer">
-          <dl class="direction__prices">
-            <div><dt>Устная консультация</dt><dd>5&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Исковое заявление</dt><dd>от&nbsp;10&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Представительство в&nbsp;суде</dt><dd class="direction__note">по&nbsp;договорённости</dd></div>
-          </dl>
-          <div class="direction__actions">
-            <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
-            <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- opeka -->
-    <section class="section direction section--white" id="opeka" aria-labelledby="opeka-title" data-direction="opeka">
-      <div class="container direction__inner">
-        <h2 class="direction__title" id="opeka-title">Адвокат по&nbsp;делам об&nbsp;опеке, усыновлении и&nbsp;родительских правах в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h2>
-        <div class="direction__body">
-          <div class="direction__text">
-            <p>Веду дела об&nbsp;усыновлении, опеке, попечительстве и&nbsp;родительских правах.</p>
-            <p>Работаю чётко и&nbsp;оперативно, возможен выезд к&nbsp;клиенту.</p>
-          </div>
-          <ul class="direction__points" aria-label="Что делаю">
-            <li>Консультирую устно и&nbsp;письменно</li>
-            <li>Составляю исковые заявления</li>
-            <li>Веду досудебное урегулирование</li>
-            <li>Представляю интересы в&nbsp;суде</li>
-          </ul>
-        </div>
-        <div class="direction__offer">
-          <dl class="direction__prices">
-            <div><dt>Устная консультация</dt><dd>5&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Исковое заявление</dt><dd>от&nbsp;10&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Представительство в&nbsp;суде</dt><dd class="direction__note">по&nbsp;договорённости</dd></div>
-          </dl>
-          <div class="direction__actions">
-            <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
-            <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- administrativnye -->
-    <section class="section direction section--stone" id="administrativnye" aria-labelledby="administrativnye-title" data-direction="administrativnye">
-      <div class="container direction__inner">
-        <h2 class="direction__title" id="administrativnye-title">Адвокат по&nbsp;административным делам в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h2>
-        <div class="direction__body">
-          <div class="direction__text">
-            <p>Веду административные дела.</p>
-            <p>Работаю по&nbsp;договору; возможны онлайн-консультации и&nbsp;выезд к&nbsp;клиенту.</p>
-          </div>
-          <ul class="direction__points" aria-label="Что делаю">
-            <li>Консультирую устно и&nbsp;письменно</li>
-            <li>Изучаю материалы дела</li>
-            <li>Представляю интересы в&nbsp;суде</li>
-          </ul>
-        </div>
-        <div class="direction__offer">
-          <dl class="direction__prices">
-            <div><dt>Устная консультация</dt><dd>5&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Исковое заявление</dt><dd>от&nbsp;10&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Представительство в&nbsp;суде</dt><dd class="direction__note">по&nbsp;договорённости</dd></div>
-          </dl>
-          <div class="direction__actions">
-            <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
-            <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- voennoe-pravo -->
-    <section class="section direction section--white" id="voennoe-pravo" aria-labelledby="voennoe-pravo-title" data-direction="voennoe-pravo">
-      <div class="container direction__inner">
-        <h2 class="direction__title" id="voennoe-pravo-title">Адвокат по&nbsp;военному праву в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h2>
-        <div class="direction__body">
-          <div class="direction__text">
-            <p>Консультирую и&nbsp;веду дела по&nbsp;военному праву.</p>
-            <p>Работаю по&nbsp;договору, возможна рассрочка.</p>
-          </div>
-          <ul class="direction__points" aria-label="Что делаю">
-            <li>Консультирую устно и&nbsp;письменно</li>
-            <li>Составляю претензии и&nbsp;исковые заявления</li>
-            <li>Представляю интересы в&nbsp;суде</li>
-          </ul>
-        </div>
-        <div class="direction__offer">
-          <dl class="direction__prices">
-            <div><dt>Устная консультация</dt><dd>5&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Исковое заявление</dt><dd>от&nbsp;10&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Представительство в&nbsp;суде</dt><dd class="direction__note">по&nbsp;договорённости</dd></div>
-          </dl>
-          <div class="direction__actions">
-            <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
-            <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- zashchita-potrebiteley -->
-    <section class="section direction section--stone" id="zashchita-potrebiteley" aria-labelledby="zashchita-potrebiteley-title" data-direction="zashchita-potrebiteley">
-      <div class="container direction__inner">
-        <h2 class="direction__title" id="zashchita-potrebiteley-title">Адвокат по&nbsp;защите прав потребителей в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h2>
-        <div class="direction__body">
-          <div class="direction__text">
-            <p>Веду дела о&nbsp;защите прав потребителей.</p>
-            <p>Возможны онлайн-консультации и&nbsp;выезд к&nbsp;клиенту.</p>
-          </div>
-          <ul class="direction__points" aria-label="Что делаю">
-            <li>Проверяю и&nbsp;анализирую договоры</li>
-            <li>Составляю претензии и&nbsp;исковые заявления</li>
-            <li>Веду досудебное урегулирование</li>
-            <li>Представляю интересы в&nbsp;суде</li>
-          </ul>
-        </div>
-        <div class="direction__offer">
-          <dl class="direction__prices">
-            <div><dt>Проверка и&nbsp;анализ договора</dt><dd>от&nbsp;5&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Претензия / исковое заявление</dt><dd>от&nbsp;10&nbsp;000&nbsp;₽</dd></div>
-            <div><dt>Досудебное урегулирование</dt><dd>от&nbsp;15&nbsp;000&nbsp;₽</dd></div>
-          </dl>
-          <div class="direction__actions">
-            <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
-            <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- directions:sections:end -->
 
     <!-- ==================== Об адвокате ==================== -->
     <section class="section section--white section--anchor" id="ob-advokate" aria-labelledby="ob-advokate-title">
@@ -775,32 +686,13 @@
       </div>
     </section>
 
-    <!-- ==================== Отзывы ==================== -->
-    <section class="section section--stone section--anchor" id="otzyvy" aria-labelledby="otzyvy-title">
-      <!-- Тексты отзывов на сайт не переносятся: только ссылки на площадки
-           и официальный виджет Яндекс Карт. Виджет не шире ~760 px (дальше
-           Яндекс заливает iframe своим серым), поэтому он в широкой колонке,
-           а рядом — заголовок и кнопки площадок. Пока виджет не загрузился,
-           его блок нулевой высоты: пустого прямоугольника нет. -->
-      <div class="container reviews">
-        <div class="reviews__aside">
-          <h2 class="section__title" id="otzyvy-title">Отзывы</h2>
-          <div class="reviews__buttons">
-            <a class="btn btn--outline" href="https://yandex.ru/maps/org/advokat_strakhovetskaya_ye_r_/192041376690/reviews/" target="_blank" rel="noopener">Отзывы на&nbsp;Яндекс Картах</a>
-            <a class="btn btn--outline" href="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/#reviews_jurist" target="_blank" rel="noopener">Отзывы на&nbsp;HARANT (6)</a>
-          </div>
-        </div>
-        <div class="embed embed--reviews" data-embed="reviews"></div>
-      </div>
-    </section>
-
-    <!-- ==================== Стоимость ==================== -->
-    <section class="section section--white" id="stoimost" aria-labelledby="stoimost-title">
+    <!-- ==================== Стоимость и условия ==================== -->
+    <!-- Полный прайс — один раз на странице; в группах направлений только
+         их собственные цены. Условия — из профиля адвоката, без обещаний
+         исхода. -->
+    <section class="section section--stone" id="stoimost" aria-labelledby="stoimost-title">
       <div class="container">
-        <div class="section-head">
-          <h2 class="section__title" id="stoimost-title">Стоимость</h2>
-          <p class="section-head__lead">Работа по&nbsp;договору, рассрочка, оплата наличными и&nbsp;картой, выезд к&nbsp;клиенту, онлайн-консультации.</p>
-        </div>
+        <h2 class="section__title" id="stoimost-title">Стоимость и&nbsp;условия</h2>
 
         <!-- Список «услуга — цена» (dl), а не карточки: пары читаются построчно,
              скринридер объявляет их как термин и значение. Восемь строк
@@ -815,25 +707,99 @@
           <div class="price__row"><dt>Представительство в&nbsp;суде</dt><dd class="price__note">по договорённости</dd></div>
           <div class="price__row"><dt>Защита по&nbsp;уголовному делу</dt><dd class="price__note">фиксированная цена, обсуждается на&nbsp;консультации</dd></div>
         </dl>
-      </div>
-    </section>
 
-    <!-- ==================== Проверить адвоката ==================== -->
-    <section class="section section--stone section--short" id="proverka" aria-labelledby="proverka-title">
-      <div class="container verify">
-        <h2 class="verify__title" id="proverka-title">Проверить адвоката</h2>
-        <ul class="verify__links">
-          <li><a href="https://harant.ru/proverka-statusa-advokata/?search_reestr=78/5942" target="_blank" rel="noopener">Реестр адвокатов: рег.&nbsp;№&nbsp;78/5942</a></li>
-          <li><a href="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/#status_jurist" target="_blank" rel="noopener">Удостоверение №&nbsp;8928</a></li>
-          <li><a href="https://www.apspb.ru/" target="_blank" rel="noopener">Адвокатская палата <span class="nowrap">Санкт-Петербурга</span></a></li>
-          <li><a href="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/" target="_blank" rel="noopener">Профиль на&nbsp;HARANT</a></li>
+        <h3 class="terms__heading">Условия работы</h3>
+        <ul class="terms">
+          <li class="terms__item">
+            <p class="terms__title">Выезд в&nbsp;СИЗО и&nbsp;ИК</p>
+            <p>Возможен выезд к&nbsp;клиенту и&nbsp;командировки, работаю также в&nbsp;Москве.</p>
+          </li>
+          <li class="terms__item">
+            <p class="terms__title">Экстренно&nbsp;— круглосуточно</p>
+            <p>Ежедневно 10:00–22:00, в&nbsp;экстренных случаях&nbsp;— в&nbsp;любое время суток.</p>
+          </li>
+          <li class="terms__item">
+            <p class="terms__title">Работа по&nbsp;договору</p>
+            <p>Защита по&nbsp;уголовному делу&nbsp;— по&nbsp;фиксированной цене, её обсуждаем на&nbsp;консультации.</p>
+          </li>
+          <li class="terms__item">
+            <p class="terms__title">Оплата</p>
+            <p>Наличными и&nbsp;картой, возможны онлайн-консультации.</p>
+          </li>
         </ul>
       </div>
     </section>
 
+    <!-- ==================== Проверить адвоката и отзывы ==================== -->
+    <!-- Компактно: слева ссылки для проверки статуса, справа — площадки
+         с отзывами. Тексты отзывов на сайт не переносятся. Якорь #otzyvy
+         (пункт меню «Отзывы») стоит на правой колонке. -->
+    <section class="section section--white section--short" id="proverka" aria-labelledby="proverka-title">
+      <div class="container verify">
+        <div class="verify__col">
+          <h2 class="section__title" id="proverka-title">Проверить адвоката</h2>
+          <ul class="platforms">
+            <li>
+              <a class="platform" href="https://harant.ru/proverka-statusa-advokata/?search_reestr=78/5942" target="_blank" rel="noopener">
+                <span class="platform__name">Реестр адвокатов</span>
+                <span class="platform__meta">рег.&nbsp;№&nbsp;78/5942<span class="visually-hidden"> (откроется в&nbsp;новой вкладке)</span></span>
+              </a>
+            </li>
+            <li>
+              <a class="platform" href="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/#status_jurist" target="_blank" rel="noopener">
+                <span class="platform__name">Удостоверение №&nbsp;8928</span>
+                <span class="platform__meta">статус на&nbsp;HARANT<span class="visually-hidden"> (откроется в&nbsp;новой вкладке)</span></span>
+              </a>
+            </li>
+            <li>
+              <a class="platform" href="https://www.apspb.ru/" target="_blank" rel="noopener">
+                <span class="platform__name">Адвокатская палата</span>
+                <span class="platform__meta"><span class="nowrap">Санкт-Петербурга</span><span class="visually-hidden"> (откроется в&nbsp;новой вкладке)</span></span>
+              </a>
+            </li>
+            <li>
+              <a class="platform" href="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/" target="_blank" rel="noopener">
+                <span class="platform__name">Профиль на&nbsp;HARANT</span>
+                <span class="platform__meta">специализации и&nbsp;практика<span class="visually-hidden"> (откроется в&nbsp;новой вкладке)</span></span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="verify__col" id="otzyvy">
+          <h3 class="verify__subtitle">Отзывы</h3>
+          <ul class="platforms platforms--stack">
+            <li>
+              <a class="platform" href="https://yandex.ru/maps/org/advokat_strakhovetskaya_ye_r_/192041376690/reviews/" target="_blank" rel="noopener">
+                <span class="platform__name">Отзывы на&nbsp;Яндекс Картах</span>
+                <span class="platform__meta">карточка адвоката<span class="visually-hidden"> (откроется в&nbsp;новой вкладке)</span></span>
+              </a>
+            </li>
+            <li>
+              <a class="platform" href="https://harant.ru/lawyers/sankt-peterburg/strahoveczkaya-eva-rubinovna/#reviews_jurist" target="_blank" rel="noopener">
+                <span class="platform__name">Отзывы на&nbsp;HARANT</span>
+                <span class="platform__meta">профиль адвоката<span class="visually-hidden"> (откроется в&nbsp;новой вкладке)</span></span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <!-- ==================== Контакты ==================== -->
-    <section class="section section--white" id="kontakty" aria-labelledby="kontakty-title">
+    <!-- Тёмная секция (вторая из двух), подвал ниже — того же графита:
+         контакты и подвал читаются одним блоком. -->
+    <section class="section section--dark section--joined" id="kontakty" aria-labelledby="kontakty-title">
       <div class="container contacts">
+        <!-- Фото: assets/img/src/contacts-dark.jpg → bash build-images.sh.
+             Пропорцию в width/height вписывает скрипт. -->
+        <picture class="contacts__photo">
+          <source type="image/avif" srcset="assets/img/contacts-dark-640.avif 640w, assets/img/contacts-dark-1000.avif 1000w" sizes="(min-width: 64em) 20rem, (min-width: 40em) 40vw, 100vw">
+          <source type="image/webp" srcset="assets/img/contacts-dark-640.webp 640w, assets/img/contacts-dark-1000.webp 1000w" sizes="(min-width: 64em) 20rem, (min-width: 40em) 40vw, 100vw">
+          <img class="contacts__img" src="assets/img/contacts-dark.jpg" width="853" height="1280"
+               alt="Адвокат Страховецкая Ева Рубиновна" loading="lazy" decoding="async">
+        </picture>
+
         <div class="contacts__info">
           <h2 class="section__title" id="kontakty-title">Контакты</h2>
           <dl class="contacts__list">

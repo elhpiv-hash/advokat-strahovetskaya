@@ -24,9 +24,17 @@ const SITE = {
   vk: 'https://vk.ru/id124027365',
   // Простая метка без карточки организации: в карточке Яндекса другие
   // часы работы, чем на HARANT, — противоречие на сайте ни к чему
-  map: 'https://yandex.ru/map-widget/v1/?ll=30.320962%2C59.872331&z=16&pt=30.320962%2C59.872331%2Cpm2dgm',
-  // Официальный виджет отзывов карточки организации (id 192041376690)
-  yandexReviews: 'https://yandex.ru/maps-reviews-widget/192041376690?comments'
+  map: 'https://yandex.ru/map-widget/v1/?ll=30.320962%2C59.872331&z=16&pt=30.320962%2C59.872331%2Cpm2dgm'
+};
+
+/* Якоря прошлых версий, которых на странице больше нет: по ним ещё могут
+   приходить из рекламы и закладок. Срабатывают, только если элемента с таким
+   id нет или он скрыт (как «Образование», пока нет сканов). */
+const ANCHOR_ALIASES = {
+  krazha: 'moshennichestvo',      // кража теперь в одной строке с мошенничеством
+  otzyvy: 'proverka',             // отзывы — в разделе «Проверить адвоката»
+  usloviya: 'stoimost',           // условия работы — в «Стоимости и условиях»
+  obrazovanie: 'ob-advokate'
 };
 
 /* Яндекс.Метрика: номер счётчика строкой, например '12345678'.
@@ -37,6 +45,10 @@ const METRIKA_ID = '';
 // Отметка о согласии на cookie — в localStorage (в браузере посетителя)
 const CONSENT_KEY = 'cookie-consent';
 
+// Цели, достигнутые до согласия на cookie (например, sec_<id> при переходе
+// из рекламы — плашка ещё на экране): уходят в Метрику после «Понятно»
+const pendingGoals = [];
+
 const root = document.documentElement;
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -45,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMenu();
   initSmoothScroll();
   initHashOnLoad();
+  initCaseGoals();
   initHero();
   initEmbeds();
   initCallBar();
@@ -128,11 +141,55 @@ function initMenu() {
 
 /* ---------- Плавный переход по якорям ---------- */
 
-// Отступ под шапку задаёт CSS (scroll-margin-top у разделов), поэтому
-// scrollIntoView ставит раздел ровно под шапку — так же, как браузер
+// Элемент по якорю — с учётом старых якорей. Скрытый (hidden) не годится:
+// к нему не прокрутить.
+function findTarget(id) {
+  const visible = (el) => (el && !el.closest('[hidden]') ? el : null);
+  if (!id) return null;
+  return visible(document.getElementById(id)) || visible(document.getElementById(ANCHOR_ALIASES[id] || ''));
+}
+
+// Отступ под шапку задаёт CSS (scroll-margin-top), поэтому scrollIntoView
+// ставит раздел или строку ровно под шапку — так же, как браузер
 // при открытии ссылки с #якорем из рекламы
 function scrollToTarget(target, smooth) {
   target.scrollIntoView({ block: 'start', behavior: smooth && !reducedMotion.matches ? 'smooth' : 'instant' });
+}
+
+// «Подробнее», раскрытые скриптом (переход по якорю), а не человеком:
+// для них цель open_<id> не отправляется
+const autoOpened = new WeakSet();
+const flashTimers = new WeakMap();
+
+// Строку направления раскрываем до прокрутки: её высота должна быть
+// окончательной, иначе строка уедет из-под шапки
+function openCase(target) {
+  if (!target.classList.contains('case')) return false;
+  const details = target.querySelector('details');
+  if (details && !details.open) {
+    autoOpened.add(details);
+    details.open = true;
+  }
+  return true;
+}
+
+// Подсветка на ~2 с (анимация — в CSS) и цель Метрики sec_<id>: человек
+// пришёл в строку по якорю — из рекламы или из карточки «Направлений»
+function flashCase(target) {
+  target.classList.remove('is-flash');
+  void target.offsetWidth;   // перезапуск анимации, если строку только что подсвечивали
+  target.classList.add('is-flash');
+  clearTimeout(flashTimers.get(target));
+  flashTimers.set(target, setTimeout(() => target.classList.remove('is-flash'), 3000));
+  reachGoal('sec_' + target.id.replace(/-/g, '_'));
+}
+
+function goTo(target, smooth) {
+  const isCase = openCase(target);
+  if (target.id === 'hero') window.scrollTo({ top: 0, behavior: smooth && !reducedMotion.matches ? 'smooth' : 'instant' });
+  else scrollToTarget(target, smooth);
+  if (isCase) flashCase(target);
+  return isCase;
 }
 
 function initSmoothScroll() {
@@ -140,21 +197,27 @@ function initSmoothScroll() {
     const link = event.target.closest('a[href^="#"]');
     if (!link) return;
 
-    const id = decodeURIComponent(link.getAttribute('href').slice(1));
-    const target = id && document.getElementById(id);
+    const target = findTarget(decodeURIComponent(link.getAttribute('href').slice(1)));
     if (!target) return;
 
     event.preventDefault();
-    if (id === 'hero') window.scrollTo({ top: 0, behavior: reducedMotion.matches ? 'instant' : 'smooth' });
-    else scrollToTarget(target, true);
+    const isCase = goTo(target, true);
 
     // replaceState, а не pushState: utm-метки в адресе сохраняются,
     // а «Назад» уводит со страницы, а не прыгает по разделам
-    history.replaceState(null, '', '#' + id);
+    history.replaceState(null, '', '#' + target.id);
 
-    // Переносим фокус в раздел: следующий Tab должен идти отсюда, а не с начала
-    if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
-    target.focus({ preventScroll: true });
+    // Переносим фокус: следующий Tab должен идти отсюда, а не с начала.
+    // В строке направления — на её «Подробнее»: его можно сразу свернуть.
+    const focusable = isCase ? target.querySelector('summary') : target;
+    if (!isCase && !focusable.hasAttribute('tabindex')) focusable.setAttribute('tabindex', '-1');
+    focusable.focus({ preventScroll: true });
+  });
+
+  // Якорь сменили руками в адресной строке
+  window.addEventListener('hashchange', () => {
+    const target = findTarget(decodeURIComponent(window.location.hash.slice(1)));
+    if (target) goTo(target, false);
   });
 }
 
@@ -162,13 +225,15 @@ function initSmoothScroll() {
 /* ---------- Ссылка с #якорем из рекламы ---------- */
 
 // Браузер прокручивает к #якорю сразу, по раскладке до загрузки шрифтов.
-// Потом приходят шрифты, строки выше секции переносятся иначе, и секция
-// уезжает из-под шапки. Поэтому после загрузки шрифтов и страницы
-// ставим её на место ещё раз — если человек сам не начал прокручивать.
+// Потом приходят шрифты, строки выше переносятся иначе, и цель уезжает
+// из-под шапки. Поэтому после загрузки шрифтов и страницы ставим её на
+// место ещё раз — если человек сам не начал прокручивать. Старый якорь
+// (#krazha) браузер не находит вовсе — к нему прокручиваем только мы.
 function initHashOnLoad() {
-  const id = decodeURIComponent(window.location.hash.slice(1));
-  const target = id && document.getElementById(id);
-  if (!target || id === 'hero') return;
+  const target = findTarget(decodeURIComponent(window.location.hash.slice(1)));
+  if (!target || target.id === 'hero') return;
+
+  const isCase = openCase(target);
 
   let userMoved = false;
   const stop = () => { userMoved = true; };
@@ -181,7 +246,13 @@ function initHashOnLoad() {
   };
 
   settle();
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(settle);
+  // Подсветка — когда шрифты на месте: до этого страница может быть
+  // ещё не отрисована, и человек её не увидел бы
+  const fontsReady = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+  fontsReady.then(() => {
+    settle();
+    if (isCase) flashCase(target);
+  });
   window.addEventListener('load', settle, { once: true });
 }
 
@@ -208,15 +279,13 @@ function initHero() {
 
 /* ---------- Виджеты Яндекса: подгрузка при подходе к блоку ---------- */
 
-// Карта и отзывы — сторонние iframe, каждый тяжелее всей страницы.
-// В разметке только блок с data-embed, iframe появляется, когда блок
-// подходит к экрану: первый экран за них не платит. Пустого прямоугольника
-// нет: у карты до загрузки видны адрес и ссылка, у отзывов блок нулевой
-// высоты раскрывается только после загрузки виджета.
+// Карта — сторонний iframe тяжелее всей страницы. В разметке только блок
+// с data-embed, iframe появляется, когда блок подходит к экрану: первый
+// экран за неё не платит. Пустого прямоугольника нет: до загрузки в блоке
+// видны адрес и ссылка на Яндекс Карты.
 function initEmbeds() {
   const EMBEDS = {
-    map: { src: SITE.map, title: 'Карта: Санкт-Петербург, Московский проспект, 186' },
-    reviews: { src: SITE.yandexReviews, title: 'Отзывы об адвокате Страховецкой Е. Р. на Яндекс Картах' }
+    map: { src: SITE.map, title: 'Карта: Санкт-Петербург, Московский проспект, 186' }
   };
 
   const boxes = document.querySelectorAll('[data-embed]');
@@ -235,8 +304,7 @@ function initEmbeds() {
   };
 
   // За 600 px до появления: к тому моменту, как блок въедет в экран,
-  // виджет уже успеет отрисоваться. Следим за секцией, а не за блоком:
-  // у блока отзывов до загрузки нулевая высота.
+  // карта уже успеет отрисоваться
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
@@ -365,6 +433,14 @@ function loadMetrika() {
     accurateTrackBounce: true,
     webvisor: false
   });
+  pendingGoals.splice(0).forEach((name) => window.ym(Number(METRIKA_ID), 'reachGoal', name));
+}
+
+// Цель Метрики. Пока счётчика нет (нет согласия) — в очередь.
+function reachGoal(name) {
+  if (!METRIKA_ID) return;
+  if (typeof window.ym === 'function') window.ym(Number(METRIKA_ID), 'reachGoal', name);
+  else pendingGoals.push(name);
 }
 
 // Плашка показывается, только если Метрика настроена и согласия ещё нет
@@ -387,9 +463,9 @@ function initCookies() {
   });
 }
 
-// Цели Метрики — клики по способам связи. Клик внутри секции направления
-// отправляет ещё и цель этой секции (sec_narkotiki_228 и т. п.): так видно,
-// какой рекламный запрос приводит звонки. Срабатывают после согласия.
+// Цели Метрики — клики по способам связи. Цели строк направлений —
+// в flashCase (sec_<id>, переход по якорю) и initCaseGoals (open_<id>).
+// В Метрику уходят только после согласия на cookie.
 function initGoals() {
   const goals = [
     ['a[href^="tel:"]', 'click_phone'],
@@ -399,15 +475,23 @@ function initGoals() {
   ];
 
   document.addEventListener('click', (event) => {
-    if (!METRIKA_ID || typeof window.ym !== 'function') return;
     for (const [selector, goal] of goals) {
-      const link = event.target.closest(selector);
-      if (!link) continue;
-      window.ym(Number(METRIKA_ID), 'reachGoal', goal);
-      const section = link.closest('[data-direction]');
-      if (section) window.ym(Number(METRIKA_ID), 'reachGoal', 'sec_' + section.dataset.direction.replace(/-/g, '_'));
+      if (!event.target.closest(selector)) continue;
+      reachGoal(goal);
       return;
     }
+  });
+}
+
+// open_<id> — человек сам раскрыл «Подробнее» в строке направления.
+// Раскрытие по якорю (из рекламы) не считается: для него есть sec_<id>.
+function initCaseGoals() {
+  document.querySelectorAll('.case__details').forEach((details) => {
+    details.addEventListener('toggle', () => {
+      const auto = autoOpened.has(details);
+      autoOpened.delete(details);
+      if (details.open && !auto) reachGoal('open_' + details.closest('.case').id.replace(/-/g, '_'));
+    });
   });
 }
 

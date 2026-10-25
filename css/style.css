@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Адвокат Страховецкая Е. Р. — стили, версия 3 (светлая, под Яндекс.Директ)
+   Адвокат Страховецкая Е. Р. — стили, версия 4 (светлая, две тёмные секции)
    --------------------------------------------------------------------------
    0. Шрифты   1. Переменные   2. Сброс   3. Типографика   4. Layout
    5. Компоненты   6. Утилиты   7. Медиазапросы
@@ -86,10 +86,13 @@
   --c-gold-line: #D8C49B;
   --c-gold-text: #8A6A33;
 
-  /* Тёмно-синий — только подвал */
-  --c-dark: #121E2E;
+  /* Графит — две тёмные секции («Практика в цифрах», «Контакты» с подвалом).
+     Не тёмно-синий: та же гамма, что у текста, светлые секции не спорят с ним */
+  --c-dark: #1F2226;
   --c-on-dark: #F2F1EE;
-  --c-on-dark-soft: #A9B3C1;  /* 7,9 : 1 на #121E2E */
+  --c-on-dark-soft: #A9ADB3;  /* 7,1 : 1 на графите */
+  --c-dark-line: rgba(242, 241, 238, .14);
+  --c-dark-card: rgba(242, 241, 238, .04);
 
   --ff-serif: 'Spectral', Georgia, 'Times New Roman', serif;
   --ff-sans: 'Commissioner', 'Helvetica Neue', Arial, sans-serif;
@@ -110,7 +113,6 @@
   /* Ритм неровный: «опорные» разделы выше, «служебные» ниже */
   --pad-anchor: clamp(3.5rem, 2rem + 6vw, 7.5rem);
   --pad-base: clamp(3rem, 1.75rem + 4.5vw, 6rem);
-  --pad-support: clamp(2.75rem, 1.75rem + 3vw, 4.5rem);
   --pad-short: clamp(2.25rem, 1.5rem + 2vw, 3.25rem);
 
   --radius-btn: 4px;
@@ -258,12 +260,13 @@ a[href^="tel:"] {
   padding-block: var(--pad-anchor);
 }
 
-.section--support {
-  padding-block: var(--pad-support);
-}
-
 .section--short {
   padding-block: var(--pad-short);
+}
+
+/* «Контакты» перед подвалом: снизу меньше поля, подвал продолжает фон */
+.section--joined {
+  padding-bottom: var(--pad-short);
 }
 
 .section--white {
@@ -297,27 +300,9 @@ main [id] {
   background: var(--c-gold-line);
 }
 
-.section-head {
-  display: grid;
-  gap: 1rem;
-  margin-bottom: clamp(2rem, 1.25rem + 2.5vw, 3.25rem);
-}
-
-.section-head .section__title {
-  margin-bottom: 0;
-}
-
-.section-head__lead {
-  max-width: 48ch;
-  color: var(--c-ink-soft);
-}
-
 /* У элементов сетки min-width: auto — без нуля длинные строки
    распирают колонку шире экрана */
-.section-head > *,
-.direction__inner > *,
 .about > *,
-.reviews > *,
 .contacts > * {
   min-width: 0;
 }
@@ -348,7 +333,7 @@ main [id] {
 /* Фокус переносится в раздел скриптом после перехода по якорю —
    рамка вокруг всей секции была бы шумом */
 main:focus,
-section[tabindex="-1"]:focus {
+main [tabindex="-1"]:focus {
   outline: none;
 }
 
@@ -801,111 +786,220 @@ section[tabindex="-1"]:focus {
 }
 
 
-/* ---------- Условия работы ---------- */
+/* ---------- Карточки групп (раздел «Направления») ---------- */
 
-.terms {
+/* Три карточки, как «Направления практики» у Зубрицкого, но внутри не
+   описание, а ссылки на строки направлений: из карточки человек сразу
+   попадает в свою строку с раскрытым «Подробнее» */
+.areas {
   display: grid;
-  gap: 1.75rem 2.5rem;
+  gap: 1rem;
 }
 
-.terms__item {
-  padding-top: 1.125rem;
-  border-top: 1px solid var(--c-gold-line);
+.area {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1.25rem 1rem;
+  overflow: hidden;
+  background: var(--c-white);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
 }
 
-.terms__title {
-  font-size: var(--step-1);
-  line-height: 1.2;
+/* Отклик на наведение — золотая линия вырастает по верхнему краю,
+   карточка не «подпрыгивает» и не отбрасывает тень */
+.area::before,
+.platform::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: var(--c-gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .45s var(--ease);
 }
 
-.terms__item p {
-  margin-top: .5rem;
-  font-size: .9375rem;
-  line-height: 1.55;
-  color: var(--c-ink-soft);
+.area__title {
+  margin-bottom: .875rem;
+  font-size: var(--step-2);
 }
 
-
-/* ---------- Направления: оглавление ---------- */
-
-.toc {
-  display: grid;
-  gap: 2rem 3rem;
+.area__list {
+  margin-bottom: .75rem;
+  border-top: 1px solid var(--c-line);
 }
 
-.toc__heading {
-  margin-bottom: 0;
-}
-
-.toc__title {
-  margin-bottom: .5rem;
-  font-size: var(--step-1);
-}
-
-.toc__link {
+.area__link {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 0 1rem;
-  padding-block: .75rem;
+  gap: 0 .75rem;
+  padding-block: .625rem;
   border-bottom: 1px solid var(--c-line);
   color: var(--c-ink);
+  line-height: 1.35;
   text-decoration: none;
 }
 
-.toc__link:hover .toc__name {
+.area__link:hover .area__name {
   color: var(--c-gold-text);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: .2em;
 }
 
-.toc__law {
+.area__law {
   font-size: .875rem;
+  color: var(--c-ink-soft);
+  white-space: nowrap;
+}
+
+/* Ссылка на группу прижата к низу: карточки разной длины стоят ровно */
+.area__more {
+  align-self: flex-start;
+  margin-top: auto;
+  padding-block: .625rem;
+}
+
+
+/* ---------- Группы направлений ---------- */
+
+/* Раскладка как «Защита по уголовным делам» у Зубрицкого: слева заголовок,
+   вводный абзац и строки направлений, справа «Стоимость» группы */
+.group__inner {
+  display: grid;
+  gap: 2rem;
+}
+
+.group__inner > * {
+  min-width: 0;
+}
+
+.group__lead {
+  margin-bottom: 1.75rem;
   color: var(--c-ink-soft);
 }
 
+/* Строки выходят за колонку на 1rem с каждой стороны: подсветке строки
+   нужно поле вокруг текста, а текст остаётся на линии заголовка */
+.cases {
+  margin-inline: -1rem;
+  border-top: 1px solid var(--c-line);
+}
 
-/* ---------- Секции направлений ---------- */
+.case {
+  --flash-bg: var(--c-stone);
 
-.direction__inner {
+  padding-inline: 1rem;
+  border-bottom: 1px solid var(--c-line);
+  border-radius: var(--radius);
+}
+
+/* Переход по якорю из рекламы ставит строку под шапку с небольшим полем.
+   main — чтобы перебить общее правило main [id] выше. */
+main .case {
+  scroll-margin-top: calc(var(--header-h) + 1rem);
+}
+
+.section--stone .case {
+  --flash-bg: var(--c-white);
+}
+
+.case__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3rem;
+  padding-block: 1rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.case__head::-webkit-details-marker {
+  display: none;
+}
+
+.case__name {
+  display: flex;
+  flex-direction: column;
+  gap: .125rem;
+  min-width: 0;
+}
+
+.case__title {
+  font-family: var(--ff-serif);
+  font-weight: 500;
+  font-size: var(--step-1);
+  line-height: 1.25;
+  transition: color .15s;
+}
+
+.case__law {
+  font-size: .875rem;
+  line-height: 1.4;
+  color: var(--c-ink-soft);
+}
+
+.case__more {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  flex: none;
+  font-size: .9375rem;
+  color: var(--c-gold-text);
+}
+
+.case__head:hover .case__title {
+  color: var(--c-gold-text);
+}
+
+.case__head:hover .case__open,
+.case__head:hover .case__close {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .2em;
+}
+
+.case__close,
+.case__details[open] .case__open {
+  display: none;
+}
+
+.case__details[open] .case__close {
+  display: inline;
+}
+
+.case__icon {
+  flex: none;
+  transition: transform .2s var(--ease);
+}
+
+.case__details[open] .case__icon {
+  transform: rotate(180deg);
+}
+
+.case__body {
+  max-width: 40rem;
+  padding-bottom: 1.5rem;
+}
+
+.case__points {
   display: grid;
-  gap: 1.75rem;
-}
-
-.direction__title {
-  max-width: 28em;
-  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem);
-  line-height: 1.15;
-}
-
-.direction__title::after {
-  content: '';
-  display: block;
-  width: 3rem;
-  height: 2px;
-  margin-top: .875rem;
-  background: var(--c-gold-line);
-}
-
-.direction__text p + p {
-  margin-top: .75em;
-}
-
-.direction__points {
-  display: grid;
-  gap: .625rem;
-  margin-top: 1.5rem;
+  gap: .5rem;
+  margin-top: 1rem;
 }
 
 /* Маркер — короткая золотая черта, а не галочка */
-.direction__points li {
+.case__points li {
   position: relative;
   padding-left: 1.75rem;
 }
 
-.direction__points li::before {
+.case__points li::before {
   content: '';
   position: absolute;
   left: 0;
@@ -915,42 +1009,77 @@ section[tabindex="-1"]:focus {
   background: var(--c-gold-line);
 }
 
-/* Цена и кнопки — отдельным блоком контрастного фона: это действие,
-   а не ещё один абзац текста */
-.direction__offer {
-  align-self: start;
-  padding: 1.25rem 1rem;
-  border-top: 2px solid var(--c-gold-line);
-  border-radius: var(--radius);
-  background: var(--c-stone);
+/* «Также: убийство…» — строка без якоря и без «Подробнее» */
+.case--also {
+  padding-block: 1rem;
+  font-size: .9375rem;
+  line-height: 1.5;
+  color: var(--c-ink-soft);
 }
 
-.section--stone .direction__offer {
+/* Подсветка строки, в которую привела ссылка (реклама, карточка):
+   фон и золотая полоса слева держатся, затем плавно гаснут. Класс ставит
+   main.js; без JS то же делает :target. При reduced-motion анимации нет —
+   подсветка просто стоит, пока main.js не снимет класс. */
+.case.is-flash,
+.no-js .case:target {
+  background-color: var(--flash-bg);
+  box-shadow: inset 3px 0 0 var(--c-gold);
+  animation: case-flash 2.8s var(--ease) forwards;
+}
+
+@keyframes case-flash {
+  0%, 60% {
+    background-color: var(--flash-bg);
+    box-shadow: inset 3px 0 0 var(--c-gold);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: inset 3px 0 0 transparent;
+  }
+}
+
+/* Таблица «Стоимость» группы — блок другого фона: это действие,
+   а не ещё один абзац текста */
+.tariff {
+  padding: 1.5rem 1.25rem 1.25rem;
+  background: var(--c-stone);
+  border-top: 2px solid var(--c-gold-line);
+  border-radius: var(--radius);
+}
+
+.section--stone .tariff {
   background: var(--c-white);
 }
 
-.direction__prices {
-  display: grid;
-  gap: .75rem;
+.tariff__title {
+  font-size: var(--step-1);
+  line-height: 1.2;
 }
 
-/* flex-wrap: на узком экране длинное название («Представительство в суде»)
-   не помещается рядом с ценой — цена уходит на строку ниже, вправо */
-.direction__prices div {
+.tariff__list {
+  margin-block: .75rem 1.25rem;
+  font-variant-numeric: lining-nums;
+}
+
+/* flex-wrap: длинное название («Составление претензии / искового
+   заявления») не помещается рядом с ценой — цена уходит на строку ниже */
+.tariff__row {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: baseline;
   gap: .25rem 1rem;
-  padding-bottom: .75rem;
+  padding-block: .75rem;
   border-bottom: 1px solid var(--c-line);
+  line-height: 1.4;
 }
 
-.direction__prices dt {
+.tariff__row dt {
   min-width: 0;
 }
 
-.direction__prices dd {
+.tariff__row dd {
   flex: none;
   margin-left: auto;
   font-family: var(--ff-serif);
@@ -959,46 +1088,194 @@ section[tabindex="-1"]:focus {
   white-space: nowrap;
 }
 
-/* Словесная цена («фиксированная цена, обсуждается на консультации») —
-   строкой под названием услуги: в узкой правой колонке она рассыпалась
-   бы столбиком по слову */
-.direction__prices dd.direction__note {
+/* Словесная цена («по договорённости») — строкой под названием услуги:
+   в узкой колонке она рассыпалась бы столбиком по слову */
+.tariff__row dd.tariff__note {
   flex: 1 1 100%;
   margin-left: 0;
   font-family: var(--ff-sans);
+  font-weight: 400;
   font-size: .9375rem;
-  line-height: 1.45;
   white-space: normal;
   color: var(--c-ink-soft);
 }
 
-.direction__actions {
+.tariff__actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: .625rem;
-  margin-top: 1.25rem;
 }
 
 /* На 320 px две кнопки с обычными полями шире блока цены */
-.direction__actions .btn {
+.tariff__actions .btn {
   min-width: 0;
   padding-inline: .75rem;
 }
 
-/* Фото секции (2–3 главных направления). На телефоне — под заголовком,
-   кадр 4:5 по верху, чтобы лицо не срезалось. На десктопе — слева на всю
-   высоту секции (см. медиазапрос), без пустоты под ним. */
-.direction__photo {
-  position: relative;
+/* Фото группы — небольшой вертикальный кадр под таблицей, только на
+   десктопе, где правая колонка короче строк слева: высота секции от него
+   не растёт. На телефоне его нет (display: none — ленивая картинка
+   не скачивается). */
+.group__photo {
+  display: none;
 }
 
-.direction__photo img {
-  width: 100%;
-  max-height: 28rem;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  object-position: 50% 15%;
+
+/* ---------- Практика в цифрах (тёмная) ---------- */
+
+.practice {
+  display: grid;
+  gap: 1rem;
+}
+
+.stats {
+  display: grid;
+  gap: .75rem;
+}
+
+.stats__item {
+  display: flex;
+  align-items: baseline;
+  gap: 1.25rem;
+  padding: 1.125rem 1.25rem;
+  background: var(--c-dark-card);
+  border: 1px solid var(--c-dark-line);
   border-radius: var(--radius);
+}
+
+.stats__value {
+  flex: none;
+  min-width: 2.3em;
+  font-family: var(--ff-serif);
+  font-weight: 500;
+  font-size: clamp(2.25rem, 1.75rem + 2vw, 3.25rem);
+  line-height: 1;
+  color: var(--c-on-dark);
+  font-variant-numeric: lining-nums;
+}
+
+.stats__plus {
+  color: var(--c-gold);
+}
+
+.stats__label {
+  line-height: 1.4;
+  color: var(--c-on-dark-soft);
+}
+
+.chart {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1.25rem;
+  background: var(--c-dark-card);
+  border: 1px solid var(--c-dark-line);
+  border-radius: var(--radius);
+}
+
+.chart__title {
+  font-family: var(--ff-serif);
+  font-weight: 500;
+  font-size: var(--step-1);
+  line-height: 1.2;
+}
+
+.chart__lead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 .75rem;
+  margin-top: 1.25rem;
+  font-family: var(--ff-serif);
+  font-weight: 500;
+  font-variant-numeric: lining-nums;
+}
+
+.chart__num {
+  font-size: clamp(3.25rem, 2.25rem + 4vw, 5rem);
+  line-height: .9;
+  color: var(--c-gold);
+}
+
+.chart__of {
+  font-size: var(--step-2);
+  line-height: 1.2;
+}
+
+.chart__text {
+  margin-top: .5rem;
+  color: var(--c-on-dark-soft);
+}
+
+/* Две части одной полосы: длины — из --a и --b в разметке */
+.chart__bar {
+  display: flex;
+  gap: 3px;
+  height: .875rem;
+  margin-top: 1.75rem;
+}
+
+.chart__part {
+  border-radius: 1px;
+}
+
+.chart__part--a {
+  flex: var(--a) 1 0%;
+  background: var(--c-gold);
+}
+
+.chart__part--b {
+  flex: var(--b) 1 0%;
+  background: rgba(242, 241, 238, .24);
+}
+
+.chart__legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: .375rem 1.5rem;
+  margin-top: .875rem;
+  font-size: .9375rem;
+}
+
+.chart__key {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  color: var(--c-on-dark-soft);
+}
+
+.chart__key::before {
+  content: '';
+  flex: none;
+  width: .75rem;
+  height: .75rem;
+  border-radius: 1px;
+  background: var(--c-gold);
+}
+
+.chart__key--b::before {
+  background: rgba(242, 241, 238, .24);
+}
+
+.chart__key b {
+  font-family: var(--ff-serif);
+  font-weight: 500;
+  font-size: 1.125rem;
+  color: var(--c-on-dark);
+}
+
+.practice__source {
+  max-width: none;
+  margin-top: 1.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--c-dark-line);
+  font-size: .9375rem;
+  color: var(--c-on-dark-soft);
+}
+
+.practice__source a {
+  display: inline-block;
+  padding-block: .625rem;
 }
 
 
@@ -1151,7 +1428,7 @@ section[tabindex="-1"]:focus {
 }
 
 .lightbox::backdrop {
-  background: rgba(18, 30, 46, .85);
+  background: rgba(31, 34, 38, .88);
 }
 
 .lightbox__img {
@@ -1181,44 +1458,7 @@ section[tabindex="-1"]:focus {
 }
 
 
-/* ---------- Отзывы ---------- */
-
-/* На телефоне: заголовок, кнопки площадок, виджет */
-.reviews {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.reviews__buttons {
-  display: grid;
-  gap: .625rem;
-  justify-items: start;
-}
-
-/* Виджет Яндекса: блок нулевой высоты, пока iframe не загрузился,
-   — пустого прямоугольника на месте отзывов не бывает. Ширина ограничена:
-   шире ~760 px Яндекс заливает iframe своим серым фоном. */
-.embed--reviews {
-  position: relative;
-  height: 0;
-  max-width: 47rem;
-  overflow: hidden;
-  border-radius: var(--radius);
-}
-
-.embed--reviews.is-loaded {
-  height: 34rem;
-}
-
-/* У iframe отзывов своя полная высота с самого начала: виджет сразу
-   раскладывается как надо, а блок вокруг лишь раскрывается */
-.embed.embed--reviews iframe {
-  inset: 0 auto auto 0;
-  height: 34rem;
-}
-
-
-/* ---------- Стоимость ---------- */
+/* ---------- Стоимость и условия ---------- */
 
 .price {
   border-top: 1px solid var(--c-line);
@@ -1253,43 +1493,168 @@ section[tabindex="-1"]:focus {
   color: var(--c-ink-soft);
 }
 
-
-/* ---------- Проверить адвоката ---------- */
-
-.verify__title {
+.terms__heading {
+  margin: 2.5rem 0 1.25rem;
   font-size: var(--step-2);
 }
 
-.verify__links {
+/* Четыре условия работы (раньше — отдельный раздел над направлениями) */
+.terms {
+  display: grid;
+  gap: 1.25rem 2.5rem;
+}
+
+.terms__item {
+  padding-top: 1rem;
+  border-top: 1px solid var(--c-gold-line);
+}
+
+.terms__title {
+  font-family: var(--ff-serif);
+  font-weight: 500;
+  font-size: var(--step-1);
+  line-height: 1.2;
+}
+
+.terms__item p + p {
+  margin-top: .375rem;
+  font-size: .9375rem;
+  line-height: 1.55;
+  color: var(--c-ink-soft);
+}
+
+
+/* ---------- Проверить адвоката и отзывы ---------- */
+
+/* Слева — статус (реестр, удостоверение, палата, HARANT), справа —
+   площадки с отзывами. Карточка целиком — ссылка. */
+.verify {
+  display: grid;
+  gap: 2rem;
+}
+
+.verify > * {
+  min-width: 0;
+}
+
+/* «Отзывы» — h3 внутри раздела, но по виду наравне с заголовком
+   «Проверить адвоката»: это вторая половина раздела и пункт меню */
+.verify__subtitle {
+  font-size: clamp(var(--step-2), 1.3rem + 1.8vw, 2.625rem);
+  margin-bottom: 1.5rem;
+}
+
+.verify__subtitle::after {
+  content: '';
+  display: block;
+  width: 3rem;
+  height: 2px;
+  margin-top: .875rem;
+  background: var(--c-gold-line);
+}
+
+.platforms {
+  display: grid;
+  gap: .625rem;
+}
+
+/* Стрелка «наружу» справа: ссылка уводит на другой сайт */
+.platform {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0 2rem;
-  margin-top: .5rem;
+  flex-direction: column;
+  gap: .125rem;
+  height: 100%;
+  padding: .875rem 3rem .875rem 1.25rem;
+  overflow: hidden;
+  background: var(--c-stone);
+  border-radius: var(--radius);
+  color: var(--c-ink);
+  text-decoration: none;
 }
 
-/* Ссылки в строку — каждой даём 44 px по высоте за счёт отступов */
-.verify__links a {
-  display: inline-block;
-  padding-block: .625rem;
-  line-height: 1.5;
+.platform::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 1.125rem;
+  width: 1rem;
+  height: 1rem;
+  margin-top: -.5rem;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238A6A33' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17L17 7M8 7h9v9'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.platform__name {
+  font-family: var(--ff-serif);
+  font-weight: 500;
+  font-size: var(--step-1);
+  line-height: 1.25;
+}
+
+.platform__meta {
+  font-size: .875rem;
+  line-height: 1.4;
+  color: var(--c-ink-soft);
+}
+
+.platform:hover .platform__name {
+  color: var(--c-gold-text);
 }
 
 
-/* ---------- Контакты ---------- */
+/* ---------- Тёмные секции: «Практика в цифрах» и «Контакты» ---------- */
+
+/* Графит, не тёмно-синий: та же гамма, что у текста. Золото на нём —
+   светлая ступень: тёмная (#8A6A33) не проходит по контрасту. */
+.section--dark {
+  background: var(--c-dark);
+  color: var(--c-on-dark);
+}
+
+.section--dark .section__title::after {
+  background: var(--c-gold);
+}
+
+.section--dark a {
+  color: var(--c-gold-line);
+}
+
+.section--dark :focus-visible,
+.footer :focus-visible {
+  outline-color: var(--c-on-dark);
+}
+
+
+/* ---------- Контакты (тёмная) ---------- */
 
 .contacts {
   display: grid;
-  gap: 2.5rem;
+  gap: 2rem;
+}
+
+/* На телефоне — горизонтальный кадр по лицу; на планшете и десктопе
+   снимок тянется на высоту колонки с контактами (см. медиазапросы) */
+.contacts__photo {
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius);
+}
+
+.contacts__img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: 50% 24%;
 }
 
 .contacts__list {
   display: grid;
-  gap: 1rem;
+  gap: .875rem;
 }
 
 .contacts__row dt {
   font-size: .875rem;
-  color: var(--c-ink-soft);
+  color: var(--c-on-dark-soft);
 }
 
 /* Ссылки в контактах — отдельные цели нажатия, им нужно 44 px по высоте */
@@ -1309,6 +1674,11 @@ section[tabindex="-1"]:focus {
   line-height: 1.2;
 }
 
+.section--dark .contacts__phone {
+  color: var(--c-on-dark);
+  text-decoration-color: var(--c-gold);
+}
+
 .contacts__links {
   display: flex;
   flex-wrap: wrap;
@@ -1316,7 +1686,7 @@ section[tabindex="-1"]:focus {
 }
 
 .contacts__moscow {
-  margin-top: 1.5rem;
+  margin-top: 1.25rem;
 }
 
 /* Карта: до загрузки в блоке адрес и ссылка на Яндекс Карты,
@@ -1324,10 +1694,10 @@ section[tabindex="-1"]:focus {
 .map {
   position: relative;
   min-height: 20rem;
-  border: 1px solid var(--c-line);
-  border-radius: var(--radius);
   overflow: hidden;
-  background: var(--c-stone);
+  background: var(--c-dark-card);
+  border: 1px solid var(--c-dark-line);
+  border-radius: var(--radius);
 }
 
 .map__placeholder {
@@ -1348,7 +1718,7 @@ section[tabindex="-1"]:focus {
 }
 
 .map__metro {
-  color: var(--c-ink-soft);
+  color: var(--c-on-dark-soft);
 }
 
 .map__placeholder a {
@@ -1371,8 +1741,7 @@ section[tabindex="-1"]:focus {
   visibility: hidden;
 }
 
-/* Жёлтые дороги Яндекса спорят со сдержанной палитрой — приглушаем.
-   Виджет отзывов не трогаем: звёзды рейтинга должны остаться жёлтыми */
+/* Жёлтые дороги Яндекса спорят со сдержанной палитрой — приглушаем */
 .map iframe {
   filter: saturate(.6);
 }
@@ -1380,8 +1749,10 @@ section[tabindex="-1"]:focus {
 
 /* ---------- Подвал ---------- */
 
+/* Тот же графит, что у «Контактов»: на главной они читаются одним тёмным
+   блоком, граница — тонкая линия над реквизитами */
 .footer {
-  padding-block: 3.5rem calc(3rem + 4.5rem + env(safe-area-inset-bottom));
+  padding-bottom: calc(3rem + 4.5rem + env(safe-area-inset-bottom));
   background: var(--c-dark);
   color: var(--c-on-dark-soft);
   font-size: .9375rem;
@@ -1390,6 +1761,8 @@ section[tabindex="-1"]:focus {
 .footer__inner {
   display: grid;
   gap: .375rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--c-dark-line);
 }
 
 .footer__name {
@@ -1428,10 +1801,6 @@ section[tabindex="-1"]:focus {
 
 .footer__note {
   margin-top: .5rem;
-}
-
-.footer :focus-visible {
-  outline-color: var(--c-on-dark);
 }
 
 
@@ -1675,40 +2044,58 @@ section[tabindex="-1"]:focus {
     font-size: .9375rem;
   }
 
-  .terms {
-    grid-template-columns: 1fr 1fr;
+  .tariff {
+    padding: 1.75rem 1.5rem 1.5rem;
   }
 
-  .toc__groups,
-  .toc {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .toc__heading {
-    grid-column: 1 / -1;
-  }
-
-  .direction__offer {
-    padding: 1.5rem;
-  }
-
-  .direction__actions {
+  .tariff__actions {
     display: flex;
     flex-wrap: wrap;
   }
 
-  .direction__actions .btn {
+  .tariff__actions .btn {
     padding-inline: 1.625rem;
   }
 
-  .reviews__buttons {
-    grid-auto-flow: column;
-    justify-content: start;
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
   }
 
-  .contacts__list {
+  .stats__item {
+    flex-direction: column;
+    gap: .75rem;
+    padding: 1.5rem 1.25rem;
+  }
+
+  .chart {
+    padding: 1.75rem 1.5rem;
+  }
+
+  .terms {
     grid-template-columns: 1fr 1fr;
-    gap: 1.25rem 2rem;
+  }
+
+  .platforms {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Фото слева, контакты справа, карта — строкой ниже во всю ширину */
+  .contacts {
+    grid-template-columns: 2fr 3fr;
+    column-gap: 2.5rem;
+  }
+
+  .contacts > * {
+    min-width: 0;
+  }
+
+  .contacts .map {
+    grid-column: 1 / -1;
+  }
+
+  .contacts__img {
+    height: 100%;
+    aspect-ratio: auto;
   }
 }
 
@@ -1719,58 +2106,50 @@ section[tabindex="-1"]:focus {
     --header-h: 4.75rem;
   }
 
-  .terms {
-    grid-template-columns: repeat(4, 1fr);
+  .areas {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
   }
 
-  .toc {
-    grid-template-columns: repeat(3, 1fr);
+  /* Группа: строки слева, «Стоимость» справа и едет вместе с экраном,
+     пока человек читает строки */
+  .group__inner {
+    grid-template-columns: 7fr 5fr;
+    column-gap: 4rem;
     align-items: start;
   }
 
-  /* Секция направления: заголовок во всю ширину, ниже текст и пункты
-     слева, цена и кнопки справа — блок действия рядом с описанием */
-  .direction__inner {
-    grid-template-columns: 7fr 5fr;
-    column-gap: 4rem;
-    row-gap: 2rem;
+  .group__aside {
+    position: sticky;
+    top: calc(var(--header-h) + 1.5rem);
   }
 
-  .direction__title {
-    grid-column: 1 / -1;
+  /* Цифры столбиком слева, график справа — как «Практика» у Зубрицкого */
+  .practice {
+    grid-template-columns: 5fr 7fr;
+    gap: 1.5rem;
   }
 
-  /* С фото: снимок слева на все строки, справа заголовок, текст и цена
-     друг под другом. Картинка лежит абсолютно и не задаёт высоту строк:
-     её высоту определяет текст рядом. */
-  .direction--photo .direction__inner {
-    grid-template-columns: 4fr 8fr;
+  .stats {
+    grid-template-columns: 1fr;
   }
 
-  .direction--photo .direction__title,
-  .direction--photo .direction__body,
-  .direction--photo .direction__offer {
-    grid-column: 2;
-  }
-
-  .direction--photo .direction__photo {
-    grid-column: 1;
-    grid-row: 1 / span 3;
-    min-height: 28rem;
-  }
-
-  .direction--photo .direction__photo img {
-    position: absolute;
-    inset: 0;
-    height: 100%;
-    max-height: none;
-    aspect-ratio: auto;
-  }
-
-  .section-head {
-    grid-template-columns: 4fr 8fr;
-    column-gap: 4rem;
+  .stats__item {
+    flex-direction: row;
     align-items: baseline;
+    gap: 1.5rem;
+  }
+
+  .chart {
+    padding: 2rem 2rem 1.75rem;
+  }
+
+  .chart__bar {
+    margin-top: auto;
+  }
+
+  .chart__text {
+    margin-bottom: 1.75rem;
   }
 
   .about {
@@ -1797,22 +2176,6 @@ section[tabindex="-1"]:focus {
     max-height: none;
   }
 
-  /* Отзывы: кнопки площадок слева по центру высоты виджета */
-  .reviews {
-    grid-template-columns: 4fr 8fr;
-    column-gap: 4rem;
-    align-items: center;
-  }
-
-  .reviews__buttons {
-    grid-auto-flow: row;
-  }
-
-  .embed--reviews.is-loaded,
-  .embed.embed--reviews iframe {
-    height: 40rem;
-  }
-
   /* Прайс в две колонки по четыре строки */
   .price {
     display: grid;
@@ -1828,30 +2191,18 @@ section[tabindex="-1"]:focus {
     border-top: 1px solid var(--c-line);
   }
 
+  .terms {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Проверка — 2 × 2 слева, отзывы столбиком справа */
   .verify {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0 3rem;
+    grid-template-columns: 7fr 5fr;
+    column-gap: 4rem;
   }
 
-  .verify__links {
-    margin-top: 0;
-  }
-
-  /* Карта тянется на высоту списка контактов */
-  .contacts {
-    grid-template-columns: 5fr 7fr;
-    gap: 4rem;
-  }
-
-  .map {
-    min-height: 26rem;
-  }
-
-  .contacts__list {
+  .platforms--stack {
     grid-template-columns: 1fr;
-    gap: 1rem;
   }
 
   .footer {
@@ -1918,6 +2269,31 @@ section[tabindex="-1"]:focus {
   .hero__photo {
     height: min(40rem, 100svh - var(--header-h) - 7rem);
   }
+
+  .group__photo {
+    display: block;
+    width: 13rem;
+    margin-top: 1.5rem;
+  }
+
+  .group__photo img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 20%;
+    border-radius: var(--radius);
+  }
+
+  /* Три колонки одной высоты: фото, контакты, карта */
+  .contacts {
+    grid-template-columns: 3fr 4fr 5fr;
+    column-gap: 3rem;
+  }
+
+  .contacts .map {
+    grid-column: auto;
+    min-height: 100%;
+  }
 }
 
 /* ---------- ≥ 1280 px: меню в шапке вместо бургера ---------- */
@@ -1956,6 +2332,14 @@ section[tabindex="-1"]:focus {
 
   .nav__extra {
     display: none;
+  }
+}
+
+/* ---------- Наведение — только для настоящего курсора ---------- */
+@media (hover: hover) {
+  .area:hover::before,
+  .platform:hover::before {
+    transform: scaleX(1);
   }
 }
 

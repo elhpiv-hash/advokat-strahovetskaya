@@ -24,7 +24,7 @@ README, `*.sh`, `tools/`, исходников фото и сканов).
 | Яндекс.Вебмастер | `YANDEX_VERIFICATION` в `build.sh` — только значение `content` | `bash build.sh` |
 | Ссылка на студию в подвале | `STUDIO_URL` в `build.sh` (пусто — просто текст) | `bash build.sh` |
 | Телефон, мессенджеры, почта | объект `SITE` в `js/main.js` + запасные значения в разметке, JSON-LD и `tools/build-directions.mjs` | `bash build.sh` |
-| Секции направлений | `tools/directions.json` — тексты, пункты «что делаю», цены, порядок | `bash build.sh` |
+| Направления | `tools/directions.json` — группы, строки, тексты «Подробнее», цены групп, порядок | `bash build.sh` |
 
 Шапка, подвал и плашка cookie повторены в трёх страницах (`index.html`,
 `privacy/index.html`, `404.html`) — при правке меняйте все три.
@@ -32,23 +32,46 @@ README, `*.sh`, `tools/`, исходников фото и сканов).
 
 ## Направления и реклама
 
-У каждого направления своя секция с якорем — это адрес для объявления в Директе:
+Направления собраны в три группы — «Уголовные дела», «Семейные дела», «Другие
+дела». У каждой строки направления свой якорь — это адрес для объявления в Директе:
 
 ```
 https://example.ru/?utm_source=yandex&utm_medium=cpc&utm_campaign=…#narkotiki-228
 ```
 
-Якоря: `#narkotiki-228`, `#moshennichestvo`, `#tyazhkiy-vred`, `#grabezh-razboy`,
-`#krazha`, `#poddelka-dokumentov`, `#ugolovnye-dela`, `#razdel-imushchestva`,
-`#razvod`, `#alimenty`, `#opeka`, `#administrativnye`, `#voennoe-pravo`,
-`#zashchita-potrebiteley`. Ссылка открывает секцию ровно под шапкой; после загрузки
-шрифтов скрипт доводит её на место ещё раз (если человек сам не начал листать).
+| Группа (якорь) | Строки (якоря) |
+|---|---|
+| Уголовные дела `#ugolovnye-dela` | `#narkotiki-228` (ст. 228, 228.1), `#moshennichestvo` (мошенничество, кража, растрата, ст. 158–160), `#grabezh-razboy` (ст. 161, 162), `#tyazhkiy-vred` (ст. 111), `#poddelka-dokumentov` (ст. 327) |
+| Семейные дела `#semeynye-dela` | `#razdel-imushchestva`, `#razvod`, `#alimenty`, `#opeka` (опека, усыновление, родительские права) |
+| Другие дела `#drugie-dela` | `#administrativnye`, `#voennoe-pravo`, `#zashchita-potrebiteley` |
 
-Секции и оглавление собирает `tools/build-directions.mjs` из `tools/directions.json`
-(его запускает `build.sh`): блоки между метками `directions:*` в `index.html` руками
-не правят. Порядок секций — порядок `id` в `groups[].items`. Тексты сейчас временные
-(из профиля на HARANT и прайса) — заменить текстами клиента из `assets/content/`,
-правя только опечатки и разметку.
+Переход по якорю строки (из рекламы — и с utm-метками, из карточек «Направлений»)
+ставит строку ровно под шапку, раскрывает её «Подробнее» и подсвечивает на ~2 с;
+после загрузки шрифтов скрипт доводит строку на место ещё раз (если человек сам
+не начал листать). Без JS строку подсвечивает CSS (`:target`), «Подробнее» закрыто.
+
+Разделы: `#napravleniya`, `#praktika`, `#ob-advokate`, `#stoimost`, `#proverka`,
+`#otzyvy` (отзывы — правая колонка «Проверить адвоката»), `#kontakty`.
+
+**Старые якоря** (версия 3) ещё работают — `main.js` (`ANCHOR_ALIASES`) ведёт их на
+новое место, если элемента с таким id нет или он скрыт:
+
+| Было | Стало |
+|---|---|
+| `#krazha` | `#moshennichestvo` (кража теперь в одной строке с мошенничеством) |
+| `#ugolovnye-dela` | id группы «Уголовные дела» — алиас не нужен |
+| `#otzyvy` | блок «Отзывы» в `#proverka` (если его уберут — `#proverka`) |
+| `#usloviya` | `#stoimost` (условия работы теперь там) |
+| `#obrazovanie` | `#ob-advokate`, пока «Образование» скрыто |
+
+Карточки «Направлений» и секции групп собирает `tools/build-directions.mjs` из
+`tools/directions.json` (его запускает `build.sh`): блоки между метками
+`directions:cards:*` и `directions:groups:*` в `index.html` руками не правят.
+Структура: `groups[]` — `id`, `title`, `lead`, `pricesTitle`, `prices`, `photo`,
+`also` и `items[]` — `id`, `title`, `article`, `text`, `points[]`. Тексты строк сейчас
+временные (из профиля на HARANT и прайса) — заменить текстами клиента, правя только
+опечатки и разметку. Цены — только в таблицах групп и в общем прайсе «Стоимость
+и условия», не в строках.
 
 ## Яндекс.Метрика и cookie
 
@@ -64,13 +87,16 @@ https://example.ru/?utm_source=yandex&utm_medium=cpc&utm_campaign=…#narkotiki-
 | `click_whatsapp` | WhatsApp |
 | `click_telegram` | Telegram |
 | `click_email` | адрес почты |
-| `sec_narkotiki_228`, `sec_moshennichestvo`, `sec_tyazhkiy_vred`, `sec_grabezh_razboy`, `sec_krazha`, `sec_poddelka_dokumentov`, `sec_ugolovnye_dela`, `sec_razdel_imushchestva`, `sec_razvod`, `sec_alimenty`, `sec_opeka`, `sec_administrativnye`, `sec_voennoe_pravo`, `sec_zashchita_potrebiteley` | «Позвонить» или WhatsApp внутри секции этого направления (вместе с общей целью) |
+| `sec_narkotiki_228`, `sec_moshennichestvo`, `sec_grabezh_razboy`, `sec_tyazhkiy_vred`, `sec_poddelka_dokumentov`, `sec_razdel_imushchestva`, `sec_razvod`, `sec_alimenty`, `sec_opeka`, `sec_administrativnye`, `sec_voennoe_pravo`, `sec_zashchita_potrebiteley` | переход по якорю строки: ссылка из рекламы (в т. ч. старый `#krazha` → `sec_moshennichestvo`) или клик в карточке «Направлений» |
+| `open_narkotiki_228`, `open_moshennichestvo` … `open_zashchita_potrebiteley` (те же 12 id) | человек сам раскрыл «Подробнее» в строке; раскрытие по якорю сюда не считается |
+
+Цели, достигнутые до согласия на cookie (переход из рекламы, пока на экране плашка),
+не теряются: `main.js` держит их в очереди и отправляет после «Понятно».
 
 ## Фото
 
 Исходники — в `assets/img/src/` (в git и на сервер не попадают). Сейчас там фото
-клиента: `hero.jpg`, `about.jpg`, `extra-1…3.jpg` и `contacts-dark.jpg` (последний
-не используется: по заданию — только для тёмной секции, а её на сайте нет).
+клиента: `hero.jpg`, `about.jpg`, `extra-1…3.jpg` и `contacts-dark.jpg`.
 
 - `hero.jpg` — портрет для первого экрана, фон вырезается:
   ```bash
@@ -84,9 +110,11 @@ https://example.ru/?utm_source=yandex&utm_medium=cpc&utm_campaign=…#narkotiki-
   снимка их пересчитать. Маска rembg кешируется в `hero-mask.png` (повторный прогон —
   секунды); удалите её, если заменили `hero.jpg` тем же именем и датой.
 - `about.jpg` — «Об адвокате».
-- `extra-1.jpg` … `extra-3.jpg` — фото секций направлений: какая секция получает какое
-  фото, задаёт поле `photo` в `tools/directions.json` (сейчас наркотики, мошенничество,
-  раздел имущества).
+- `extra-1.jpg` … `extra-3.jpg` — фото групп направлений: поле `photo` группы в
+  `tools/directions.json`. Кадр стоит под таблицей «Стоимость» и виден только на
+  десктопе. Сейчас одно — `extra-3` в «Уголовных делах»: там правая колонка короче
+  строк, и высота секции от фото не растёт. В «Семейных» и «Других» места нет.
+- `contacts-dark.jpg` — фото в тёмных «Контактах».
 
 Самая крупная версия — не шире исходника (снимки клиента ~720–910 px). Пропорции
 `build-images.sh` сам вписывает в `width`/`height` у `<img>`; og-cover собирается
