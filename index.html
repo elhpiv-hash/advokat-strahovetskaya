@@ -37,10 +37,10 @@
   <link rel="preload" href="assets/fonts/commissioner-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <!-- Фото первого экрана — LCP на телефоне: браузер качает его до разбора CSS -->
   <link rel="preload" as="image" type="image/avif" fetchpriority="high"
-        imagesrcset="assets/img/hero-480.avif 480w, assets/img/hero-960.avif 960w"
-        imagesizes="(min-width: 64em) 28rem, 22rem">
+        imagesrcset="assets/img/hero-640.avif 640w, assets/img/hero-860.avif 860w"
+        imagesizes="(min-width: 64em) 50vw, 100vw">
 
-  <link rel="stylesheet" href="css/style.min.css?v=7e5d183560">
+  <link rel="stylesheet" href="css/style.min.css?v=59c704b456">
 
   <!-- Единственный встроенный скрипт (одинаковый на всех страницах): класс js
        нужен до первой отрисовки, иначе первый экран мигнёт перед анимацией.
@@ -150,33 +150,33 @@
   <main id="main" tabindex="-1">
 
     <!-- ==================== Первый экран ==================== -->
-    <!-- Класс hero--photo включает раскладку с фигурой в рост справа (на телефоне —
-         кадр до пояса над текстом). Без портрета (класс убрать) справа стоит карточка приёма
-         .hero__card — разметку см. в истории git, коммит cdeb88b. -->
-    <section class="hero hero--photo" id="hero" aria-labelledby="hero-title">
-      <div class="container hero__inner">
-        <div class="hero__content">
-          <h1 class="hero__title" id="hero-title">Адвокат по&nbsp;уголовным и&nbsp;семейным делам в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h1>
-          <p class="hero__name hero__later">Страховецкая Ева Рубиновна</p>
-          <p class="hero__reg hero__later">Адвокатская палата <span class="nowrap">Санкт-Петербурга</span>, рег.&nbsp;№&nbsp;78/5942</p>
-          <p class="hero__lead hero__later">Провожу собственные расследования, оспариваю доказательства и&nbsp;документирую каждый этап процесса. Работаю чётко и&nbsp;оперативно, готова выехать в&nbsp;любое время суток.</p>
-          <div class="hero__actions hero__later" id="hero-actions">
-            <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
-            <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
-            <a class="btn btn--outline" href="https://t.me/advokatstrahovetskaya" data-site="telegram" target="_blank" rel="noopener">Telegram</a>
-          </div>
-          <p class="hero__price hero__later">Устная консультация&nbsp;— 5&nbsp;000&nbsp;₽</p>
-        </div>
+    <!-- Фото — целиком, с родным фоном (серая стена): справа до края окна,
+         на телефоне — сверху во всю ширину. Левый край и низ растворяются
+         маской в фон первого экрана, подобранный под стену снимка. -->
+    <section class="hero" id="hero" aria-labelledby="hero-title">
+      <div class="hero__stage">
+        <!-- Исходник: assets/img/src/hero.jpg → bash build-images.sh. Ширины
+             в srcset и width/height скрипт вписывает сам. -->
+        <picture class="hero__photo">
+          <source type="image/avif" srcset="assets/img/hero-640.avif 640w, assets/img/hero-860.avif 860w" sizes="(min-width: 64em) 50vw, 100vw">
+          <source type="image/webp" srcset="assets/img/hero-640.webp 640w, assets/img/hero-860.webp 860w" sizes="(min-width: 64em) 50vw, 100vw">
+          <img class="hero__img" src="assets/img/hero.jpg" width="860" height="1280"
+               alt="Адвокат Страховецкая Ева Рубиновна" fetchpriority="high">
+        </picture>
 
-        <div class="hero__aside">
-          <!-- Фигура без фона: assets/img/src/hero-full.jpg → python tools/cutout.py →
-               bash build-images.sh. Пропорцию в width/height вписывает скрипт. -->
-          <picture class="hero__photo">
-            <source type="image/avif" srcset="assets/img/hero-480.avif 480w, assets/img/hero-960.avif 960w" sizes="(min-width: 64em) 28rem, 22rem">
-            <source type="image/webp" srcset="assets/img/hero-480.webp 480w, assets/img/hero-960.webp 960w" sizes="(min-width: 64em) 28rem, 22rem">
-            <img class="hero__img" src="assets/img/hero-640.png" width="513" height="1004"
-                 alt="Адвокат Страховецкая Ева Рубиновна" fetchpriority="high">
-          </picture>
+        <div class="container hero__inner">
+          <div class="hero__content">
+            <h1 class="hero__title" id="hero-title">Адвокат по&nbsp;уголовным и&nbsp;семейным делам в&nbsp;<span class="nowrap">Санкт-Петербурге</span></h1>
+            <p class="hero__name hero__later">Страховецкая Ева Рубиновна</p>
+            <p class="hero__reg hero__later">Адвокатская палата <span class="nowrap">Санкт-Петербурга</span>, рег.&nbsp;№&nbsp;78/5942</p>
+            <p class="hero__lead hero__later">Провожу собственные расследования, оспариваю доказательства и&nbsp;документирую каждый этап процесса. Работаю чётко и&nbsp;оперативно, готова выехать в&nbsp;любое время суток.</p>
+            <div class="hero__actions hero__later" id="hero-actions">
+              <a class="btn btn--primary" href="tel:+79112585934" data-site="phone">Позвонить</a>
+              <a class="btn btn--outline" href="https://wa.me/79112585934" data-site="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
+              <a class="btn btn--outline" href="https://t.me/advokatstrahovetskaya" data-site="telegram" target="_blank" rel="noopener">Telegram</a>
+            </div>
+            <p class="hero__price hero__later">Устная консультация&nbsp;— 5&nbsp;000&nbsp;₽</p>
+          </div>
         </div>
       </div>
 

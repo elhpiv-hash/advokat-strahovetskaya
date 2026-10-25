@@ -597,17 +597,47 @@ main [tabindex="-1"]:focus {
 
 /* ---------- Первый экран ---------- */
 
+/* Фото — целиком, с родным фоном (серая стена), а не вырезанная фигура:
+   на десктопе справа до края окна, на телефоне сверху во всю ширину.
+   Фон первого экрана — холодный светло-серый под стену снимка, остальной
+   сайт его не наследует. На телефоне фон ровный (средний тон перелива):
+   текст там во всю ширину, и справа на тёмном конце перелива вторичный
+   текст потерял бы контраст. */
 .hero {
+  --hero-soft: #4F555C;          /* 6,2 : 1 на #E7EAEB, 5,2 : 1 на #D3D7D9 */
+
   position: relative;
   padding-top: calc(var(--header-h) + env(safe-area-inset-top));
-  background: var(--c-stone);
+  background: #E7EAEB;
   isolation: isolate;
 }
 
+.hero__stage {
+  position: relative;
+}
+
+/* Телефон: фото во всю ширину экрана (выходит за поля контейнера), низ
+   растворяется, заголовок наезжает на растворённую часть */
+.hero__photo {
+  display: block;
+  height: min(44svh, 24rem);
+  margin-bottom: -3.5rem;
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+}
+
+.hero__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 18%;
+}
+
 .hero__inner {
+  position: relative;
   display: flex;
   flex-direction: column;
-  padding-block: 2rem 2.5rem;
+  padding-block: 0 2.5rem;
 }
 
 .hero__title {
@@ -626,7 +656,7 @@ main [tabindex="-1"]:focus {
 .hero__reg {
   margin-top: .25rem;
   font-size: .9375rem;
-  color: var(--c-ink-soft);
+  color: var(--hero-soft);
 }
 
 .hero__lead {
@@ -646,90 +676,19 @@ main [tabindex="-1"]:focus {
   grid-column: 1 / -1;
 }
 
+/* На сером фоне контурные кнопки терялись — подложка светлее фона */
+.hero .btn--outline {
+  background: rgba(255, 255, 255, .55);
+}
+
+.hero .btn--outline:hover {
+  background: rgba(255, 255, 255, .8);
+}
+
 .hero__price {
   margin-top: 1rem;
   font-size: .9375rem;
-  color: var(--c-ink-soft);
-}
-
-/* Карточка приёма — пока нет портрета. На телефоне она не нужна:
-   те же адрес и часы — в «Контактах», а первый экран должен уместить
-   «Позвонить». */
-.hero__aside {
-  display: none;
-}
-
-.hero__card {
-  padding: 1.75rem 1.75rem 1.5rem;
-  background: var(--c-white);
-  border-top: 2px solid var(--c-gold-line);
-  border-radius: var(--radius);
-}
-
-.hero__card-title {
-  font-family: var(--ff-serif);
-  font-weight: 500;
-  font-size: var(--step-2);
-  line-height: 1.2;
-}
-
-.hero__card-list {
-  display: grid;
-  gap: .875rem;
-  margin-top: 1.25rem;
-}
-
-.hero__card-list dt {
-  font-size: .875rem;
-  color: var(--c-ink-soft);
-}
-
-.hero__card-phone {
-  display: inline-block;
-  margin-top: 1.25rem;
-  padding-block: .375rem;
-  font-family: var(--ff-serif);
-  font-weight: 500;
-  font-size: var(--step-2);
-  line-height: 1.2;
-}
-
-/* ----- Фигура в рост без фона (когда есть: класс hero--photo) -----
-   На десктопе фигура стоит на полосе цифр во всю высоту первого экрана.
-   На телефоне в рост она вышла бы ростом с палец, а лицо — с ноготь,
-   поэтому там кадр до пояса над текстом, низ растворяется в фоне. */
-.hero--photo .hero__aside {
-  display: block;
-  order: -1;
-  margin-bottom: 1rem;
-}
-
-.hero--photo .hero__card {
-  display: none;
-}
-
-.hero--photo .hero__inner {
-  padding-top: 1rem;
-}
-
-/* Высота по экрану: на 375 × 812 после кадра, заголовка, имени, рег. №
-   и текста «Позвонить» ещё помещается целиком. Ширина — из пропорции:
-   кадр 13 : 14 при обрезке по верху показывает фигуру до пояса. */
-.hero__photo {
-  display: block;
-  height: clamp(13rem, 100svh - 35rem, 26rem);
-  max-width: 100%;
-  aspect-ratio: 13 / 14;
-  margin-inline: auto;
-  -webkit-mask-image: linear-gradient(to bottom, #000 68%, transparent 98%);
-  mask-image: linear-gradient(to bottom, #000 68%, transparent 98%);
-}
-
-.hero__img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 0;
+  color: var(--hero-soft);
 }
 
 /* Полоса из трёх цифр — под первым экраном, на белом: цифры читаются
@@ -2042,6 +2001,11 @@ main .case {
     flex-wrap: wrap;
   }
 
+  /* Планшет: экран шире — кадр выше, иначе в нём осталось бы одно лицо */
+  .hero__photo {
+    height: min(48svh, 30rem);
+  }
+
   .facts {
     padding-block: 1.5rem;
   }
@@ -2240,52 +2204,57 @@ main .case {
   }
 }
 
-/* ---------- ≥ 1024 px: первый экран в две колонки ---------- */
+/* ---------- ≥ 1024 px: текст слева, фото справа до края окна ---------- */
 @media (min-width: 64em) {
-  .hero__inner {
-    display: grid;
-    grid-template-columns: 7fr 5fr;
-    column-gap: 4rem;
+  /* Перелив под стену снимка: светлый под текстом, к фото — тон стены */
+  .hero {
+    background: linear-gradient(90deg, #F3F4F4 0%, #E7EAEB 38%, #D3D7D9 62%, #C3C8CA 100%);
+  }
+
+  /* Первый экран вместе с полосой цифр (≈ 7,375rem) — ровно экран, но не
+     выше 52rem: на высоких мониторах фото не раздувается */
+  .hero__stage {
+    display: flex;
     align-items: center;
-    min-height: min(42rem, 100svh - var(--header-h) - 7rem);
+    min-height: calc(min(100svh - 7.375rem, 52rem) - var(--header-h));
+  }
+
+  /* Левый край фото растворяется в фон, низ мягко уходит в полосу цифр.
+     Две маски пересекаются: видно только там, где непрозрачны обе. */
+  .hero__photo {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(50vw, 50rem);
+    height: auto;
+    margin: 0;
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0%, #000 38%),
+      linear-gradient(to top, transparent 0%, #000 16%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to right, transparent 0%, #000 38%),
+      linear-gradient(to top, transparent 0%, #000 16%);
+    mask-composite: intersect;
+  }
+
+  /* Кадр привязан к макушке: над головой всегда 2,5rem стены, при любой
+     пропорции окна (процент давал на 1366 × 768 всего 9 px, а 42 % из
+     задания срезал макушку на 1280 и 1920). Фото заполняет кадр по ширине
+     (cover), поэтому масштаб = ширина кадра / 860, а макушка на снимке —
+     на 190-й строке из 1280: 190 / 860 = 0,221. Другой снимок — пересчитать.
+     В кадре лицо и рука с очками, край книги — внизу, в растворении. */
+  .hero__img {
+    object-position: 50% calc(2.5rem - min(50vw, 50rem) * .221);
+  }
+
+  .hero__inner {
     padding-block: 3rem;
   }
 
-  .hero__aside {
-    display: block;
-  }
-
-  /* Фигура в рост: от шапки (с полем 1,5rem) до полосы цифр, срез кадра
-     выше колена прячется за полосой — фигура на ней стоит. Первый экран
-     вместе с полосой — ровно экран (полоса ≈ 8,25rem). */
-  .hero--photo .hero__inner {
-    min-height: clamp(30rem, 100svh - var(--header-h) - 8.25rem, 48rem);
-    padding-top: 1.5rem;
-    padding-bottom: 0;
-    align-items: end;
-  }
-
-  .hero--photo .hero__content {
-    align-self: center;
-    padding-block: 1.5rem 3rem;
-  }
-
-  .hero--photo .hero__aside {
-    order: 0;
-    margin-bottom: 0;
-  }
-
-  .hero__photo {
-    height: clamp(28.5rem, 100svh - var(--header-h) - 9.75rem, 46.5rem);
-    aspect-ratio: auto;
-    margin-inline: 0;
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-
-  .hero__img {
-    object-fit: contain;
-    object-position: 50% 100%;
+  .hero__content {
+    max-width: 36rem;
   }
 
   .group__photo {

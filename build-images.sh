@@ -4,9 +4,12 @@
 #  --------------------------------------------------------------------------
 #  Исходники — в assets/img/src/ (в git и на сервер не попадают):
 #
-#  1. hero-cutout.png — портрет БЕЗ ФОНА для первого экрана (делается из
-#     hero.jpg скриптом tools/cutout.py) → hero-480|960.avif|webp с прозрачностью
-#     и запасной hero-640.png. Пропорция — как у вырезки: снимок не обрезается.
+#  1. hero.jpg — фото первого экрана целиком, с родным фоном → hero-<ширина>
+#     .avif|webp (640, 960, 1280 — но не шире исходника) + запасной hero.jpg.
+#     Лёгкое повышение резкости (sharpen 0.5): исходник пережат мессенджером.
+#     Ширины, которые реально получились, скрипт сам вписывает в srcset
+#     и preload в index.html — пришлёт клиент снимок крупнее, просто замените
+#     файл и запустите скрипт.
 #  2. about.jpg — фото для «Об адвокате» → about-640|1000.avif|webp + about.jpg.
 #  3. extra-1.jpg … extra-3.jpg — фото для групп направлений (поле photo
 #     в tools/directions.json) → extra-N-640|1000.avif|webp + extra-N.jpg.
@@ -15,7 +18,8 @@
 #     (превью) и docs/<имя>-1600.webp (для увеличения). Номера и серии
 #     размываются по координатам из tools/docs-blur.json.
 #  5. assets/img/og-cover.jpg (1200 × 630) — превью ссылки в мессенджерах:
-#     имя, направления, телефон; есть портрет — он справа.
+#     на сером фоне первого экрана слева имя и «Адвокат, Санкт-Петербург»,
+#     справа фото первого экрана, растворённое влево.
 #  6. favicon.ico (16, 32, 48 px) и apple-touch-icon.png (180 px).
 #
 #  Пропорции фото скрипт сам вписывает в width/height у <img> в index.html
@@ -62,7 +66,7 @@ const DOCS = path.join(IMG, 'docs');
 const FONTS = 'assets/fonts';
 
 // Цвета — те же, что в css/style.css
-const C = { stone: '#F6F5F2', ink: '#22252A', soft: '#5E636B', goldLine: '#D8C49B', goldText: '#8A6A33', dark: '#1F2226', onDark: '#F2F1EE' };
+const C = { stone: '#F6F5F2', ink: '#22252A', soft: '#5E636B', heroSoft: '#4F555C', goldLine: '#D8C49B', goldText: '#8A6A33', dark: '#1F2226', onDark: '#F2F1EE' };
 
 const kb = (file) => (fs.statSync(file).size / 1024).toFixed(1).padStart(8);
 const log = (file, w, h) => console.log(`  ${path.relative(IMG, file).padEnd(24)} ${String(w).padStart(5)} x ${String(h).padEnd(5)} ${kb(file)} KB`);
@@ -77,24 +81,22 @@ function findSource(dir, name) {
 
 /* ----- Фото ----- */
 
-// alpha — набор с прозрачностью: запасной формат PNG, а не JPG
+// alpha — набор с прозрачностью: запасной формат PNG, а не JPG.
+// exact — файлы называются по реальной ширине (hero-860, если исходник
+// 860 px), и скрипт сам переписывает srcset в index.html. sharpen — sigma.
 const SETS = {
-  hero: { widths: [480, 960], alpha: true },
+  hero: { widths: [640, 960, 1280], alpha: false, exact: true, sharpen: 0.5 },
   about: { widths: [640, 1000], alpha: false },
   'extra-1': { widths: [640, 1000], alpha: false },
   'extra-2': { widths: [640, 1000], alpha: false },
   'extra-3': { widths: [640, 1000], alpha: false },
   'contacts-dark': { widths: [640, 1000], alpha: false }
 };
-// Портрет без фона лежит под отдельным именем: hero.jpg — исходник для cutout.py
-const SOURCE_NAME = { hero: 'hero-cutout' };
-
 async function buildSet(name) {
-  const { widths, alpha } = SETS[name];
-  const file = findSource(SRC, SOURCE_NAME[name] || name);
+  const { widths, alpha, exact, sharpen } = SETS[name];
+  const file = findSource(SRC, name);
   if (!file) {
-    if (name === 'hero' && findSource(SRC, 'hero')) console.log('→ hero: есть hero.jpg, но нет hero-cutout.png — сначала python tools/cutout.py');
-    else console.log(`→ ${name}: исходника нет — пропускаю`);
+    console.log(`→ ${name}: исходника нет — пропускаю`);
     return null;
   }
 
@@ -108,11 +110,23 @@ async function buildSet(name) {
   if (srcWidth < need) console.log(`  ! исходник ${srcWidth} px в ширину (нужно ${need}): крупная версия — ${srcWidth} px, без растягивания`);
 
   // Увеличивать снимок незачем: резче он не станет, а весить будет больше.
-  // Имя файла остаётся по ширине из набора (hero-960), чтобы не менять разметку.
+  // Обычно имя файла — по ширине из набора (about-1000 при исходнике 913 px),
+  // чтобы не менять разметку; у exact-наборов — по реальной ширине.
   const fit = (w) => Math.min(w, srcWidth);
-  const make = (w) => sharp(file).rotate().resize(fit(w), height(fit(w)), { fit: 'fill' });
+  const make = (w) => {
+    const img = sharp(file).rotate().resize(fit(w), height(fit(w)), { fit: 'fill' });
+    return sharpen ? img.sharpen({ sigma: sharpen }) : img;
+  };
 
-  for (const w of widths) {
+  const steps = exact ? [...new Set(widths.map(fit))] : widths;
+  if (exact) {
+    // прошлые размеры этого набора (в том числе от другого исходника) — прочь
+    for (const f of fs.readdirSync(IMG)) {
+      if (f.startsWith(`${name}-`) && /^[a-z-]+-[0-9]+[.](avif|webp|png)$/.test(f)) fs.unlinkSync(path.join(IMG, f));
+    }
+  }
+
+  for (const w of steps) {
     const avif = path.join(IMG, `${name}-${w}.avif`);
     // 4:2:0 — у AVIF по умолчанию 4:4:4: вдвое тяжелее при той же видимой разнице
     await make(w).avif({ quality: alpha ? 62 : 55, effort: 6, chromaSubsampling: '4:2:0' }).toFile(avif);
@@ -122,6 +136,7 @@ async function buildSet(name) {
     await make(w).webp({ quality: 82, alphaQuality: 90, effort: 6 }).toFile(webp);
     log(webp, fit(w), height(fit(w)));
   }
+  if (exact) patchSrcset(name, steps);
 
   if (alpha) {
     // Запасной PNG для браузеров без AVIF/WebP: палитра 256 цветов
@@ -132,11 +147,28 @@ async function buildSet(name) {
   } else {
     const jpg = path.join(IMG, `${name}.jpg`);
     // mozjpeg + прогрессивная развёртка: меньше вес, снимок проявляется целиком сразу
-    await make(1000).flatten({ background: C.stone }).jpeg({ quality: 82, mozjpeg: true, progressive: true }).toFile(jpg);
-    log(jpg, fit(1000), height(fit(1000)));
+    await make(need).flatten({ background: C.stone }).jpeg({ quality: 82, mozjpeg: true, progressive: true }).toFile(jpg);
+    log(jpg, fit(need), height(fit(need)));
   }
 
-  return { make, ratio, width: fit(need), height: height(fit(need)) };
+  return { file, make, ratio, width: fit(need), height: height(fit(need)) };
+}
+
+// srcset (и imagesrcset у preload) набора в index.html — по реально
+// собранным ширинам: дескриптор 960w у файла шириной 860 px сбивал бы выбор
+// браузера. Без обратных слэшей в шаблоне: [.] и [0-9] вместо экранирования.
+function patchSrcset(name, steps) {
+  const file = 'index.html';
+  let html = fs.readFileSync(file, 'utf8');
+  for (const ext of ['avif', 'webp']) {
+    const one = `assets/img/${name}-[0-9]+[.]${ext} [0-9]+w`;
+    const re = new RegExp(`${one}(, ${one})*`, 'g');
+    const list = steps.map((w) => `assets/img/${name}-${w}.${ext} ${w}w`).join(', ');
+    if (!re.test(html)) console.log(`  ! в index.html нет srcset ${name}-….${ext}`);
+    html = html.replace(re, list);
+  }
+  fs.writeFileSync(file, html);
+  console.log(`  index.html: srcset ${name} — ${steps.join(', ')}w`);
 }
 
 // width/height у <img> в index.html — по пропорции исходника, чтобы браузер
@@ -216,43 +248,59 @@ function textPath(fonts, str, { size, x, y, fill, tracking = 0 }) {
 
 /* ----- og-cover ----- */
 
-async function ogCover(portrait) {
+// Фон первого экрана — тот же, что у .hero в css/style.css
+const HERO_BG = [['0', '#F3F4F4'], ['0.38', '#E7EAEB'], ['0.62', '#D3D7D9'], ['1', '#C3C8CA']];
+
+async function ogCover(hero) {
   const serif = await loadFont(['spectral-cyrillic-500-normal', 'spectral-latin-500-normal']);
   const sans = await loadFont(['commissioner-cyrillic-400-normal', 'commissioner-latin-400-normal', 'commissioner-rub-400-normal']);
   const W = 1200, H = 630, x = 88;
 
   const parts = [
-    textPath(sans, 'Адвокат, рег. № 78/5942', { size: 26, x, y: 150, fill: C.soft }),
-    textPath(serif, 'Страховецкая', { size: 96, x: x - 3, y: 252, fill: C.ink, tracking: -1 }),
-    textPath(serif, 'Ева Рубиновна', { size: 54, x, y: 322, fill: C.ink }),
-    textPath(sans, 'Уголовные и семейные дела', { size: 32, x, y: 420, fill: C.ink }),
-    textPath(sans, 'Санкт-Петербург, Московский пр., 186', { size: 24, x, y: 470, fill: C.soft }),
-    textPath(serif, '+7 (911) 258-59-34', { size: 38, x, y: 548, fill: C.goldText })
+    textPath(serif, 'Страховецкая', { size: 96, x: x - 3, y: 268, fill: C.ink, tracking: -1 }),
+    textPath(serif, 'Ева Рубиновна', { size: 54, x, y: 338, fill: C.ink }),
+    textPath(sans, 'Адвокат, Санкт-Петербург', { size: 32, x, y: 442, fill: C.heroSoft })
   ];
 
+  const bg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
+  <defs><linearGradient id="g">${HERO_BG.map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join('')}</linearGradient></defs>
+  <rect width="${W}" height="${H}" fill="url(#g)"/>
+</svg>`;
   const layers = [];
-  if (portrait) {
-    // Портрет без фона стоит на нижнем крае справа, по высоте превью
-    const ph = 600, pw = Math.round(ph / portrait.ratio);
-    const photo = await portrait.make(pw).png().toBuffer();
-    layers.push({ input: photo, left: W - pw - 40, top: H - ph });
-    const widest = Math.max(...parts.map((p) => p.width));
-    if (x + widest > W - pw - 40 + pw * 0.2) console.log(`  ! текст (${Math.round(x + widest)} px) заходит на портрет`);
+
+  if (hero) {
+    // Фото справа на всю высоту, кадр по лицу (как object-position на сайте),
+    // левый край растворяется в фоне — как маска первого экрана
+    // Снимок по ширине колонки, сверху срезано 110 px исходника: над
+    // макушкой остаётся поле, а не стена во всю высоту
+    const pw = 540;
+    const scale = pw / hero.width;
+    const scaled = await sharp(hero.file).rotate().resize(pw).toBuffer({ resolveWithObject: true });
+    const top = Math.max(0, Math.min(Math.round(110 * scale), scaled.info.height - H));
+    const photo = await sharp(scaled.data).extract({ left: 0, top, width: pw, height: Math.min(H, scaled.info.height) }).toBuffer();
+    const fade = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${pw}" height="${H}">
+  <defs><linearGradient id="f"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.38" stop-color="#fff" stop-opacity="1"/></linearGradient></defs>
+  <rect width="${pw}" height="${H}" fill="url(#f)"/>
+</svg>`);
+    const masked = await sharp(photo).ensureAlpha().composite([{ input: fade, blend: 'dest-in' }]).png().toBuffer();
+    layers.push({ input: masked, left: W - pw, top: 0 });
   }
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
-  <rect x="${x}" y="350" width="72" height="2" fill="${C.goldLine}"/>
-  <rect x="0" y="${H - 6}" width="${W}" height="6" fill="${C.goldLine}"/>
+  <rect x="${x}" y="370" width="72" height="2" fill="${C.goldText}"/>
   ${parts.map((p) => p.svg).join('\n  ')}
 </svg>`;
   layers.push({ input: Buffer.from(svg), left: 0, top: 0 });
+  const widest = Math.max(...parts.map((p) => p.width));
+  if (hero && x + widest > W - 540 * 0.62) console.log(`  ! текст (${Math.round(x + widest)} px) заходит на фото`);
 
   const out = path.join(IMG, 'og-cover.jpg');
-  await sharp({ create: { width: W, height: H, channels: 3, background: C.stone } })
+  await sharp(Buffer.from(bg))
     .composite(layers)
+    .flatten({ background: '#E7EAEB' })
     .jpeg({ quality: 86, mozjpeg: true, progressive: true })
     .toFile(out);
-  console.log(`→ og-cover${portrait ? ' (с портретом)' : ' (без портрета — портрета пока нет)'}`);
+  console.log(`→ og-cover${hero ? ' (с фото первого экрана)' : ' (без фото — исходника нет)'}`);
   log(out, W, H);
 }
 
