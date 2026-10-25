@@ -694,9 +694,10 @@ main [tabindex="-1"]:focus {
   line-height: 1.2;
 }
 
-/* ----- Портрет без фона (когда есть: класс hero--photo) -----
-   На телефоне — над текстом, высота по экрану: так лицо и руки с книгой
-   видны целиком, а «Позвонить» остаётся в первом экране 375 × 812. */
+/* ----- Фигура в рост без фона (когда есть: класс hero--photo) -----
+   На десктопе фигура стоит на полосе цифр во всю высоту первого экрана.
+   На телефоне в рост она вышла бы ростом с палец, а лицо — с ноготь,
+   поэтому там кадр до пояса над текстом, низ растворяется в фоне. */
 .hero--photo .hero__aside {
   display: block;
   order: -1;
@@ -707,23 +708,28 @@ main [tabindex="-1"]:focus {
   display: none;
 }
 
-/* Высота по экрану: на 375 × 812 после портрета, заголовка, имени,
-   рег. № и текста «Позвонить» ещё помещается целиком. Портрет вписан
-   (contain), а не обрезан: лицо и руки с книгой видны при любой высоте. */
 .hero--photo .hero__inner {
   padding-top: 1rem;
 }
 
+/* Высота по экрану: на 375 × 812 после кадра, заголовка, имени, рег. №
+   и текста «Позвонить» ещё помещается целиком. Ширина — из пропорции:
+   кадр 13 : 14 при обрезке по верху показывает фигуру до пояса. */
 .hero__photo {
   display: block;
   height: clamp(13rem, 100svh - 35rem, 26rem);
+  max-width: 100%;
+  aspect-ratio: 13 / 14;
+  margin-inline: auto;
+  -webkit-mask-image: linear-gradient(to bottom, #000 68%, transparent 98%);
+  mask-image: linear-gradient(to bottom, #000 68%, transparent 98%);
 }
 
 .hero__img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: 50% 100%;
+  object-fit: cover;
+  object-position: 50% 0;
 }
 
 /* Полоса из трёх цифр — под первым экраном, на белом: цифры читаются
@@ -2249,16 +2255,19 @@ main .case {
     display: block;
   }
 
-  /* Портрет: на всю высоту колонки, низ фигуры стоит на полосе цифр */
+  /* Фигура в рост: от шапки (с полем 1,5rem) до полосы цифр, срез кадра
+     выше колена прячется за полосой — фигура на ней стоит. Первый экран
+     вместе с полосой — ровно экран (полоса ≈ 8,25rem). */
   .hero--photo .hero__inner {
-    padding-top: 3rem;
+    min-height: clamp(30rem, 100svh - var(--header-h) - 8.25rem, 48rem);
+    padding-top: 1.5rem;
     padding-bottom: 0;
     align-items: end;
   }
 
   .hero--photo .hero__content {
     align-self: center;
-    padding-bottom: 3rem;
+    padding-block: 1.5rem 3rem;
   }
 
   .hero--photo .hero__aside {
@@ -2267,7 +2276,16 @@ main .case {
   }
 
   .hero__photo {
-    height: min(40rem, 100svh - var(--header-h) - 7rem);
+    height: clamp(28.5rem, 100svh - var(--header-h) - 9.75rem, 46.5rem);
+    aspect-ratio: auto;
+    margin-inline: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .hero__img {
+    object-fit: contain;
+    object-position: 50% 100%;
   }
 
   .group__photo {

@@ -35,12 +35,12 @@
        Латиница и знак ₽ нужны позже и приходят по unicode-range сами. -->
   <link rel="preload" href="assets/fonts/spectral-cyrillic-500-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/commissioner-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <!-- Портрет — LCP на телефоне: браузер начинает качать его до разбора CSS -->
+  <!-- Фото первого экрана — LCP на телефоне: браузер качает его до разбора CSS -->
   <link rel="preload" as="image" type="image/avif" fetchpriority="high"
         imagesrcset="assets/img/hero-480.avif 480w, assets/img/hero-960.avif 960w"
-        imagesizes="(min-width: 64em) 30rem, 16rem">
+        imagesizes="(min-width: 64em) 28rem, 22rem">
 
-  <link rel="stylesheet" href="css/style.min.css?v=1c124c441d">
+  <link rel="stylesheet" href="css/style.min.css?v=7e5d183560">
 
   <!-- Единственный встроенный скрипт (одинаковый на всех страницах): класс js
        нужен до первой отрисовки, иначе первый экран мигнёт перед анимацией.
@@ -150,8 +150,8 @@
   <main id="main" tabindex="-1">
 
     <!-- ==================== Первый экран ==================== -->
-    <!-- Класс hero--photo включает раскладку с портретом справа (на телефоне —
-         над текстом). Без портрета (класс убрать) справа стоит карточка приёма
+    <!-- Класс hero--photo включает раскладку с фигурой в рост справа (на телефоне —
+         кадр до пояса над текстом). Без портрета (класс убрать) справа стоит карточка приёма
          .hero__card — разметку см. в истории git, коммит cdeb88b. -->
     <section class="hero hero--photo" id="hero" aria-labelledby="hero-title">
       <div class="container hero__inner">
@@ -169,12 +169,12 @@
         </div>
 
         <div class="hero__aside">
-          <!-- Портрет без фона: assets/img/src/hero.jpg → python tools/cutout.py →
+          <!-- Фигура без фона: assets/img/src/hero-full.jpg → python tools/cutout.py →
                bash build-images.sh. Пропорцию в width/height вписывает скрипт. -->
           <picture class="hero__photo">
-            <source type="image/avif" srcset="assets/img/hero-480.avif 480w, assets/img/hero-960.avif 960w" sizes="(min-width: 64em) 30rem, 16rem">
-            <source type="image/webp" srcset="assets/img/hero-480.webp 480w, assets/img/hero-960.webp 960w" sizes="(min-width: 64em) 30rem, 16rem">
-            <img class="hero__img" src="assets/img/hero-640.png" width="860" height="1125"
+            <source type="image/avif" srcset="assets/img/hero-480.avif 480w, assets/img/hero-960.avif 960w" sizes="(min-width: 64em) 28rem, 22rem">
+            <source type="image/webp" srcset="assets/img/hero-480.webp 480w, assets/img/hero-960.webp 960w" sizes="(min-width: 64em) 28rem, 22rem">
+            <img class="hero__img" src="assets/img/hero-640.png" width="513" height="1004"
                  alt="Адвокат Страховецкая Ева Рубиновна" fetchpriority="high">
           </picture>
         </div>
