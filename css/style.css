@@ -517,6 +517,37 @@ main [tabindex="-1"]:focus {
   transform: translateY(-7px) rotate(-45deg);
 }
 
+/* Над тёмным первым экраном шапка тёмная полупрозрачная, после него —
+   белая. Класс header--dark стоит в разметке главной (первый экран виден
+   сразу), снимает и возвращает его main.js. Открытое меню на телефоне —
+   белая панель, поэтому с ним шапка тоже белая. */
+.header {
+  transition: background-color .3s, color .3s, border-color .3s;
+}
+
+.header--dark:not(.is-menu-open) {
+  background: rgba(25, 23, 20, .92);
+  color: #F4F1EC;
+  border-bottom-color: rgba(216, 196, 155, .3);
+}
+
+.header--dark:not(.is-menu-open) .header__role,
+.header--dark:not(.is-menu-open) .header__hours {
+  color: #B9B2A7;
+}
+
+.header--dark:not(.is-menu-open) .header__icon:hover {
+  background: rgba(242, 239, 234, .1);
+}
+
+.header--dark:not(.is-menu-open) .nav__link:hover {
+  color: var(--c-gold-line);
+}
+
+.header--dark:not(.is-menu-open) :focus-visible {
+  outline-color: #F4F1EC;
+}
+
 
 /* ---------- Меню (на телефоне — панель под шапкой) ---------- */
 
@@ -597,47 +628,69 @@ main [tabindex="-1"]:focus {
 
 /* ---------- Первый экран ---------- */
 
-/* Фото — целиком, с родным фоном (серая стена), а не вырезанная фигура:
-   на десктопе справа до края окна, на телефоне сверху во всю ширину.
-   Фон первого экрана — холодный светло-серый под стену снимка, остальной
-   сайт его не наследует. На телефоне фон ровный (средний тон перелива):
-   текст там во всю ширину, и справа на тёмном конце перелива вторичный
-   текст потерял бы контраст. */
+/* Тёмный первый экран по образцу Иванцова: фото целиком, с родным фоном
+   (коричневый костюм, тёмная стена, пальма). На десктопе кадр справа
+   уходит под край окна, левая граница растворяется, по краям — глубина,
+   низ уходит в фон. На телефоне фото — фон верхней части экрана, текст
+   ложится на затемнённый низ кадра. Фон — тёплый тёмный под стену снимка,
+   с тёплым светом там, где на снимке освещена стена за головой. */
+/* На телефоне фон ровный: низ фото растворяется в середине экрана, и при
+   переливе сверху вниз там остался бы стык — фото уходило бы в цвет
+   темнее фона под ним. Перелив и тёплый свет — с 1024 px. */
 .hero {
-  --hero-soft: #4F555C;          /* 6,2 : 1 на #E7EAEB, 5,2 : 1 на #D3D7D9 */
+  --hero-bg: #1A1815;            /* фон, в него уходит низ фото */
+  --hero-soft: #B9B2A7;          /* вторичный текст: 8,1 : 1 на #1E1B18 */
 
   position: relative;
   padding-top: calc(var(--header-h) + env(safe-area-inset-top));
-  background: #E7EAEB;
+  background: var(--hero-bg);
+  color: #F4F1EC;
   isolation: isolate;
+}
+
+.hero :focus-visible {
+  outline-color: #F4F1EC;
 }
 
 .hero__stage {
   position: relative;
 }
 
-/* Телефон: фото во всю ширину экрана (выходит за поля контейнера), низ
-   растворяется, заголовок наезжает на растворённую часть */
+/* Телефон: кадр начинается под шапкой и занимает фиксированную долю
+   экрана — лицо не уезжает вниз, сколько бы строк ни было в тексте */
 .hero__photo {
-  display: block;
-  height: min(44svh, 24rem);
-  margin-bottom: -3.5rem;
-  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+  position: absolute;
+  inset: 0 0 auto;
+  height: calc(42svh + 3rem);
+  overflow: hidden;
 }
 
 .hero__img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 18%;
+  /* Кадр привязан к макушке: над головой 2rem стены. Фото заполняет
+     кадр по ширине, масштаб = ширина / 808, макушка на снимке — на 245-й
+     строке: 245 / 808 = 0,303. Другой снимок — пересчитать. */
+  object-position: 62% calc(2rem - 100vw * .303);
 }
 
+/* Лицо читается сверху, текст ложится на плотный фон снизу */
+.hero__photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(26, 24, 21, .35) 0%, rgba(26, 24, 21, 0) 18%, rgba(26, 24, 21, 0) 50%, var(--hero-bg) 100%);
+}
+
+/* Текст начинается ниже лица: отступ привязан к высоте экрана, а не к
+   длине текста. На 375 × 812 «Позвонить» ещё в первом экране. */
 .hero__inner {
   position: relative;
   display: flex;
   flex-direction: column;
-  padding-block: 0 2.5rem;
+  padding-block: calc(42svh - 2rem) 2.5rem;
 }
 
 .hero__title {
@@ -676,13 +729,13 @@ main [tabindex="-1"]:focus {
   grid-column: 1 / -1;
 }
 
-/* На сером фоне контурные кнопки терялись — подложка светлее фона */
 .hero .btn--outline {
-  background: rgba(255, 255, 255, .55);
+  color: #F4F1EC;
+  border-color: rgba(242, 239, 234, .35);
 }
 
 .hero .btn--outline:hover {
-  background: rgba(255, 255, 255, .8);
+  border-color: rgba(242, 239, 234, .75);
 }
 
 .hero__price {
@@ -736,13 +789,21 @@ main [tabindex="-1"]:focus {
     opacity: 0;
   }
 
+  /* Кадр раскрывается справа налево, как отводимая штора, — один раз,
+     без бесконечного дрейфа и «дыхания» света */
   .is-hero-ready .hero__photo {
-    animation: hero-reveal .9s ease-out both;
+    animation: hero-curtain 1.5s var(--ease) .1s both;
   }
 
   .is-hero-ready .hero__later {
     animation: hero-reveal .7s ease-out .25s both;
   }
+}
+
+@keyframes hero-curtain {
+  from { opacity: 0; clip-path: inset(0 0 0 100%); }
+  60%  { opacity: 1; }
+  to   { opacity: 1; clip-path: inset(0); }
 }
 
 @keyframes hero-reveal {
@@ -2001,11 +2062,6 @@ main .case {
     flex-wrap: wrap;
   }
 
-  /* Планшет: экран шире — кадр выше, иначе в нём осталось бы одно лицо */
-  .hero__photo {
-    height: min(48svh, 30rem);
-  }
-
   .facts {
     padding-block: 1.5rem;
   }
@@ -2206,9 +2262,14 @@ main .case {
 
 /* ---------- ≥ 1024 px: текст слева, фото справа до края окна ---------- */
 @media (min-width: 64em) {
-  /* Перелив под стену снимка: светлый под текстом, к фото — тон стены */
+  /* Тёплый свет там, где на снимке освещена стена за головой; низ фона —
+     тот цвет, в который уходит низ фото */
   .hero {
-    background: linear-gradient(90deg, #F3F4F4 0%, #E7EAEB 38%, #D3D7D9 62%, #C3C8CA 100%);
+    --hero-bg: #151311;
+
+    background:
+      radial-gradient(50rem 40rem at 78% 30%, rgba(120, 96, 64, .22), transparent 65%),
+      linear-gradient(180deg, #1E1B18, var(--hero-bg));
   }
 
   /* Первый экран вместе с полосой цифр (≈ 7,375rem) — ровно экран, но не
@@ -2219,34 +2280,28 @@ main .case {
     min-height: calc(min(100svh - 7.375rem, 52rem) - var(--header-h));
   }
 
-  /* Левый край фото растворяется в фон, низ мягко уходит в полосу цифр.
-     Две маски пересекаются: видно только там, где непрозрачны обе. */
+  /* Кадр занимает правую часть и уходит под край окна. Левая граница
+     растворяется маской — фото читается частью сцены, а не прямоугольной
+     вставкой поверх фона. */
   .hero__photo {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: min(50vw, 50rem);
+    inset: 0 0 0 auto;
+    width: clamp(20rem, 52vw, 52rem);
     height: auto;
-    margin: 0;
-    -webkit-mask-image:
-      linear-gradient(to right, transparent 0%, #000 38%),
-      linear-gradient(to top, transparent 0%, #000 16%);
-    -webkit-mask-composite: source-in;
-    mask-image:
-      linear-gradient(to right, transparent 0%, #000 38%),
-      linear-gradient(to top, transparent 0%, #000 16%);
-    mask-composite: intersect;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 32%);
+    mask-image: linear-gradient(to right, transparent 0%, #000 32%);
   }
 
-  /* Кадр привязан к макушке: над головой всегда 2,5rem стены, при любой
-     пропорции окна (процент давал на 1366 × 768 всего 9 px, а 42 % из
-     задания срезал макушку на 1280 и 1920). Фото заполняет кадр по ширине
-     (cover), поэтому масштаб = ширина кадра / 860, а макушка на снимке —
-     на 190-й строке из 1280: 190 / 860 = 0,221. Другой снимок — пересчитать.
-     В кадре лицо и рука с очками, край книги — внизу, в растворении. */
+  /* Глубина по краям и мягкий уход низа в фон */
+  .hero__photo::after {
+    background:
+      linear-gradient(to top, var(--hero-bg) 0%, rgba(21, 19, 17, 0) 20%),
+      radial-gradient(125% 95% at 52% 30%, transparent 42%, rgba(12, 10, 9, .6) 100%);
+  }
+
+  /* Над макушкой 4rem стены, в кадре — голова и корпус до рук в карманах
+     (коэффициент тот же: 245 / 808, ширина кадра — как у .hero__photo) */
   .hero__img {
-    object-position: 50% calc(2.5rem - min(50vw, 50rem) * .221);
+    object-position: 62% calc(4rem - clamp(20rem, 52vw, 52rem) * .303);
   }
 
   .hero__inner {

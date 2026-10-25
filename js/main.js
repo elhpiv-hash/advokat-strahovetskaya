@@ -55,6 +55,7 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 document.addEventListener('DOMContentLoaded', () => {
   initSiteData();
   initMenu();
+  initHeaderTone();
   initSmoothScroll();
   initHashOnLoad();
   initCaseGoals();
@@ -136,6 +137,33 @@ function initMenu() {
   desktop.addEventListener('change', (event) => {
     if (event.matches && isOpen()) setOpen(false, false);
   });
+}
+
+
+/* ---------- Шапка над тёмным первым экраном ---------- */
+
+// Пока под шапкой первый экран, она тёмная (класс header--dark стоит
+// в разметке главной), ниже — белая. Проверка при прокрутке через rAF:
+// одно getBoundingClientRect за кадр — дёшево.
+function initHeaderTone() {
+  const header = document.querySelector('.header--dark');
+  const stage = document.querySelector('.hero__stage');
+  if (!header || !stage) return;
+
+  let queued = false;
+  const update = () => {
+    queued = false;
+    header.classList.toggle('header--dark', stage.getBoundingClientRect().bottom > header.offsetHeight);
+  };
+  const queue = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(update);
+  };
+
+  window.addEventListener('scroll', queue, { passive: true });
+  window.addEventListener('resize', queue);
+  update();
 }
 
 

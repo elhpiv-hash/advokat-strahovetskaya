@@ -37,10 +37,10 @@
   <link rel="preload" href="assets/fonts/commissioner-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <!-- Фото первого экрана — LCP на телефоне: браузер качает его до разбора CSS -->
   <link rel="preload" as="image" type="image/avif" fetchpriority="high"
-        imagesrcset="assets/img/hero-640.avif 640w, assets/img/hero-860.avif 860w"
-        imagesizes="(min-width: 64em) 50vw, 100vw">
+        imagesrcset="assets/img/hero-640.avif 640w, assets/img/hero-808.avif 808w"
+        imagesizes="(min-width: 64em) 52vw, 100vw">
 
-  <link rel="stylesheet" href="css/style.min.css?v=59c704b456">
+  <link rel="stylesheet" href="css/style.min.css?v=1b28c97b94">
 
   <!-- Единственный встроенный скрипт (одинаковый на всех страницах): класс js
        нужен до первой отрисовки, иначе первый экран мигнёт перед анимацией.
@@ -48,7 +48,7 @@
        всё равно проявится. Его sha256 стоит в CSP (.htaccess) — build.sh
        пересчитывает хеш сам. -->
   <script>document.documentElement.className='js';setTimeout(function(){document.documentElement.classList.add('is-hero-ready')},2000);</script>
-  <script src="js/main.min.js?v=7f40e98f3e" defer></script>
+  <script src="js/main.min.js?v=d8c689b954" defer></script>
 
   <!-- Телефон здесь не подставляется из SITE (поисковики JS не ждут) —
        при смене номера поправить и тут. -->
@@ -104,7 +104,7 @@
   <a class="skip-link" href="#main">Перейти к содержанию</a>
 
   <!-- ==================== Шапка ==================== -->
-  <header class="header">
+  <header class="header header--dark">
     <div class="header__inner">
       <a class="header__brand" href="#hero">
         <span class="header__name">Страховецкая Ева Рубиновна</span>
@@ -158,9 +158,9 @@
         <!-- Исходник: assets/img/src/hero.jpg → bash build-images.sh. Ширины
              в srcset и width/height скрипт вписывает сам. -->
         <picture class="hero__photo">
-          <source type="image/avif" srcset="assets/img/hero-640.avif 640w, assets/img/hero-860.avif 860w" sizes="(min-width: 64em) 50vw, 100vw">
-          <source type="image/webp" srcset="assets/img/hero-640.webp 640w, assets/img/hero-860.webp 860w" sizes="(min-width: 64em) 50vw, 100vw">
-          <img class="hero__img" src="assets/img/hero.jpg" width="860" height="1280"
+          <source type="image/avif" srcset="assets/img/hero-640.avif 640w, assets/img/hero-808.avif 808w" sizes="(min-width: 64em) 52vw, 100vw">
+          <source type="image/webp" srcset="assets/img/hero-640.webp 640w, assets/img/hero-808.webp 808w" sizes="(min-width: 64em) 52vw, 100vw">
+          <img class="hero__img" src="assets/img/hero.jpg" width="808" height="1216"
                alt="Адвокат Страховецкая Ева Рубиновна" fetchpriority="high">
         </picture>
 

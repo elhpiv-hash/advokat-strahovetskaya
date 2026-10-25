@@ -4,7 +4,8 @@
 #  --------------------------------------------------------------------------
 #  Исходники — в assets/img/src/ (в git и на сервер не попадают):
 #
-#  1. hero.jpg — фото первого экрана целиком, с родным фоном → hero-<ширина>
+#  1. Фото первого экрана (какое — HERO.source ниже: сейчас extra-2.jpg, тёмное;
+#     светлый вариант — hero.jpg) целиком, с родным фоном → hero-<ширина>
 #     .avif|webp (640, 960, 1280 — но не шире исходника) + запасной hero.jpg.
 #     Лёгкое повышение резкости (sharpen 0.5): исходник пережат мессенджером.
 #     Ширины, которые реально получились, скрипт сам вписывает в srcset
@@ -66,7 +67,7 @@ const DOCS = path.join(IMG, 'docs');
 const FONTS = 'assets/fonts';
 
 // Цвета — те же, что в css/style.css
-const C = { stone: '#F6F5F2', ink: '#22252A', soft: '#5E636B', heroSoft: '#4F555C', goldLine: '#D8C49B', goldText: '#8A6A33', dark: '#1F2226', onDark: '#F2F1EE' };
+const C = { stone: '#F6F5F2', ink: '#22252A', soft: '#5E636B', goldLine: '#D8C49B', goldText: '#8A6A33', dark: '#1F2226', onDark: '#F2F1EE' };
 
 const kb = (file) => (fs.statSync(file).size / 1024).toFixed(1).padStart(8);
 const log = (file, w, h) => console.log(`  ${path.relative(IMG, file).padEnd(24)} ${String(w).padStart(5)} x ${String(h).padEnd(5)} ${kb(file)} KB`);
@@ -92,9 +93,17 @@ const SETS = {
   'extra-3': { widths: [640, 1000], alpha: false },
   'contacts-dark': { widths: [640, 1000], alpha: false }
 };
+
+// Какой снимок стоит на первом экране. Сейчас тёмный extra-2 (коричневый
+// костюм, тёмная стена); светлый вариант — 'hero' (src/hero.jpg).
+// crown — строка макушки в пикселях исходника: по ней кадр og-cover
+// оставляет поле над головой (а CSS — коэффициент crown / ширина снимка).
+const HERO = { source: 'extra-2', crown: 245 };
+const SOURCE_NAME = { hero: HERO.source };
+
 async function buildSet(name) {
   const { widths, alpha, exact, sharpen } = SETS[name];
-  const file = findSource(SRC, name);
+  const file = findSource(SRC, SOURCE_NAME[name] || name);
   if (!file) {
     console.log(`→ ${name}: исходника нет — пропускаю`);
     return null;
@@ -248,8 +257,8 @@ function textPath(fonts, str, { size, x, y, fill, tracking = 0 }) {
 
 /* ----- og-cover ----- */
 
-// Фон первого экрана — тот же, что у .hero в css/style.css
-const HERO_BG = [['0', '#F3F4F4'], ['0.38', '#E7EAEB'], ['0.62', '#D3D7D9'], ['1', '#C3C8CA']];
+// Фон и текст первого экрана — те же, что у .hero в css/style.css
+const HERO_BG = { top: '#1E1B18', bottom: '#151311', glow: 'rgb(120,96,64)', text: '#F4F1EC', soft: '#B9B2A7', gold: '#C2A062' };
 
 async function ogCover(hero) {
   const serif = await loadFont(['spectral-cyrillic-500-normal', 'spectral-latin-500-normal']);
@@ -257,47 +266,54 @@ async function ogCover(hero) {
   const W = 1200, H = 630, x = 88;
 
   const parts = [
-    textPath(serif, 'Страховецкая', { size: 96, x: x - 3, y: 268, fill: C.ink, tracking: -1 }),
-    textPath(serif, 'Ева Рубиновна', { size: 54, x, y: 338, fill: C.ink }),
-    textPath(sans, 'Адвокат, Санкт-Петербург', { size: 32, x, y: 442, fill: C.heroSoft })
+    textPath(serif, 'Страховецкая', { size: 96, x: x - 3, y: 268, fill: HERO_BG.text, tracking: -1 }),
+    textPath(serif, 'Ева Рубиновна', { size: 54, x, y: 338, fill: HERO_BG.text }),
+    textPath(sans, 'Адвокат, Санкт-Петербург', { size: 32, x, y: 442, fill: HERO_BG.soft })
   ];
 
   const bg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
-  <defs><linearGradient id="g">${HERO_BG.map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join('')}</linearGradient></defs>
+  <defs>
+    <linearGradient id="g" x2="0" y2="1"><stop offset="0" stop-color="${HERO_BG.top}"/><stop offset="1" stop-color="${HERO_BG.bottom}"/></linearGradient>
+    <radialGradient id="r" cx="0.78" cy="0.3" r="0.6"><stop offset="0" stop-color="${HERO_BG.glow}" stop-opacity="0.22"/><stop offset="0.65" stop-color="${HERO_BG.glow}" stop-opacity="0"/></radialGradient>
+  </defs>
   <rect width="${W}" height="${H}" fill="url(#g)"/>
+  <rect width="${W}" height="${H}" fill="url(#r)"/>
 </svg>`;
   const layers = [];
 
   if (hero) {
-    // Фото справа на всю высоту, кадр по лицу (как object-position на сайте),
-    // левый край растворяется в фоне — как маска первого экрана
-    // Снимок по ширине колонки, сверху срезано 110 px исходника: над
-    // макушкой остаётся поле, а не стена во всю высоту
-    const pw = 540;
+    // Фото справа на всю высоту, по ширине колонки; над макушкой — поле
+    // 50 px. Левый край растворяется в фоне (как маска первого экрана),
+    // низ уходит в фон.
+    const pw = 560;
     const scale = pw / hero.width;
     const scaled = await sharp(hero.file).rotate().resize(pw).toBuffer({ resolveWithObject: true });
-    const top = Math.max(0, Math.min(Math.round(110 * scale), scaled.info.height - H));
+    const top = Math.max(0, Math.min(Math.round(HERO.crown * scale) - 50, scaled.info.height - H));
     const photo = await sharp(scaled.data).extract({ left: 0, top, width: pw, height: Math.min(H, scaled.info.height) }).toBuffer();
     const fade = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${pw}" height="${H}">
-  <defs><linearGradient id="f"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.38" stop-color="#fff" stop-opacity="1"/></linearGradient></defs>
-  <rect width="${pw}" height="${H}" fill="url(#f)"/>
+  <defs>
+    <linearGradient id="f"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.32" stop-color="#fff" stop-opacity="1"/></linearGradient>
+    <linearGradient id="b" x2="0" y2="1"><stop offset="0.8" stop-color="#fff" stop-opacity="1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <mask id="m"><rect width="${pw}" height="${H}" fill="url(#b)"/></mask>
+  </defs>
+  <rect width="${pw}" height="${H}" fill="url(#f)" mask="url(#m)"/>
 </svg>`);
     const masked = await sharp(photo).ensureAlpha().composite([{ input: fade, blend: 'dest-in' }]).png().toBuffer();
     layers.push({ input: masked, left: W - pw, top: 0 });
   }
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
-  <rect x="${x}" y="370" width="72" height="2" fill="${C.goldText}"/>
+  <rect x="${x}" y="370" width="72" height="2" fill="${HERO_BG.gold}"/>
   ${parts.map((p) => p.svg).join('\n  ')}
 </svg>`;
   layers.push({ input: Buffer.from(svg), left: 0, top: 0 });
   const widest = Math.max(...parts.map((p) => p.width));
-  if (hero && x + widest > W - 540 * 0.62) console.log(`  ! текст (${Math.round(x + widest)} px) заходит на фото`);
+  if (hero && x + widest > W - 560 * 0.68) console.log(`  ! текст (${Math.round(x + widest)} px) заходит на фото`);
 
   const out = path.join(IMG, 'og-cover.jpg');
   await sharp(Buffer.from(bg))
     .composite(layers)
-    .flatten({ background: '#E7EAEB' })
+    .flatten({ background: HERO_BG.bottom })
     .jpeg({ quality: 86, mozjpeg: true, progressive: true })
     .toFile(out);
   console.log(`→ og-cover${hero ? ' (с фото первого экрана)' : ' (без фото — исходника нет)'}`);
