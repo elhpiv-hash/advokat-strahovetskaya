@@ -773,6 +773,13 @@ main [tabindex="-1"]:focus {
   font-variant-numeric: lining-nums;
 }
 
+/* «лет» после числа — мельче: читается число, единица его поясняет */
+.facts__unit,
+.stats__unit {
+  font-size: .5em;
+  letter-spacing: 0;
+}
+
 .facts__label {
   font-size: .875rem;
   line-height: 1.35;
@@ -1180,7 +1187,8 @@ main .case {
   font-variant-numeric: lining-nums;
 }
 
-.stats__plus {
+.stats__plus,
+.stats__unit {
   color: var(--c-gold);
 }
 
@@ -1709,7 +1717,7 @@ main .case {
   margin-top: 1.25rem;
 }
 
-/* «Позвонить» — во всю ширину колонки, WhatsApp и Telegram — парой */
+/* «Позвонить» — во всю ширину колонки, WhatsApp и MAX — парой */
 .contacts__actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1724,6 +1732,13 @@ main .case {
 .contacts__actions .btn {
   min-width: 0;
   padding-inline: .75rem;
+}
+
+/* Пока ссылки на MAX нет, его кнопки скрыты (hidden) — WhatsApp тогда
+   во всю ширину, а не половинкой с пустым местом рядом */
+.hero__actions:has(> [data-site="max"][hidden]) .btn--outline,
+.contacts__actions:has(> [data-site="max"][hidden]) .btn--outline {
+  grid-column: 1 / -1;
 }
 
 /* В тёмной секции ссылки золотые — у кнопок свои цвета, их возвращаем */
@@ -2108,8 +2123,9 @@ main .case {
     padding-inline: 1.625rem;
   }
 
+  /* Четыре цифры — два на два */
   .stats {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .stats__item {
@@ -2195,6 +2211,9 @@ main .case {
     padding: 2rem 2rem 1.75rem;
   }
 
+  /* Карточка по высоте — как четыре цифры слева. Свободное место делится
+     поровну: заголовок сверху, число посередине, полоса внизу */
+  .chart__lead,
   .chart__bar {
     margin-top: auto;
   }

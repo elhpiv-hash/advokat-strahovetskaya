@@ -23,7 +23,8 @@ README, `*.sh`, `tools/`, исходников фото и сканов).
 | Яндекс.Метрика | `METRIKA_ID` в начале `js/main.js` (пусто — Метрики и плашки cookie нет) | `bash build.sh` |
 | Яндекс.Вебмастер | `YANDEX_VERIFICATION` в `build.sh` — только значение `content` | `bash build.sh` |
 | Ссылка на студию в подвале | `STUDIO_URL` в `build.sh` (пусто — просто текст) | `bash build.sh` |
-| Телефон, мессенджеры, почта | объект `SITE` в `js/main.js` + запасные значения в разметке, JSON-LD и `tools/build-directions.mjs` | `bash build.sh` |
+| Телефон, WhatsApp, почта, ВК | объект `SITE` в `js/main.js` + запасные значения в разметке, JSON-LD и `tools/build-directions.mjs` | `bash build.sh` |
+| **MAX** | `SITE.max` в `js/main.js` — ссылка на профиль, например `'https://max.ru/u/…'`. Сейчас пусто: кнопок MAX нет нигде (ни «#», ни пустых ссылок). Впишите ссылку — `build.sh` поставит её во все кнопки MAX (первый экран, контакты, меню на телефоне на трёх страницах) и в `sameAs` JSON-LD | `bash build.sh` |
 | Направления | `tools/directions.json` — группы, строки, тексты «Подробнее», цены групп, порядок | `bash build.sh` |
 
 Шапка, подвал и плашка cookie повторены в трёх страницах (`index.html`,
@@ -85,7 +86,7 @@ https://example.ru/?utm_source=yandex&utm_medium=cpc&utm_campaign=…#narkotiki-
 |---|---|
 | `click_phone` | любая ссылка «Позвонить» / номер телефона |
 | `click_whatsapp` | WhatsApp |
-| `click_telegram` | Telegram |
+| `click_max` | MAX (пока ссылки нет, кнопок нет и цель не срабатывает) |
 | `click_email` | адрес почты |
 | `sec_narkotiki_228`, `sec_moshennichestvo`, `sec_grabezh_razboy`, `sec_tyazhkiy_vred`, `sec_poddelka_dokumentov`, `sec_razdel_imushchestva`, `sec_razvod`, `sec_alimenty`, `sec_opeka`, `sec_administrativnye`, `sec_voennoe_pravo`, `sec_zashchita_potrebiteley` | переход по якорю строки: ссылка из рекламы (в т. ч. старый `#krazha` → `sec_moshennichestvo`) или клик в карточке «Направлений» |
 | `open_narkotiki_228`, `open_moshennichestvo` … `open_zashchita_potrebiteley` (те же 12 id) | человек сам раскрыл «Подробнее» в строке; раскрытие по якорю сюда не считается |

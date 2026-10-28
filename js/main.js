@@ -19,7 +19,10 @@ const SITE = {
   phone: '+79112585934',
   phoneText: '+7 (911) 258-59-34',
   whatsapp: 'https://wa.me/79112585934',
-  telegram: 'https://t.me/advokatstrahovetskaya',
+  // Профиль в MAX: ссылку пришлёт клиент. Пока пусто, кнопок MAX нет нигде
+  // (ни «#», ни пустых ссылок). Вписали ссылку — bash build.sh перенесёт
+  // её в разметку всех страниц и в sameAs, кнопки появятся.
+  max: '',
   email: 'strahovets@yandex.ru',
   vk: 'https://vk.ru/id124027365',
   // Простая метка без карточки организации: в карточке Яндекса другие
@@ -76,7 +79,6 @@ function initSiteData() {
     phone: () => 'tel:' + SITE.phone,
     email: () => 'mailto:' + SITE.email,
     whatsapp: () => SITE.whatsapp,
-    telegram: () => SITE.telegram,
     vk: () => SITE.vk
   };
   const text = {
@@ -95,6 +97,12 @@ function initSiteData() {
     const key = el.dataset.siteText || el.dataset.site;
     if (text[key]) el.textContent = text[key]();
   });
+
+  // MAX: кнопки в разметке ставит build.sh — ссылкой, если SITE.max задан,
+  // иначе скрытым <span>. Здесь только обновляем адрес у готовых ссылок.
+  if (SITE.max) {
+    document.querySelectorAll('a[data-site="max"]').forEach((el) => el.setAttribute('href', SITE.max));
+  }
 }
 
 
@@ -498,7 +506,7 @@ function initGoals() {
   const goals = [
     ['a[href^="tel:"]', 'click_phone'],
     ['a[href*="wa.me/"]', 'click_whatsapp'],
-    ['a[href*="t.me/"]', 'click_telegram'],
+    ['a[data-site="max"]', 'click_max'],
     ['a[href^="mailto:"]', 'click_email']
   ];
 

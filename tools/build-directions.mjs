@@ -18,9 +18,9 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+// Корень проекта — от пути к самому скрипту (tools/…), а не от папки запуска
+const root = path.resolve(path.dirname(process.argv[1]), '..');
 const data = JSON.parse(fs.readFileSync(path.join(root, 'tools/directions.json'), 'utf8'));
 const indexFile = path.join(root, 'index.html');
 let html = fs.readFileSync(indexFile, 'utf8');

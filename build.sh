@@ -15,6 +15,8 @@
 #  6. lastmod в sitemap.xml — сегодняшняя дата.
 #  7. Код Яндекс.Вебмастера (YANDEX_VERIFICATION) — meta в index.html,
 #     пустой — meta нет. Ссылка на студию (STUDIO_URL) — в подвале.
+#     Ссылка на MAX (SITE.max в js/main.js) — в href всех кнопок MAX и в
+#     sameAs JSON-LD; пустая — кнопки MAX скрыты (hidden, без href).
 #  8. dist/ — только файлы для сервера, и архив $ZIP_NAME
 #     (без .git, README, *.sh, tools/, assets/img/src/, assets/content/).
 #
@@ -156,6 +158,32 @@ for (const file of pages) {
   html[file] = html[file].replace(/<!-- studio -->[\s\S]*?<!-- \/studio -->/, `<!-- studio -->${studio}<!-- /studio -->`);
 }
 
+// MAX: ссылка на профиль — SITE.max в js/main.js. Пусто — кнопок MAX нет
+// вовсе: на их месте скрытый <span hidden> (не <a> без href — такую
+// «ссылку» Lighthouse считает неиндексируемой, и никаких «#»). Есть ссылка —
+// там <a href> с target и rel, профиль добавлен в sameAs JSON-LD.
+// Без обратных слэшей в шаблонах: [.] и [/] вместо экранирования.
+const maxMatch = read('js/main.js').match(/max: '([^']*)'/);
+if (!maxMatch) fail("в js/main.js нет SITE.max (строка max: '…')");
+const maxUrl = maxMatch[1].trim();
+if (maxUrl && !/^https:[/][/][^"'<>]+$/.test(maxUrl)) fail(`SITE.max «${maxUrl}» — не похоже на ссылку https://…`);
+let maxCount = 0;
+const maxEl = (all, attrs) => {
+  maxCount++;
+  const bare = attrs.replace(/ ?(href|target|rel)="[^"]*"/g, '').replace(/ ?hidden(?= |$)/, '').trim();
+  return maxUrl
+    ? `<a href="${maxUrl}" ${bare} target="_blank" rel="noopener">MAX</a>`
+    : `<span ${bare} hidden>MAX</span>`;
+};
+for (const file of pages) {
+  html[file] = html[file].replace(/<(?:a|span) ([^>]*data-site="max"[^>]*)>MAX<[/](?:a|span)>/g, maxEl);
+}
+html['index.html'] = html['index.html'].replace(/"sameAs": [[]([^]*?)]/, (all, body) => {
+  const urls = (body.match(/"[^"]+"/g) || []).map((u) => u.slice(1, -1)).filter((u) => !u.includes('max.ru'));
+  if (maxUrl) urls.push(maxUrl);
+  return '"sameAs": [\n' + urls.map((u) => `      "${u}"`).join(',\n') + '\n    ]';
+});
+
 const today = new Date().toISOString().slice(0, 10);
 sitemap = sitemap.replace(/<lastmod>[^<]*<\/lastmod>/g, `<lastmod>${today}</lastmod>`);
 
@@ -165,6 +193,7 @@ fs.writeFileSync('sitemap.xml', sitemap);
 fs.writeFileSync('.htaccess', htaccess);
 console.log(`  CSP: sha256-${cspHash}`);
 console.log(`  Вебмастер: ${verification ? 'meta добавлена' : 'код не задан — meta нет'}; студия: ${studioUrl || 'без ссылки'}`);
+console.log(`  MAX: ${maxUrl ? maxUrl + ` — кнопок ${maxCount}` : `ссылка не задана — ${maxCount} кнопок скрыты`}`);
 NODE
 
 echo "→ dist/ и $ZIP_NAME"
