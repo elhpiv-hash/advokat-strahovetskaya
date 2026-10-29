@@ -22,7 +22,7 @@ const SITE = {
   // Профиль в MAX: ссылку пришлёт клиент. Пока пусто, кнопок MAX нет нигде
   // (ни «#», ни пустых ссылок). Вписали ссылку — bash build.sh перенесёт
   // её в разметку всех страниц и в sameAs, кнопки появятся.
-  max: '',
+  max: 'https://max.ru/u/f9LHodD0cOIVmBwCmqbL6WuMIrYl8EcYiUHVnizhA8UzZi-aLdURLhYDtkc',
   email: 'strahovets@yandex.ru',
   vk: 'https://vk.ru/id124027365',
   // Простая метка без карточки организации: в карточке Яндекса другие

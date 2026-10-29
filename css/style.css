@@ -661,7 +661,7 @@ main [tabindex="-1"]:focus {
 .hero__photo {
   position: absolute;
   inset: 0 0 auto;
-  height: calc(42svh + 3rem);
+  height: calc(34svh + 3rem);
   overflow: hidden;
 }
 
@@ -685,17 +685,29 @@ main [tabindex="-1"]:focus {
 }
 
 /* Текст начинается ниже лица: отступ привязан к высоте экрана, а не к
-   длине текста. На 375 × 812 «Позвонить» ещё в первом экране. */
+   длине текста. На телефоне — 34svh: заголовок в четыре строки и строка
+   с городами, а «Позвонить» на 375 × 812 всё ещё в первом экране.
+   С 640 px — 42svh (см. медиазапрос). */
 .hero__inner {
   position: relative;
   display: flex;
   flex-direction: column;
-  padding-block: calc(42svh - 2rem) 2.5rem;
+  padding-block: calc(34svh - 2rem) 2.5rem;
 }
 
+/* На телефоне заголовок мельче: «по уголовным делам и сложным семейным
+   спорам» иначе занимал пять строк на 360 px и отодвигал «Позвонить» */
 .hero__title {
-  font-size: clamp(2rem, 1.25rem + 3vw, var(--step-5));
-  line-height: 1.06;
+  font-size: 1.75rem;
+  line-height: 1.08;
+}
+
+/* Города — сразу под заголовком, тем же тоном, что рег. № и цена */
+.hero__geo {
+  margin-top: .625rem;
+  font-size: .9375rem;
+  line-height: 1.45;
+  color: var(--hero-soft);
 }
 
 .hero__name {
@@ -1852,6 +1864,18 @@ main .case {
   font-size: var(--step-1);
 }
 
+/* Под телефоном — мессенджеры; каждой ссылке 44 px по высоте */
+.footer__messengers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5rem;
+}
+
+.footer__messengers a {
+  display: inline-block;
+  padding-block: .625rem;
+}
+
 .footer__links {
   display: flex;
   flex-wrap: wrap;
@@ -2075,6 +2099,19 @@ main .case {
 
 /* ---------- ≥ 640 px: планшет ---------- */
 @media (min-width: 40em) {
+  .hero__title {
+    font-size: clamp(2rem, 1.25rem + 3vw, var(--step-5));
+    line-height: 1.06;
+  }
+
+  .hero__photo {
+    height: calc(42svh + 3rem);
+  }
+
+  .hero__inner {
+    padding-top: calc(42svh - 2rem);
+  }
+
   :root {
     --gutter: 2rem;
     --header-h: 4.25rem;
