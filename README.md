@@ -20,7 +20,7 @@ README, `*.sh`, `tools/`, исходников фото и сканов).
 | Что | Где | После правки |
 |---|---|---|
 | Домен | `SITE_URL` в начале `build.sh` (боевой `https://advokateva.ru`) | `bash build.sh` |
-| Яндекс.Метрика | `METRIKA_ID` в начале `js/main.js` (пусто — Метрики и плашки cookie нет) | `bash build.sh` |
+| Яндекс.Метрика | `METRIKA_ID` в начале `js/main.js` — счётчик advokateva.ru **114124193** (пусто — Метрики и плашки cookie нет) | `bash build.sh` |
 | Яндекс.Вебмастер | `YANDEX_VERIFICATION` в `build.sh` — только значение `content` | `bash build.sh` |
 | Ссылка на студию в подвале | `STUDIO_URL` в `build.sh` (пусто — просто текст) | `bash build.sh` |
 | Телефон, WhatsApp, почта, ВК | объект `SITE` в `js/main.js` + запасные значения в разметке, JSON-LD и `tools/build-directions.mjs` | `bash build.sh` |

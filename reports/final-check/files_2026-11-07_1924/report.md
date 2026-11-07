@@ -1,7 +1,7 @@
 # final-check advokateva.ru — до заливки (файлы сборки)
 
-Дата: 07.11.2026, 19:20:49. Браузер открывал dist/ под адресом https://advokateva.ru (запросы подменялись файлами).
-Итог: 73 пройдено, 1 замечаний, 0 ошибок.
+Дата: 07.11.2026, 19:24:47. Браузер открывал dist/ под адресом https://advokateva.ru (запросы подменялись файлами).
+Итог: 74 пройдено, 0 замечаний, 0 ошибок.
 
 
 ## Проверки
@@ -61,11 +61,11 @@
 | ✓ | Страница /nope-404-check/ | noindex на странице ошибки |  |
 | ✓ | Консоль | нет ошибок на страницах |  |
 | ✓ | Якоря | 12 строк и старый #krazha: под шапкой, раскрыты, подсвечены |  |
-| ! | Метрика | номер счётчика в js/main.js | плейсхолдер пуст — плашки и Метрики на сайте не будет, пока номер не вписан; логика проверена с тестовым номером |
+| ✓ | Метрика | номер счётчика в js/main.js | 114124193 |
 | ✓ | Метрика | до согласия запросов к mc.yandex.ru нет |  |
 | ✓ | Метрика | плашка cookie видна, есть ссылка на политику | Сайт использует cookie и Яндекс.Метрику для статистики. Подробнее — в Политике конфиденциа |
-| ✓ | Метрика | после кнопки загружается tag.js |  |
-| ✓ | Метрика | init без Вебвизора и карты кликов | {"clickmap":false,"trackLinks":true,"accurateTrackBounce":true,"webvisor":false} |
+| ✓ | Метрика | после кнопки загружается tag.js?id=114124193 | https://mc.yandex.ru/metrika/tag.js?id=114124193 |
+| ✓ | Метрика | init(114124193): ssr, clickmap, referrer, url, accurateTrackBounce, trackLinks; без webvisor и ecommerce | {"ssr":true,"clickmap":true,"referrer":"","url":"https://advokateva.ru/","accurateTrackBounce":true,"trackLinks":true} |
 | ✓ | Метрика | цель phone_click | #hero-actions a[href^="tel:"] |
 | ✓ | Метрика | цель whatsapp_click | #hero-actions a[href*="wa.me/"] |
 | ✓ | Метрика | цель max_click | #hero-actions a[data-site="max"] |

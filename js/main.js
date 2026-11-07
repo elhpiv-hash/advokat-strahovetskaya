@@ -40,14 +40,13 @@ const ANCHOR_ALIASES = {
   obrazovanie: 'ob-advokate'
 };
 
-/* Яндекс.Метрика: номер счётчика строкой, например '12345678'.
-   ПЛЕЙСХОЛДЕР — номер ещё не прислали: вписать сюда и запустить bash build.sh.
+/* Яндекс.Метрика: номер счётчика строкой. Счётчик advokateva.ru — 114124193.
    Пусто — Метрика не загружается совсем, и плашка о cookie не показывается
    (без Метрики сайт cookie не ставит). Счётчик грузится только после
-   кнопки в плашке, без Вебвизора и карты кликов, без <noscript>.
+   кнопки в плашке, без Вебвизора и ecommerce, без <noscript>.
    Цели (phone_click, whatsapp_click, max_click, email_click, vk_click
    и цели строк направлений) — в README. */
-const METRIKA_ID = '';
+const METRIKA_ID = '114124193';
 
 // Отметка о согласии на cookie — в localStorage (в браузере посетителя)
 const CONSENT_KEY = 'cookie-consent';
@@ -452,8 +451,8 @@ function saveConsent() {
 }
 
 // Официальный код счётчика, разобранный по шагам: очередь вызовов ym()
-// до загрузки tag.js, сам скрипт и инициализация. Вебвизор и карта кликов
-// выключены — политика конфиденциальности их не описывает.
+// до загрузки tag.js, сам скрипт и инициализация. Вебвизора нет: политика
+// конфиденциальности его не описывает.
 function loadMetrika() {
   if (!METRIKA_ID || typeof window.ym === 'function') return;
 
@@ -464,14 +463,18 @@ function loadMetrika() {
 
   const script = document.createElement('script');
   script.async = true;
-  script.src = 'https://mc.yandex.ru/metrika/tag.js';
+  script.src = 'https://mc.yandex.ru/metrika/tag.js?id=' + METRIKA_ID;
   document.head.appendChild(script);
 
+  // Параметры — как в коде счётчика из кабинета Метрики, без webvisor
+  // и ecommerce (по заданию)
   window.ym(Number(METRIKA_ID), 'init', {
-    clickmap: false,
-    trackLinks: true,
+    ssr: true,
+    clickmap: true,
+    referrer: document.referrer,
+    url: location.href,
     accurateTrackBounce: true,
-    webvisor: false
+    trackLinks: true
   });
   pendingGoals.splice(0).forEach((name) => window.ym(Number(METRIKA_ID), 'reachGoal', name));
 }

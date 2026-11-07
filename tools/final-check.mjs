@@ -282,9 +282,15 @@ async function newContext({ testMetrika = false, viewport = { width: 1440, heigh
   await page.screenshot({ path: join(OUT, 'shots', 'cookie-1440.png') });
   await page.click('[data-cookie-accept]');
   await page.waitForTimeout(500);
-  check(G, 'после кнопки загружается tag.js', log.metrika.some((u) => u.endsWith('/metrika/tag.js')));
+  const id = SRC_METRIKA || TEST_ID;
+  check(G, `после кнопки загружается tag.js?id=${id}`, log.metrika.some((u) => u.includes('/metrika/tag.js?id=' + id)), log.metrika.filter((u) => u.includes('tag.js')).join(', '));
   const init = await page.evaluate(() => (window.ym && window.ym.a ? [...window.ym.a].find((a) => a[1] === 'init') : null));
-  check(G, 'init без Вебвизора и карты кликов', !!init && init[2] && init[2].webvisor === false && init[2].clickmap === false, init ? JSON.stringify(init[2]) : 'нет init');
+  const o = init && init[2] ? init[2] : {};
+  // Параметры — как в коде счётчика из кабинета, строго без webvisor и ecommerce
+  check(G, `init(${init ? init[0] : '—'}): ssr, clickmap, referrer, url, accurateTrackBounce, trackLinks; без webvisor и ecommerce`,
+    !!init && String(init[0]) === id && o.ssr === true && o.clickmap === true && 'referrer' in o && typeof o.url === 'string' && o.url.startsWith(PROD)
+      && o.accurateTrackBounce === true && o.trackLinks === true && !('webvisor' in o) && !('ecommerce' in o),
+    JSON.stringify(o));
   await page.evaluate(() => document.addEventListener('click', (e) => { if (e.target.closest('a[href^="tel:"], a[href^="mailto:"], a[target="_blank"]')) e.preventDefault(); }, true));
   for (const [goal, sel] of GOALS) {
     await page.$eval(sel, (a) => a.click());

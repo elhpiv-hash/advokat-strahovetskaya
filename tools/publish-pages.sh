@@ -11,7 +11,10 @@
 #  • noindex на всех страницах и «Disallow: /» в robots.txt — копия не попадёт
 #    в поиск и не будет конкурировать с боевым сайтом;
 #  • 404.html — пути с префиксом /advokat-strahovetskaya/ (сайт в подпапке);
-#  • .htaccess убран (на Pages не действует), добавлен .nojekyll.
+#  • .htaccess убран (на Pages не действует), добавлен .nojekyll;
+#  • Метрики нет: js/main.min.js собран из исходника с пустым METRIKA_ID —
+#    без плашки cookie и без счётчика, просмотры демо не попадают
+#    в статистику боевого сайта.
 #
 #  Запуск:   bash tools/publish-pages.sh
 #  Ветка gh-pages целиком генерируется этим скриптом: каждый запуск — новый
@@ -33,6 +36,20 @@ trap 'rm -rf "$TMP"' EXIT
 cp -R dist/. "$TMP/"
 rm -f "$TMP/.htaccess"
 touch "$TMP/.nojekyll"
+
+# Демо без Метрики: тот же скрипт, но с пустым номером счётчика. terser
+# с теми же настройками, что в build.sh, вырезает код Метрики целиком.
+node -e "
+const fs = require('fs');
+const src = fs.readFileSync('js/main.js', 'utf8');
+const out = src.replace(/const METRIKA_ID = '[0-9]*';/, \"const METRIKA_ID = '';\");
+if (out === src && !/const METRIKA_ID = '';/.test(src)) { console.error('Ошибка: в js/main.js не найден METRIKA_ID'); process.exit(1); }
+fs.writeFileSync(process.argv[1], out);
+" "$TMP/main.demo.js"
+npx --yes --package=terser@5 terser "$TMP/main.demo.js" --compress passes=2 --mangle --comments false --output "$TMP/js/main.min.js"
+rm -f "$TMP/main.demo.js"
+grep -q 'mc.yandex' "$TMP/js/main.min.js" && { echo "Ошибка: в демо остался код Метрики" >&2; exit 1; }
+echo "→ демо: Метрика выключена"
 
 node - "$TMP" "$PAGES_URL" <<'NODE'
 const fs = require('fs');
