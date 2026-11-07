@@ -41,7 +41,8 @@ for (const group of data.groups) {
   for (const item of group.items) {
     ids.push(item.id);
     if (!item.title || !item.text || !item.points) fail(`у строки «${item.id}» нет title, text или points`);
-    if (item.points.length < 3 || item.points.length > 4) console.warn(`  ! у «${item.id}» ${item.points.length} пунктов «что делаю» — по заданию 3–4`);
+    // 8 пунктов — у «Наркотиков» по тексту клиента (круг 3); больше — уже стена текста
+    if (item.points.length < 3 || item.points.length > 8) console.warn(`  ! у «${item.id}» ${item.points.length} пунктов «что делаю» — обычно 3–8`);
   }
 }
 for (const id of ids) {
@@ -66,8 +67,9 @@ function typo(text) {
   return s
     .replace(/ — /g, '&nbsp;— ')                 // тире не начинает строку
     .replace(/ст\. (\d)/g, 'ст.&nbsp;$1')        // «ст. 228» не разрывается
-    .replace(/(\d) УК РФ/g, '$1&nbsp;УК РФ')     // номер статьи не отрывается от «УК РФ»
-    .replace(/УК РФ/g, 'УК&nbsp;РФ')
+    .replace(/ч\. (\d)/g, 'ч.&nbsp;$1')          // «ч. 5»
+    .replace(/(\d) (УП?К) РФ/g, '$1&nbsp;$2 РФ') // номер статьи не отрывается от «УК РФ», «УПК РФ»
+    .replace(/(УП?К) РФ/g, '$1&nbsp;РФ')
     .replace(/(\d) (\d{3})/g, '$1&nbsp;$2')       // «10 000»
     .replace(/ ₽/g, '&nbsp;₽')
     .replace(/ \/ /g, '&nbsp;/ ')
@@ -123,7 +125,9 @@ const groups = data.groups.map((group, index) => {
 
   const rows = group.items.map((item) => {
     const law = item.article ? `\n                  <span class="case__law">${typo(item.article)}</span>` : '';
-    const text = item.text.map(typo).join(' ');
+    // text — предложения одного абзаца или список абзацев: [[…], […]]
+    const paras = Array.isArray(item.text[0]) ? item.text : [item.text];
+    const text = paras.map((p) => `                <p>${p.map(typo).join(' ')}</p>`).join('\n');
     const points = item.points.map((p) => `                  <li>${typo(p)}</li>`).join('\n');
     return `          <li class="case" id="${item.id}">
             <details class="case__details">
@@ -134,7 +138,7 @@ const groups = data.groups.map((group, index) => {
                 <span class="case__more"><span class="case__open">Подробнее</span><span class="case__close">Свернуть</span>${CHEVRON}</span>
               </summary>
               <div class="case__body">
-                <p>${text}</p>
+${text}
                 <ul class="case__points" aria-label="Что делаю">
 ${points}
                 </ul>
@@ -146,7 +150,9 @@ ${points}
   const also = group.also ? `\n          <li class="case case--also">${typo(group.also)}</li>` : '';
 
   const prices = group.prices.map(([name, value]) => {
-    const note = /\d/.test(value) ? '' : ' class="tariff__note"';
+    // Словесная цена в несколько слов («по договорённости») — строкой ниже;
+    // одно слово («бесплатно») стоит справа, как цифра
+    const note = /\d/.test(value) || !/\s/.test(value) ? '' : ' class="tariff__note"';
     return `            <div class="tariff__row"><dt>${typo(name)}</dt><dd${note}>${typo(value)}</dd></div>`;
   }).join('\n');
 

@@ -42,7 +42,7 @@ https://advokateva.ru/?utm_source=yandex&utm_medium=cpc&utm_campaign=…#narkoti
 
 | Группа (якорь) | Строки (якоря) |
 |---|---|
-| Уголовные дела `#ugolovnye-dela` | `#narkotiki-228` (ст. 228, 228.1), `#moshennichestvo` (мошенничество, кража, растрата, ст. 158–160), `#grabezh-razboy` (ст. 161, 162), `#tyazhkiy-vred` (ст. 111), `#poddelka-dokumentov` (ст. 327) |
+| Уголовные дела `#ugolovnye-dela` | `#narkotiki-228` (ст. 228, 228.1), `#moshennichestvo` (мошенничество, кража, растрата, ст. 158–160), `#droppery` (дропперы, финансовые курьеры, ст. 159), `#grabezh-razboy` (ст. 161, 162), `#tyazhkiy-vred` (ст. 111), `#poddelka-dokumentov` (ст. 327) |
 | Семейные дела `#semeynye-dela` | `#razdel-imushchestva`, `#razvod`, `#alimenty`, `#opeka` (опека, усыновление, родительские права) |
 | Другие дела `#drugie-dela` | `#administrativnye`, `#voennoe-pravo`, `#zashchita-potrebiteley` |
 
@@ -51,7 +51,7 @@ https://advokateva.ru/?utm_source=yandex&utm_medium=cpc&utm_campaign=…#narkoti
 после загрузки шрифтов скрипт доводит строку на место ещё раз (если человек сам
 не начал листать). Без JS строку подсвечивает CSS (`:target`), «Подробнее» закрыто.
 
-Разделы: `#napravleniya`, `#praktika`, `#ob-advokate`, `#stoimost`, `#proverka`,
+Разделы: `#napravleniya`, `#praktika`, `#ob-advokate`, `#stoimost`, `#smi` (выступления на ТВ и в СМИ), `#proverka`,
 `#otzyvy` (отзывы — правая колонка «Проверить адвоката»), `#kontakty`.
 
 **Старые якоря** (версия 3) ещё работают — `main.js` (`ANCHOR_ALIASES`) ведёт их на
@@ -69,9 +69,10 @@ https://advokateva.ru/?utm_source=yandex&utm_medium=cpc&utm_campaign=…#narkoti
 `tools/directions.json` (его запускает `build.sh`): блоки между метками
 `directions:cards:*` и `directions:groups:*` в `index.html` руками не правят.
 Структура: `groups[]` — `id`, `title`, `lead`, `pricesTitle`, `prices`, `photo`,
-`also` и `items[]` — `id`, `title`, `article`, `text`, `points[]`. Тексты строк сейчас
-временные (из профиля на HARANT и прайса) — заменить текстами клиента, правя только
-опечатки и разметку. Цены — только в таблицах групп и в общем прайсе «Стоимость
+`also` и `items[]` — `id`, `title`, `article`, `text`, `points[]`; `text` — предложения
+одного абзаца или список абзацев `[[…], […]]`. Тексты «Наркотиков», «Мошенничества»,
+«Дропперов» и «Грабежа» — клиента (круг 3, `docs/eva-pravki-3.md`), остальные строки —
+из профиля на HARANT; правим только опечатки и разметку. Цены — только в таблицах групп и в общем прайсе «Стоимость
 и условия», не в строках.
 
 ## Яндекс.Метрика и cookie
@@ -89,8 +90,8 @@ https://advokateva.ru/?utm_source=yandex&utm_medium=cpc&utm_campaign=…#narkoti
 | `max_click` | MAX |
 | `email_click` | адрес почты |
 | `vk_click` | ВКонтакте (ссылка в «Контактах») |
-| `sec_narkotiki_228`, `sec_moshennichestvo`, `sec_grabezh_razboy`, `sec_tyazhkiy_vred`, `sec_poddelka_dokumentov`, `sec_razdel_imushchestva`, `sec_razvod`, `sec_alimenty`, `sec_opeka`, `sec_administrativnye`, `sec_voennoe_pravo`, `sec_zashchita_potrebiteley` | переход по якорю строки: ссылка из рекламы (в т. ч. старый `#krazha` → `sec_moshennichestvo`) или клик в карточке «Направлений» |
-| `open_narkotiki_228`, `open_moshennichestvo` … `open_zashchita_potrebiteley` (те же 12 id) | человек сам раскрыл «Подробнее» в строке; раскрытие по якорю сюда не считается |
+| `sec_narkotiki_228`, `sec_moshennichestvo`, `sec_droppery`, `sec_grabezh_razboy`, `sec_tyazhkiy_vred`, `sec_poddelka_dokumentov`, `sec_razdel_imushchestva`, `sec_razvod`, `sec_alimenty`, `sec_opeka`, `sec_administrativnye`, `sec_voennoe_pravo`, `sec_zashchita_potrebiteley` | переход по якорю строки: ссылка из рекламы (в т. ч. старый `#krazha` → `sec_moshennichestvo`) или клик в карточке «Направлений» |
+| `open_narkotiki_228`, `open_moshennichestvo` … `open_zashchita_potrebiteley` (те же 13 id) | человек сам раскрыл «Подробнее» в строке; раскрытие по якорю сюда не считается |
 
 Цели, достигнутые до согласия на cookie (переход из рекламы, пока на экране плашка),
 не теряются: `main.js` держит их в очереди и отправляет после «Понятно».

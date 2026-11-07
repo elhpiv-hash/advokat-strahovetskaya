@@ -37,7 +37,7 @@ const check = (group, name, ok, note = '', soft = false) => add(group, name, ok 
 // \s в JS — и неразрывный пробел тоже (в подвале «в&nbsp;студии»)
 const norm = (t) => String(t || '').replace(/\s+/g, ' ').trim();
 
-const ROWS = ['narkotiki-228', 'moshennichestvo', 'grabezh-razboy', 'tyazhkiy-vred', 'poddelka-dokumentov',
+const ROWS = ['narkotiki-228', 'moshennichestvo', 'droppery', 'grabezh-razboy', 'tyazhkiy-vred', 'poddelka-dokumentov',
   'razdel-imushchestva', 'razvod', 'alimenty', 'opeka', 'administrativnye', 'voennoe-pravo', 'zashchita-potrebiteley'];
 const GOALS = [
   ['phone_click', '#hero-actions a[href^="tel:"]'],

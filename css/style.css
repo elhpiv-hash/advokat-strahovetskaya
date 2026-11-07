@@ -1032,6 +1032,10 @@ main .case {
   padding-bottom: 1.5rem;
 }
 
+.case__body p + p {
+  margin-top: .75rem;
+}
+
 .case__points {
   display: grid;
   gap: .5rem;
@@ -1207,6 +1211,51 @@ main .case {
 .stats__label {
   line-height: 1.4;
   color: var(--c-on-dark-soft);
+}
+
+/* Левая колонка «Практики»: две цифры и под ними «Опыт в семейных делах» —
+   карточка того же вида, что цифры и график */
+.practice__main {
+  display: grid;
+  gap: .75rem;
+  align-content: start;
+}
+
+.practice__family {
+  padding: 1.25rem 1.25rem 1.375rem;
+  background: var(--c-dark-card);
+  border: 1px solid var(--c-dark-line);
+  border-radius: var(--radius);
+}
+
+.practice__subtitle {
+  font-size: var(--step-1);
+  line-height: 1.2;
+  color: var(--c-on-dark);
+}
+
+.practice__list {
+  display: grid;
+  gap: .5rem;
+  margin-top: .875rem;
+  line-height: 1.45;
+  color: var(--c-on-dark-soft);
+}
+
+/* Маркер — та же золотая черта, что в строках направлений */
+.practice__list li {
+  position: relative;
+  padding-left: 1.75rem;
+}
+
+.practice__list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: .75em;
+  width: 1rem;
+  height: 2px;
+  background: var(--c-gold);
 }
 
 .chart {
@@ -1533,9 +1582,25 @@ main .case {
   white-space: nowrap;
 }
 
+/* Словесное значение («по договорённости, в зависимости от…») — строкой
+   под услугой: справа узкой колонкой оно рассыпалось бы по слову */
+.price__row:has(.price__note) {
+  flex-wrap: wrap;
+  row-gap: .25rem;
+}
+
 .price dd.price__note {
-  flex: 0 1 13rem;
+  flex: 1 1 100%;
+  text-align: left;
   white-space: normal;
+  color: var(--c-ink-soft);
+}
+
+/* Пояснение к цене («за пределами Санкт-Петербурга…») — строкой под услугой */
+.price__sub {
+  display: block;
+  margin-top: .125rem;
+  font-size: .875rem;
   color: var(--c-ink-soft);
 }
 
@@ -1544,7 +1609,8 @@ main .case {
   font-size: var(--step-2);
 }
 
-/* Четыре условия работы (раньше — отдельный раздел над направлениями) */
+/* Условия оплаты (пять фраз без заголовков) и «Как начать работу»
+   (три шага: «Шаг N» — заголовок, фраза — текст) */
 .terms {
   display: grid;
   gap: 1.25rem 2.5rem;
@@ -2283,23 +2349,26 @@ main .case {
     max-height: none;
   }
 
-  /* Прайс в две колонки по четыре строки */
+  /* Прайс в две колонки. Колонки текста, а не сетка: строки разной высоты
+     (пояснения под услугой) в сетке тянули бы соседнюю строку за собой.
+     Линия сверху и снизу у каждой строки, соседние накладываются (−1px) —
+     у обеих колонок есть и верхняя, и нижняя черта. */
   .price {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: repeat(4, auto);
-    grid-auto-flow: column;
+    columns: 2;
     column-gap: 4rem;
     border-top: 0;
   }
 
-  .price__row:nth-child(1),
-  .price__row:nth-child(5) {
+  .price__row {
+    break-inside: avoid;
     border-top: 1px solid var(--c-line);
+    margin-bottom: -1px;
   }
 
-  .terms {
-    grid-template-columns: repeat(4, 1fr);
+  /* Условия оплаты (5) и шаги (3) — одна сетка в три колонки */
+  .terms--five,
+  .terms--three {
+    grid-template-columns: repeat(3, 1fr);
   }
 
   /* Проверка — 2 × 2 слева, отзывы столбиком справа */
