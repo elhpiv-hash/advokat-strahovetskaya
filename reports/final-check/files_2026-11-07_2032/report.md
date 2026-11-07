@@ -1,0 +1,90 @@
+# final-check advokateva.ru — до заливки (файлы сборки)
+
+Дата: 07.11.2026, 20:33:20. Браузер открывал dist/ под адресом https://advokateva.ru (запросы подменялись файлами).
+Итог: 78 пройдено, 0 замечаний, 0 ошибок.
+
+
+## Проверки
+
+| | Группа | Проверка | Примечание |
+|---|---|---|---|
+| ✓ | Файлы | robots.txt: User-agent: *, Allow: /, Sitemap | User-agent: * / Allow: / / Sitemap: https://advokateva.ru/sitemap.xml |
+| ✓ | Файлы | sitemap.xml: только адреса advokateva.ru | https://advokateva.ru/, https://advokateva.ru/privacy/ |
+| ✓ | Файлы | sitemap.xml: lastmod у каждого адреса |  |
+| ✓ | Файлы | .htaccess: http → https на https://advokateva.ru |  |
+| ✓ | Файлы | .htaccess: www → без www |  |
+| ✓ | Файлы | .htaccess: /index.html → / через THE_REQUEST, сразу на домен |  |
+| ✓ | Файлы | .htaccess: признаки https за прокси (X-Forwarded-Proto, порт 443) |  |
+| ✓ | Файлы | .htaccess: служебные файлы закрыты (md, sh, zip, sql, bak, ~, README, .git) |  |
+| ✓ | Файлы | .htaccess: кэш статики и no-cache для HTML |  |
+| ✓ | Файлы | .htaccess: своя страница 404 |  |
+| ✓ | Файлы | .htaccess: CSP с хешем встроенного скрипта |  |
+| ✓ | Файлы | нет следов превью и прежнего адреса (github.io, example.ru, /advokat-strahovetskaya/) |  |
+| ✓ | Файлы | noindex только на 404.html | 404.html |
+| ✓ | Файлы | нет Telegram |  |
+| ✓ | Файлы | нет <noscript> (Метрика без пикселя) |  |
+| ✓ | Файлы | все файлы, на которые ссылаются страницы и стили, есть в сборке |  |
+| ✓ | Файлы | архив upload-advokateva.zip = dist/ (31 файлов) |  |
+| ✓ | Файлы | файлы в архиве побайтно совпадают с dist/ |  |
+| ✓ | Файлы | в архиве нет служебного (md, sh, mjs, src/, tools/, .git) |  |
+| ✓ | Файлы | в архиве пути от корня сайта (index.html, .htaccess в корне) |  |
+| ✓ | Файлы | ЗАЛИВКА.md лежит в проекте |  |
+| ✓ | Страница / | код ответа | 200 |
+| ✓ | Страница / | title | Адвокат по уголовным делам и сложным семейным спорам в Санкт-Петербурге — Страховецкая Е. Р. |
+| ✓ | Страница / | один H1 | Адвокат по уголовным делам и сложным семейным спорам в Санкт-Петербурге |
+| ✓ | Страница / | подвал: «Сайт сделан в студии elhpiv» |  |
+| ✓ | Страница / | description | 222 симв. |
+| ✓ | Страница / | canonical на боевой адрес | https://advokateva.ru/ |
+| ✓ | Страница / | нет noindex/nofollow |  |
+| ✓ | Страница / | og:url и og:image на домене | https://advokateva.ru/ / https://advokateva.ru/assets/img/og-cover.jpg |
+| ✓ | Страница / | og:image открывается | 200 |
+| ✓ | Страница / | JSON-LD разбирается |  |
+| ✓ | Страница / | JSON-LD: url и image на домене | https://advokateva.ru/ / https://advokateva.ru/assets/img/og-cover.jpg |
+| ✓ | Страница / | JSON-LD: sameAs с профилем MAX, без Telegram |  |
+| ✓ | Страница / | JSON-LD: areaServed | Санкт-Петербург, Ленинградская область, Великий Новгород, Москва |
+| ✓ | Страница / | картинки: alt и width/height (3) |  |
+| ✓ | Страница / | картинки загружаются |  |
+| ✓ | Страница / | внутренние ссылки открываются (2) |  |
+| ✓ | Страница / | нет Telegram |  |
+| ✓ | Страница / | MAX: ссылки на профиль, в новой вкладке | 4 шт. |
+| ✓ | Страница /privacy/ | код ответа | 200 |
+| ✓ | Страница /privacy/ | title | Политика конфиденциальности — адвокат Страховецкая Е. Р. |
+| ✓ | Страница /privacy/ | один H1 | Политика конфиденциальности |
+| ✓ | Страница /privacy/ | подвал: «Сайт сделан в студии elhpiv» |  |
+| ✓ | Страница /privacy/ | description | 115 симв. |
+| ✓ | Страница /privacy/ | canonical на боевой адрес | https://advokateva.ru/privacy/ |
+| ✓ | Страница /privacy/ | нет noindex/nofollow |  |
+| ✓ | Страница /nope-404-check/ | код ответа | 404 |
+| ✓ | Страница /nope-404-check/ | title | Страница не найдена — адвокат Страховецкая Е. Р. |
+| ✓ | Страница /nope-404-check/ | один H1 | Страница не найдена |
+| ✓ | Страница /nope-404-check/ | подвал: «Сайт сделан в студии elhpiv» |  |
+| ✓ | Страница /nope-404-check/ | noindex на странице ошибки |  |
+| ✓ | Консоль | нет ошибок на страницах |  |
+| ✓ | Якоря | 13 строк и старый #krazha: под шапкой, раскрыты, подсвечены |  |
+| ✓ | Метрика | номер счётчика в js/main.js | 114124193 |
+| ✓ | Метрика | до согласия запросов к mc.yandex.ru нет |  |
+| ✓ | Метрика | плашка cookie видна, есть ссылка на политику | Сайт использует cookie и Яндекс.Метрику для статистики. Подробнее — в Политике конфиденциа |
+| ✓ | Метрика | после кнопки загружается tag.js?id=114124193 | https://mc.yandex.ru/metrika/tag.js?id=114124193 |
+| ✓ | Метрика | init(114124193): ssr, clickmap, referrer, url, accurateTrackBounce, trackLinks; без webvisor и ecommerce | {"ssr":true,"clickmap":true,"referrer":"","url":"https://advokateva.ru/","accurateTrackBounce":true,"trackLinks":true} |
+| ✓ | Метрика | цель phone_click | #hero-actions a[href^="tel:"] |
+| ✓ | Метрика | цель whatsapp_click | #hero-actions a[href*="wa.me/"] |
+| ✓ | Метрика | цель max_click | #hero-actions a[data-site="max"] |
+| ✓ | Метрика | цель email_click | #kontakty a[href^="mailto:"] |
+| ✓ | Метрика | цель vk_click | #kontakty a[data-site="vk"] |
+| ✓ | Метрика | цель review_click {"platform":"yandex_maps"} | #otzyvy a[data-review="yandex_maps"] |
+| ✓ | Метрика | цель review_click {"platform":"harant"} | #otzyvy a[data-review="harant"] |
+| ✓ | Метрика | цель review_click {"platform":"zoon"} | #otzyvy a[data-review="zoon"] |
+| ✓ | Метрика | цель review_click {"platform":"zoon"} | #ob-advokate a[data-review="zoon"] |
+| ✓ | Метрика | нет <noscript> |  |
+| ✓ | Экраны | 375×812: нет горизонтальной прокрутки | 0 px |
+| ✓ | Экраны | 375×812: «Позвонить» в первом экране | низ 801 |
+| ✓ | Экраны | 375×812: нет ошибок в консоли |  |
+| ✓ | Экраны | 390×844: нет горизонтальной прокрутки | 0 px |
+| ✓ | Экраны | 390×844: «Позвонить» в первом экране | низ 812 |
+| ✓ | Экраны | 390×844: нет ошибок в консоли |  |
+| ✓ | Экраны | 768×1024: нет горизонтальной прокрутки | 0 px |
+| ✓ | Экраны | 768×1024: нет ошибок в консоли |  |
+| ✓ | Экраны | 1440×900: нет горизонтальной прокрутки | 0 px |
+| ✓ | Экраны | 1440×900: нет ошибок в консоли |  |
+
+Снимки — shots/.
