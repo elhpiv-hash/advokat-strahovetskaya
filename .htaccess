@@ -21,22 +21,33 @@ ErrorDocument 404 /404.html
 </IfModule>
 
 
-# ----- HTTPS, без www, без /index.html -----
-# Один канонический адрес — иначе поисковик считает дублями
-# http/https, www/без www и / и /index.html.
+# ----- HTTPS, без www, без /index.html — одним перенаправлением 301 -----
+# Один канонический адрес https://advokateva.ru/ — иначе поисковик считает
+# дублями http/https, www/без www и / и /index.html. Адрес назначения
+# всегда полный, поэтому любой вариант доходит за один шаг.
+# Перед Apache на REG.RU стоит nginx, и «запрос пришёл по https» узнаём
+# по любому из признаков: HTTPS=on, заголовки X-Forwarded-Proto или
+# X-Forwarded-Ssl от nginx, порт 443. Если после заливки браузер пишет
+# «слишком много переадресаций» — см. ЗАЛИВКА.md.
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  # X-Forwarded-Proto — для хостингов, где TLS снимает прокси перед Apache
-  RewriteCond %{HTTPS} !=on
-  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
-  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  RewriteCond %{HTTPS} =on [OR]
+  RewriteCond %{HTTP:X-Forwarded-Proto} =https [NC,OR]
+  RewriteCond %{HTTP:X-Forwarded-Ssl} =on [NC,OR]
+  RewriteCond %{SERVER_PORT} =443
+  RewriteRule ^ - [E=EVA_HTTPS:1]
 
-  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-  RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+  # /index.html и /папка/index.html → адрес со слэшем. Условие по THE_REQUEST —
+  # по строке запроса от браузера: подстановка index.html для «/» самим
+  # сервером сюда не попадает, петли нет. utm-метки сохраняются.
+  RewriteCond %{THE_REQUEST} \s/+((?:[^\s?]*/)?)index\.html[\s?] [NC]
+  RewriteRule ^ https://advokateva.ru/%1 [R=301,L,NE]
 
-  RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.html[\s?] [NC]
-  RewriteRule ^(.*/)?index\.html$ /$1 [L,R=301]
+  # http → https и www → без www
+  RewriteCond %{HTTP_HOST} ^www\. [NC,OR]
+  RewriteCond %{ENV:EVA_HTTPS} !=1
+  RewriteRule ^ https://advokateva.ru%{REQUEST_URI} [R=301,L,NE]
 </IfModule>
 
 
@@ -51,7 +62,9 @@ RedirectMatch 404 /assets/content(/|$)
 RedirectMatch 404 /(tools|dist)(/|$)
 RedirectMatch 404 /node_modules(/|$)
 
-<FilesMatch "(^\.|\.(sh|md|cjs|mjs|map|log|bak|orig|swp|lock)$|^package(-lock)?\.json$)">
+# Плюс архивы заливки, дампы и резервные копии (*.zip, *.sql, *.old,
+# файлы-копии редакторов с ~ на конце), README — как на advokativantsov.ru
+<FilesMatch "(?i)(^\.|\.(sh|md|cjs|mjs|map|log|bak|orig|swp|lock|zip|sql|old|tmp)$|~$|^package(-lock)?\.json$|^readme)">
   Require all denied
 </FilesMatch>
 

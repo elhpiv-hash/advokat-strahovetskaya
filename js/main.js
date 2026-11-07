@@ -41,8 +41,12 @@ const ANCHOR_ALIASES = {
 };
 
 /* Яндекс.Метрика: номер счётчика строкой, например '12345678'.
+   ПЛЕЙСХОЛДЕР — номер ещё не прислали: вписать сюда и запустить bash build.sh.
    Пусто — Метрика не загружается совсем, и плашка о cookie не показывается
-   (без Метрики сайт cookie не ставит). Цели — в README. */
+   (без Метрики сайт cookie не ставит). Счётчик грузится только после
+   кнопки в плашке, без Вебвизора и карты кликов, без <noscript>.
+   Цели (phone_click, whatsapp_click, max_click, email_click, vk_click
+   и цели строк направлений) — в README. */
 const METRIKA_ID = '';
 
 // Отметка о согласии на cookie — в localStorage (в браузере посетителя)
@@ -504,10 +508,11 @@ function initCookies() {
 // В Метрику уходят только после согласия на cookie.
 function initGoals() {
   const goals = [
-    ['a[href^="tel:"]', 'click_phone'],
-    ['a[href*="wa.me/"]', 'click_whatsapp'],
-    ['a[data-site="max"]', 'click_max'],
-    ['a[href^="mailto:"]', 'click_email']
+    ['a[href^="tel:"]', 'phone_click'],
+    ['a[href*="wa.me/"]', 'whatsapp_click'],
+    ['a[data-site="max"]', 'max_click'],
+    ['a[href^="mailto:"]', 'email_click'],
+    ['a[data-site="vk"]', 'vk_click']
   ];
 
   document.addEventListener('click', (event) => {

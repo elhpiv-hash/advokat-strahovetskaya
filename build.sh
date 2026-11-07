@@ -34,7 +34,7 @@ cd "$(dirname "$0")"
 
 # Адрес сайта — ЕДИНСТВЕННОЕ место, где задаётся домен. Поменяйте строку
 # и запустите bash build.sh — адрес обновится во всех файлах сразу.
-SITE_URL="https://example.ru"
+SITE_URL="https://advokateva.ru"
 
 # Код подтверждения Яндекс.Вебмастера: только значение content из
 # <meta name="yandex-verification" content="…">. Пусто — meta не выводится.
@@ -44,7 +44,7 @@ YANDEX_VERIFICATION=""
 STUDIO_URL=""
 
 # Архив для выкладки
-ZIP_NAME="advokat-strahovetskaya.zip"
+ZIP_NAME="../upload-advokateva.zip"
 
 CSS_SRC="css/style.css"
 CSS_MIN="css/style.min.css"
@@ -212,6 +212,21 @@ if [ -d assets/img/docs ]; then
   mkdir -p dist/assets/img/docs
   find assets/img/docs -maxdepth 1 -type f ! -name '.gitkeep' -exec cp {} dist/assets/img/docs/ \;
 fi
+
+# Фото, на которые не ссылается ни одна страница и ни один стиль (запасные
+# extra-N, прежние кадры первого экрана), на хостинг не едут: имя файла
+# ищется в HTML и CSS сборки. Документы не трогаем — их открывает скрипт.
+node - dist <<'NODE'
+const fs = require('fs');
+const path = require('path');
+const dir = process.argv[2];
+const text = ['index.html', 'privacy/index.html', '404.html', 'css/style.min.css']
+  .map((f) => fs.readFileSync(path.join(dir, f), 'utf8')).join(' ');
+const img = path.join(dir, 'assets/img');
+const dropped = fs.readdirSync(img).filter((f) => fs.statSync(path.join(img, f)).isFile() && !text.includes(f));
+dropped.forEach((f) => fs.unlinkSync(path.join(img, f)));
+console.log(`  фото без ссылок не копируются: ${dropped.length ? dropped.join(', ') : 'нет'}`);
+NODE
 
 # Архив пишет Node: zip-утилиты нет в Git Bash на Windows, а архив
 # PowerShell (Compress-Archive) кладёт пути с «\» — на Linux-хостинге
