@@ -90,6 +90,7 @@ https://advokateva.ru/?utm_source=yandex&utm_medium=cpc&utm_campaign=…#narkoti
 | `max_click` | MAX |
 | `email_click` | адрес почты |
 | `vk_click` | ВКонтакте (ссылка в «Контактах») |
+| `review_click` | ссылка на отзывы — в блоке «Отзывы» и в тексте «Об адвокате»; площадка — параметр визита `platform`: `yandex_maps`, `harant`, `zoon`. Новая площадка — атрибут `data-review="<имя>"` у ссылки, `main.js` менять не нужно. В отчёте Метрики: «Параметры визитов» → `platform` |
 | `sec_narkotiki_228`, `sec_moshennichestvo`, `sec_droppery`, `sec_grabezh_razboy`, `sec_tyazhkiy_vred`, `sec_poddelka_dokumentov`, `sec_razdel_imushchestva`, `sec_razvod`, `sec_alimenty`, `sec_opeka`, `sec_administrativnye`, `sec_voennoe_pravo`, `sec_zashchita_potrebiteley` | переход по якорю строки: ссылка из рекламы (в т. ч. старый `#krazha` → `sec_moshennichestvo`) или клик в карточке «Направлений» |
 | `open_narkotiki_228`, `open_moshennichestvo` … `open_zashchita_potrebiteley` (те же 13 id) | человек сам раскрыл «Подробнее» в строке; раскрытие по якорю сюда не считается |
 

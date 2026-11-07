@@ -44,7 +44,12 @@ const GOALS = [
   ['whatsapp_click', '#hero-actions a[href*="wa.me/"]'],
   ['max_click', '#hero-actions a[data-site="max"]'],
   ['email_click', '#kontakty a[href^="mailto:"]'],
-  ['vk_click', '#kontakty a[data-site="vk"]']
+  ['vk_click', '#kontakty a[data-site="vk"]'],
+  // одна цель на все площадки отзывов, площадка — параметр platform
+  ['review_click', '#otzyvy a[data-review="yandex_maps"]', { platform: 'yandex_maps' }],
+  ['review_click', '#otzyvy a[data-review="harant"]', { platform: 'harant' }],
+  ['review_click', '#otzyvy a[data-review="zoon"]', { platform: 'zoon' }],
+  ['review_click', '#ob-advokate a[data-review="zoon"]', { platform: 'zoon' }]
 ];
 const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json',
   '.xml': 'application/xml', '.txt': 'text/plain', '.avif': 'image/avif', '.webp': 'image/webp', '.jpg': 'image/jpeg',
@@ -292,10 +297,13 @@ async function newContext({ testMetrika = false, viewport = { width: 1440, heigh
       && o.accurateTrackBounce === true && o.trackLinks === true && !('webvisor' in o) && !('ecommerce' in o),
     JSON.stringify(o));
   await page.evaluate(() => document.addEventListener('click', (e) => { if (e.target.closest('a[href^="tel:"], a[href^="mailto:"], a[target="_blank"]')) e.preventDefault(); }, true));
-  for (const [goal, sel] of GOALS) {
+  for (const [goal, sel, params] of GOALS) {
+    const before = await page.evaluate(() => window.ym.a.length);
     await page.$eval(sel, (a) => a.click());
-    const got = await page.evaluate((g) => [...window.ym.a].some((a) => a[1] === 'reachGoal' && a[2] === g), goal);
-    check(G, `цель ${goal}`, got, sel);
+    // Только вызовы после этого клика: у review_click одно имя на три площадки
+    const got = await page.evaluate(([g, p, from]) => [...window.ym.a].slice(from).some((a) => a[1] === 'reachGoal' && a[2] === g
+      && (!p || JSON.stringify(a[3]) === JSON.stringify(p))), [goal, params || null, before]);
+    check(G, `цель ${goal}${params ? ' ' + JSON.stringify(params) : ''}`, got, sel);
   }
   const html = await page.content();
   check(G, 'нет <noscript>', !/<noscript/i.test(html));

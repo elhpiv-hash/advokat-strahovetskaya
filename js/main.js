@@ -44,8 +44,8 @@ const ANCHOR_ALIASES = {
    Пусто — Метрика не загружается совсем, и плашка о cookie не показывается
    (без Метрики сайт cookie не ставит). Счётчик грузится только после
    кнопки в плашке, без Вебвизора и ecommerce, без <noscript>.
-   Цели (phone_click, whatsapp_click, max_click, email_click, vk_click
-   и цели строк направлений) — в README. */
+   Цели (phone_click, whatsapp_click, max_click, email_click, vk_click,
+   review_click с параметром площадки и цели строк направлений) — в README. */
 const METRIKA_ID = '114124193';
 
 // Отметка о согласии на cookie — в localStorage (в браузере посетителя)
@@ -476,14 +476,20 @@ function loadMetrika() {
     accurateTrackBounce: true,
     trackLinks: true
   });
-  pendingGoals.splice(0).forEach((name) => window.ym(Number(METRIKA_ID), 'reachGoal', name));
+  pendingGoals.splice(0).forEach((args) => sendGoal(...args));
 }
 
-// Цель Метрики. Пока счётчика нет (нет согласия) — в очередь.
-function reachGoal(name) {
+function sendGoal(name, params) {
+  if (params) window.ym(Number(METRIKA_ID), 'reachGoal', name, params);
+  else window.ym(Number(METRIKA_ID), 'reachGoal', name);
+}
+
+// Цель Метрики (params — параметры визита, например { platform: 'zoon' }).
+// Пока счётчика нет (нет согласия) — в очередь.
+function reachGoal(name, params) {
   if (!METRIKA_ID) return;
-  if (typeof window.ym === 'function') window.ym(Number(METRIKA_ID), 'reachGoal', name);
-  else pendingGoals.push(name);
+  if (typeof window.ym === 'function') sendGoal(name, params);
+  else pendingGoals.push([name, params]);
 }
 
 // Плашка показывается, только если Метрика настроена и согласия ещё нет
@@ -506,22 +512,27 @@ function initCookies() {
   });
 }
 
-// Цели Метрики — клики по способам связи. Цели строк направлений —
-// в flashCase (sec_<id>, переход по якорю) и initCaseGoals (open_<id>).
-// В Метрику уходят только после согласия на cookie.
+// Цели Метрики — клики по способам связи и по ссылкам на отзывы. Цели строк
+// направлений — в flashCase (sec_<id>, переход по якорю) и initCaseGoals
+// (open_<id>). В Метрику уходят только после согласия на cookie.
+// review_click — одна цель на все площадки отзывов; какая именно — параметр
+// platform из data-review у ссылки: yandex_maps, harant, zoon. Новая
+// площадка — data-review="<имя>" у ссылки, здесь ничего менять не нужно.
 function initGoals() {
   const goals = [
     ['a[href^="tel:"]', 'phone_click'],
     ['a[href*="wa.me/"]', 'whatsapp_click'],
     ['a[data-site="max"]', 'max_click'],
     ['a[href^="mailto:"]', 'email_click'],
-    ['a[data-site="vk"]', 'vk_click']
+    ['a[data-site="vk"]', 'vk_click'],
+    ['a[data-review]', 'review_click', (link) => ({ platform: link.dataset.review })]
   ];
 
   document.addEventListener('click', (event) => {
-    for (const [selector, goal] of goals) {
-      if (!event.target.closest(selector)) continue;
-      reachGoal(goal);
+    for (const [selector, goal, params] of goals) {
+      const link = event.target.closest(selector);
+      if (!link) continue;
+      reachGoal(goal, params ? params(link) : undefined);
       return;
     }
   });
